@@ -77,5 +77,6 @@
 
 
 // 自定义数据头文件
+#include "serdes/serdes.h"
 
 #endif // __BSP_H__

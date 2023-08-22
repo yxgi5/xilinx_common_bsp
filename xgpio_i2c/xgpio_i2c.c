@@ -861,7 +861,7 @@ int xgpio_i2c_32b32_read(i2c_no i2c, char IIC_ADDR, unsigned int Addr, unsigned 
 
 #endif // XPAR_XGPIO_I2C_0_AXI_GPIO_0_DEVICE_ID
 
-int xgpio_setup(XGpio *InstancePtr, u16 DeviceId)
+int xgpio_setup(XGpio *InstancePtr, u16 DeviceId, u32 DirectionMask1, u32 DirectionMask2)
 {
 	int Status ;
 
@@ -870,9 +870,12 @@ int xgpio_setup(XGpio *InstancePtr, u16 DeviceId)
 	{
 		return XST_FAILURE ;
 	}
-	/* set as input */
-    XGpio_SetDataDirection(InstancePtr, 1, 0xffffffff);
-    XGpio_SetDataDirection(InstancePtr, 2, 0xffffffff);
+	/* set as output */
+    XGpio_SetDataDirection(InstancePtr, 1, DirectionMask1);
+    if(InstancePtr->IsDual)
+    {
+    	XGpio_SetDataDirection(InstancePtr, 2, DirectionMask2);
+    }
 
 	return XST_SUCCESS ;
 }

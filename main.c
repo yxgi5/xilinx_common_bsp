@@ -47,14 +47,33 @@
 
 #include "bsp.h"
 
+#if defined(XPAR_XGPIO_NUM_INSTANCES)
+XGpio XGpioOutput;
+#endif
+
 int main()
 {
+	int Status ;
+
     init_platform();
 
+#if defined(XPAR_XGPIO_NUM_INSTANCES)
+    Status = xgpio_setup(&XGpioOutput, XPAR_GPIO_0_DEVICE_ID, 0, 0) ;
+    if (Status != XST_SUCCESS)
+	{
+    	Xil_Assert(__FILE__, __LINE__);
+		return XST_FAILURE ;
+	}
+#endif
 
-//#if defined(XPAR_XGPIO_NUM_INSTANCES) && defined(XPAR_XGPIO_I2C_0_AXI_GPIO_0_DEVICE_ID)
+
 #if defined(XPAR_XGPIO_I2C_0_AXI_GPIO_0_DEVICE_ID)
-    xgpio_init();
+    Status = xgpio_init();
+    if (Status != XST_SUCCESS)
+	{
+		Xil_Assert(__FILE__, __LINE__);
+		return XST_FAILURE ;
+	}
 #endif
 
 
@@ -71,6 +90,49 @@ int main()
     bsp_printf("software ver = 0x%08x\n\r", __SW_VER__);
     bsp_printf("***************************\n\r");
 #endif
+
+#if defined(XPAR_XGPIO_NUM_INSTANCES)
+	XGpio_DiscreteWrite(&XGpioOutput, 1, 0x24); // RGB888
+//	XGpio_DiscreteWrite(&XGpioOutput, 1, 0x2A); // RAW8
+//	XGpio_DiscreteWrite(&XGpioOutput, 1, 0x2B); // RAW10
+//	XGpio_DiscreteWrite(&XGpioOutput, 1, 0x2C); // RAW12
+//	XGpio_DiscreteWrite(&XGpioOutput, 1, 0x1E); // YUV422_8bit
+//	XGpio_DiscreteWrite(&XGpioOutput, 2, VIDEO_COLUMNS*24/8<<16); // WC RGB888
+//	XGpio_DiscreteWrite(&XGpioOutput, 2, 3840*24/8<<16); // WC RGB888
+//	XGpio_DiscreteWrite(&XGpioOutput, 2, (1920*12/8)<<16); // WC RAW12
+	XGpio_DiscreteWrite(&XGpioOutput, 2, (1920*24/8)<<16); // WC RGB888
+//	XGpio_DiscreteWrite(&XGpioOutput, 2, (VIDEO_COLUMNS*10/8)<<16); // WC RAW10
+//	XGpio_DiscreteWrite(&XGpioOutput, 2, (1920*16/8)<<16); // WC YUV422_8bit
+#endif
+
+#if defined (SER_CFG) || defined (DES_CFG)
+    // MAX9296 config
+    u8 ret8=0;
+#if defined (DES_CFG)
+    Status = xgpio_i2c_reg16_read(I2C_NO_3, 0x90>>1, 0x0000, &ret8, STRETCH_ON);
+    Status = xgpio_i2c_reg16_read(I2C_NO_3, 0x90>>1, 0x0001, &ret8, STRETCH_ON);
+    max929x_write_array(I2C_NO_3, max9296_rgb888_gmsl2);
+#endif // DES_CFG
+#if defined (SER_CFG)
+    Status = xgpio_i2c_reg16_read(I2C_NO_3, 0x80>>1, 0x0000, &ret8, STRETCH_ON);
+    Status = xgpio_i2c_reg16_read(I2C_NO_3, 0x80>>1, 0x0001, &ret8, STRETCH_ON);
+//    max929x_write_array(I2C_NO_3, max9295_gmsl2);
+    max929x_write_array(I2C_NO_3, max96717_rgb888_gmsl2);
+#endif // SER_CFG
+#endif
+
+////    axis_switch_cfg();
+//	clkwiz_vtc_cfg();
+//	tpg_config();
+////    clear_display();
+//	vdma_config_32();
+//
+//#if 1
+//	ret32 = Csi2TxSs_Init(XPAR_CSI2TXSS_0_DEVICE_ID);
+//	XCsi2TxSs_SetClkMode(&Csi2TxSsInst, 0);
+//	XCsi2TxSs_SetLineCountForVC(&Csi2TxSsInst, 0, 1080);
+//	XCsi2TxSs_Activate(&Csi2TxSsInst, XCSI2TX_ENABLE);
+//#endif
 
     while(1)
     {
