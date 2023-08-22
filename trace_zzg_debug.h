@@ -9,7 +9,7 @@
 #ifndef TRACE_ZZG_DEBUG_H_
 #define TRACE_ZZG_DEBUG_H_
 
-#define _DEBUG_TRACE_ZZG_ 3
+#define _DEBUG_TRACE_ZZG_ 2
 #if 0 != _DEBUG_TRACE_ZZG_
 //	#include "stdio.h"	// printf()支持专义, 支持浮点数
 	#include "xil_printf.h" // xil_printf()支持专义但不支持浮点数, print()只用来打印字符串

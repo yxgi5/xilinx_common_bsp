@@ -45,63 +45,32 @@
  *   ps7_uart    115200 (configured by bootrom/bsp)
  */
 
-#include <stdio.h>
-#include "platform.h"
-#include "xil_printf.h"
-#include "sleep.h"
-#include "trace_zzg_debug.h"
-#include "bitmanip.h"
-#ifdef XPAR_XGPIO_NUM_INSTANCES
-#include "xgpio.h"
-#endif
-
-#ifdef XPAR_XGPIO_NUM_INSTANCES
-#if defined(XPAR_XGPIO_I2C_0_AXI_GPIO_0_DEVICE_ID)
-#define  XGPIO_ID  XPAR_XGPIO_I2C_0_AXI_GPIO_0_DEVICE_ID
-#endif
-#endif
-
-#ifdef XPAR_XGPIO_NUM_INSTANCES
-XGpio XGpioInst;
-#endif
-
-#if defined(XPAR_XGPIO_NUM_INSTANCES) && defined(XPAR_XGPIO_I2C_0_AXI_GPIO_0_DEVICE_ID)
-//XGPIO初始化
-int xgpio_init(void)
-{
-	int Status ;
-
-	u32 ret;
-
-	Status = XGpio_Initialize(&XGpioInst, XGPIO_ID) ;
-	if (Status != XST_SUCCESS)
-	{
-		return XST_FAILURE ;
-	}
-
-	/* set as output */
-	//设置 gpio端口 为输出
-//	XGpio_DiscreteWrite(&XGpioInst, 1, 0xfff);
-//	XGpio_SetDataDirection(&XGpioInst, 1, 0x0);
-//	XGpio_DiscreteWrite(&XGpioInst, 1, 0xfff);
-	XGpio_SetDataDirection(&XGpioInst, 2, 0x0);
-	XGpio_DiscreteWrite(&XGpioInst, 2, 1); // rs485 output
-
-	return XST_SUCCESS ;
-}
-#endif
+#include "bsp.h"
 
 int main()
 {
     init_platform();
-#if defined(XPAR_XGPIO_NUM_INSTANCES) && defined(XPAR_XGPIO_I2C_0_AXI_GPIO_0_DEVICE_ID)
+
+
+//#if defined(XPAR_XGPIO_NUM_INSTANCES) && defined(XPAR_XGPIO_I2C_0_AXI_GPIO_0_DEVICE_ID)
+#if defined(XPAR_XGPIO_I2C_0_AXI_GPIO_0_DEVICE_ID)
     xgpio_init();
 #endif
-    print("Hello World\n\r");
-//    print("Successfully ran Hello World application");
-    TRACE_ZZG("Hello World\n\r");
-//    TRACE_ZZG("s=%f\n\r",3.4);
-//    printf("s=%f\n\r",3.4);
+
+
+    TRACE_ZZG("***************************\n\r");
+    TRACE_ZZG("1920x1080@60_RGB888_out_9295\n\r");
+    TRACE_ZZG("\r\n%s,%s\r\n",__DATE__,__TIME__);
+#ifdef XPAR_AXI_LITE_REG_NUM_INSTANCES
+    if(XPAR_AXI_LITE_REG_0_DEVICE_ID == 0)
+    {
+    	TRACE_ZZG("hardware ver = 0x%08x\n\r", AXI_LITE_REG_mReadReg(XPAR_AXI_LITE_REG_0_S00_AXI_BASEADDR, AXI_LITE_REG_S00_AXI_SLV_REG0_OFFSET));
+    }
+#endif
+    TRACE_ZZG("software ver = 0x%08x\n\r", __SW_VER__);
+    TRACE_ZZG("***************************\n\r");
+
+
     while(1)
     {
 

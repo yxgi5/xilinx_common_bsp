@@ -1,0 +1,81 @@
+#ifndef __BSP_H__
+#define __BSP_H__
+
+//这里引入标准库,按需要打开
+#include <stdio.h>
+//#include <stdlib.h>
+//#include <string.h>
+//#include <stdint.h>
+//#include <stddef.h>
+//#include <malloc.h>
+//#include <assert.h>
+//#include <ctype.h>
+
+//自定义通用头文件
+#include "version.h"
+#include "config.h"
+#include "trace_zzg_debug.h"
+#include "bitmanip.h"
+
+//引入xilinx定义的通用头文件
+#include "platform.h"
+#include "xparameters.h"
+#include "xil_types.h"
+#include "xil_assert.h"
+#include "xil_cache.h"
+#include "xstatus.h"
+#include "sleep.h"
+
+//直接引入的外设库头文件
+
+//简单串口打印，不支持浮点数
+#ifndef __PPC__ // znyq zynqmp mb都可以用，排除PPC架构
+#include "xil_printf.h"
+#endif
+
+//下面是串口非打印所需
+#if defined (XPAR_XUARTLITE_NUM_INSTANCES)	// 一般用 uart lite，znyq zynqmp mb都可以用
+#include "xuartlite_l.h"
+//#elif defined (ARMR5) || (__aarch64__) || (__arm__)	// zynqmp 有 r5 核， a53 核， znyq有 a9 核
+#elif defined (XPAR_XUARTPS_NUM_INSTANCES)  // 如果没有 uart lite，再检查是否有 ps uart
+#include "xuartps.h"
+#endif
+
+// 一般都会设置hw的版本号
+#ifdef XPAR_AXI_LITE_REG_NUM_INSTANCES
+#include "AXI_LITE_REG.h"
+#endif
+
+// axis stream 监测
+#ifdef XPAR_AXI_PASSTHROUGH_MONITOR_NUM_INSTANCES
+#include "axis_passthrough_monitor.h"
+#endif
+
+
+// 中断发生器
+//#if defined (__MICROBLAZE__)
+//#include "xintc.h"
+//#else
+//#include "xscugic.h"
+//#endif
+
+//#if defined (ARMR5) || (__aarch64__) || (__arm__)
+//#include "xscugic.h"
+//#else
+//#include "xintc.h"
+//#endif
+
+#if defined (XPAR_XSCUGIC_NUM_INSTANCES)
+#include "xscugic.h"
+#elif defined (XPAR_XINTC_NUM_INSTANCES)
+#include "xintc.h"
+#endif
+
+
+// 自定义外设库头文件
+#include "xgpio_i2c/xgpio_i2c.h"
+
+
+// 自定义数据头文件
+
+#endif // __BSP_H__
