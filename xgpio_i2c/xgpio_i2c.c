@@ -25,6 +25,9 @@
  *******************************************************************************
  */
 #include "../bsp.h"
+
+#if defined(XPAR_XGPIO_NUM_INSTANCES)
+
 #if defined(XPAR_XGPIO_I2C_0_AXI_GPIO_0_DEVICE_ID)
 //#include "xgpio_i2c.h"
 //#include "sleep.h"
@@ -52,7 +55,7 @@ int xgpio_init(void)
 {
 	int Status ;
 
-	u32 ret;
+//	u32 ret;
 
 	Status = XGpio_Initialize(&XGpioInst, XGPIO_ID) ;
 	if (Status != XST_SUCCESS)
@@ -856,5 +859,23 @@ int xgpio_i2c_32b32_read(i2c_no i2c, char IIC_ADDR, unsigned int Addr, unsigned 
 }
 #endif
 
-
 #endif // XPAR_XGPIO_I2C_0_AXI_GPIO_0_DEVICE_ID
+
+int xgpio_setup(XGpio *InstancePtr, u16 DeviceId)
+{
+	int Status ;
+
+	Status = XGpio_Initialize(InstancePtr, DeviceId) ;
+	if (Status != XST_SUCCESS)
+	{
+		return XST_FAILURE ;
+	}
+	/* set as input */
+    XGpio_SetDataDirection(InstancePtr, 1, 0xffffffff);
+    XGpio_SetDataDirection(InstancePtr, 2, 0xffffffff);
+
+	return XST_SUCCESS ;
+}
+
+#endif // XPAR_XGPIO_NUM_INSTANCES
+

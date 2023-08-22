@@ -28,10 +28,11 @@
 #ifndef __XGPIO_I2C_H__
 #define __XGPIO_I2C_H__
 
-#if defined(XPAR_XGPIO_I2C_0_AXI_GPIO_0_DEVICE_ID)
-
+#if defined(XPAR_XGPIO_NUM_INSTANCES)
 #include "xgpio.h"
 #include "sleep.h"
+
+#if defined(XPAR_XGPIO_I2C_0_AXI_GPIO_0_DEVICE_ID)
 
 #define INPUT 1
 #define OUTPUT 0
@@ -108,5 +109,9 @@ int xgpio_i2c_reg16_read(i2c_no i2c, char IIC_ADDR, unsigned short Addr, u8 * re
 
 
 #endif // XPAR_XGPIO_I2C_0_AXI_GPIO_0_DEVICE_ID
+
+int xgpio_setup(XGpio *InstancePtr, u16 DeviceId);
+
+#endif // XPAR_XGPIO_NUM_INSTANCES
 
 #endif // __XGPIO_I2C_H__
