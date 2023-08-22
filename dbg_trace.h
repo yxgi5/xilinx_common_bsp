@@ -2,7 +2,7 @@
 #define __DEBUG_TRACE_H__
 
 #define TRACE_ON 		(1)			// 是否打印的全局开关 0 or 1
-#define FLOAT_ON		(1)			// 是否使能浮点数打印 0 or 1
+#define FLOAT_ON		(0)			// 是否使能浮点数打印 0 or 1
 
 #define bsp_printf(fmt, arg...) 			\
 	do { 									\

@@ -67,13 +67,14 @@ int main()
     	bsp_printf("hardware ver = 0x%08x\n\r", AXI_LITE_REG_mReadReg(XPAR_AXI_LITE_REG_0_S00_AXI_BASEADDR, AXI_LITE_REG_S00_AXI_SLV_REG0_OFFSET));
     }
 #endif
+#if defined (__SW_VER__)
     bsp_printf("software ver = 0x%08x\n\r", __SW_VER__);
     bsp_printf("***************************\n\r");
-
+#endif
 
     while(1)
     {
-    	bsp_printf("pi=%f\n\r",3.1415);
+//    	bsp_printf("pi=%f\n\r",3.1415);
     }
     cleanup_platform();
     return 0;
