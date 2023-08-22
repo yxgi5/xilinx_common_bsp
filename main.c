@@ -48,14 +48,24 @@
 #include <stdio.h>
 #include "platform.h"
 #include "xil_printf.h"
-#include "xgpio.h"
 #include "sleep.h"
 #include "trace_zzg_debug.h"
+#include "bitmanip.h"
+#ifdef XPAR_XGPIO_NUM_INSTANCES
+#include "xgpio.h"
+#endif
 
+#ifdef XPAR_XGPIO_NUM_INSTANCES
+#if defined(XPAR_XGPIO_I2C_0_AXI_GPIO_0_DEVICE_ID)
 #define  XGPIO_ID  XPAR_XGPIO_I2C_0_AXI_GPIO_0_DEVICE_ID
+#endif
+#endif
 
+#ifdef XPAR_XGPIO_NUM_INSTANCES
 XGpio XGpioInst;
+#endif
 
+#if defined(XPAR_XGPIO_NUM_INSTANCES) && defined(XPAR_XGPIO_I2C_0_AXI_GPIO_0_DEVICE_ID)
 //XGPIO初始化
 int xgpio_init(void)
 {
@@ -79,15 +89,19 @@ int xgpio_init(void)
 
 	return XST_SUCCESS ;
 }
+#endif
 
 int main()
 {
     init_platform();
+#if defined(XPAR_XGPIO_NUM_INSTANCES) && defined(XPAR_XGPIO_I2C_0_AXI_GPIO_0_DEVICE_ID)
     xgpio_init();
-
-//    print("Hello World\n\r");
+#endif
+    print("Hello World\n\r");
 //    print("Successfully ran Hello World application");
     TRACE_ZZG("Hello World\n\r");
+//    TRACE_ZZG("s=%f\n\r",3.4);
+//    printf("s=%f\n\r",3.4);
     while(1)
     {
 

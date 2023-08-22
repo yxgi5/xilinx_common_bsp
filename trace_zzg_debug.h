@@ -3,15 +3,16 @@
  *
  *  Created on: Dec 21, 2018
  *      Author: alex
+ *  function: 简单控制全局打印
  */
 
 #ifndef TRACE_ZZG_DEBUG_H_
 #define TRACE_ZZG_DEBUG_H_
 
-#define _DEBUG_TRACE_ZZG_ 2
+#define _DEBUG_TRACE_ZZG_ 3
 #if 0 != _DEBUG_TRACE_ZZG_
-//	#include "stdio.h"
-	#include "xil_printf.h"
+//	#include "stdio.h"	// printf()支持专义, 支持浮点数
+	#include "xil_printf.h" // xil_printf()支持专义但不支持浮点数, print()只用来打印字符串
 #endif
 
 #if 1==_DEBUG_TRACE_ZZG_ //普通打印
@@ -23,7 +24,7 @@
 	#define TRACE_ZZG(fmt,...) \
 		xil_printf("%s(%d)-<%s>: "fmt, __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__)
 #else
-	#define TRACE_ZZG
+	#define TRACE_ZZG	// 关闭所有打印
 #endif
 
 #endif /* TRACE_ZZG_DEBUG_H_ */
