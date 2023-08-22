@@ -73,7 +73,7 @@ int main()
 
     while(1)
     {
-
+    	bsp_printf("pi=%f\n\r",3.1415);
     }
     cleanup_platform();
     return 0;
