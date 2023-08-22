@@ -58,17 +58,17 @@ int main()
 #endif
 
 
-    TRACE_ZZG("***************************\n\r");
-    TRACE_ZZG("1920x1080@60_RGB888_out_9295\n\r");
-    TRACE_ZZG("\r\n%s,%s\r\n",__DATE__,__TIME__);
+    bsp_printf("***************************\n\r");
+    bsp_printf("1920x1080@60_RGB888_out_9295\n\r");
+    bsp_printf("\r\n%s,%s\r\n",__DATE__,__TIME__);
 #ifdef XPAR_AXI_LITE_REG_NUM_INSTANCES
     if(XPAR_AXI_LITE_REG_0_DEVICE_ID == 0)
     {
-    	TRACE_ZZG("hardware ver = 0x%08x\n\r", AXI_LITE_REG_mReadReg(XPAR_AXI_LITE_REG_0_S00_AXI_BASEADDR, AXI_LITE_REG_S00_AXI_SLV_REG0_OFFSET));
+    	bsp_printf("hardware ver = 0x%08x\n\r", AXI_LITE_REG_mReadReg(XPAR_AXI_LITE_REG_0_S00_AXI_BASEADDR, AXI_LITE_REG_S00_AXI_SLV_REG0_OFFSET));
     }
 #endif
-    TRACE_ZZG("software ver = 0x%08x\n\r", __SW_VER__);
-    TRACE_ZZG("***************************\n\r");
+    bsp_printf("software ver = 0x%08x\n\r", __SW_VER__);
+    bsp_printf("***************************\n\r");
 
 
     while(1)

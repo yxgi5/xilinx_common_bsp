@@ -14,7 +14,7 @@
 //自定义通用头文件
 #include "version.h"
 #include "config.h"
-#include "trace_zzg_debug.h"
+#include "dbg_trace.h"
 #include "bitmanip.h"
 
 //引入xilinx定义的通用头文件
