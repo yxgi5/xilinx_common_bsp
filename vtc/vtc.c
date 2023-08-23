@@ -254,6 +254,7 @@ int vtc_init(XVtc *InstancePtr, u16 DeviceId)
     Status = XVtc_CfgInitialize(InstancePtr, VtcConfig, VtcConfig->BaseAddress);
     if(Status != XST_SUCCESS)
     {
+    	bsp_printf("VTC0 Initialization failed %d\r\n", Status);
         return(XST_FAILURE);
     }
 
@@ -267,7 +268,8 @@ int vtc_config(void)
 	Status = vtc_init(&VtcInst0, XPAR_VTC_0_DEVICE_ID);
 	if(Status != XST_SUCCESS)
     {
-        bsp_printf("VTC0 Initialization failed %d\r\n", Status);
+
+        Xil_Assert(__FILE__, __LINE__);
         return(XST_FAILURE);
     }
 

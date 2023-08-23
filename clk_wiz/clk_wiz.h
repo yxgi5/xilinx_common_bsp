@@ -1,6 +1,7 @@
 #ifndef __CLK_WIZ_H__
 #define __CLK_WIZ_H__
 
+//#include "xparameters.h"
 #if defined (XPAR_XCLK_WIZ_NUM_INSTANCES)
 #include "xil_types.h"
 #include "xclk_wiz.h"

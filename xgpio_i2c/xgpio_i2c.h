@@ -28,6 +28,7 @@
 #ifndef __XGPIO_I2C_H__
 #define __XGPIO_I2C_H__
 
+//#include "xparameters.h"
 #if defined(XPAR_XGPIO_NUM_INSTANCES)
 #include "xgpio.h"
 #include "sleep.h"

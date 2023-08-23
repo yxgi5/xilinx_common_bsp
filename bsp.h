@@ -78,7 +78,8 @@
 #include "vtc/vtc.h"
 #include "tpg/tpg.h"
 #include "xswitch/xswitch.h"
-
+#include "csi_rx/csi_rx.h"
+#include "csi_tx/csi_tx.h"
 
 
 // 自定义数据头文件

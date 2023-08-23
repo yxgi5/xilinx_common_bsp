@@ -2,6 +2,7 @@
 #ifndef __VTC_H__
 #define __VTC_H__
 
+//#include "xparameters.h"
 #ifdef XPAR_XVTC_NUM_INSTANCES
 // *****************************************************
 // Notes

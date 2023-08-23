@@ -1,6 +1,7 @@
 #ifndef __XSWITCH_H__
 #define __XSWITCH_H__
 
+//#include "xparameters.h"
 #if defined (XPAR_XAXIS_SWITCH_NUM_INSTANCES)
 
 #include "xaxis_switch.h"

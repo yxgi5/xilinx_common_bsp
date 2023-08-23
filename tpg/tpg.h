@@ -1,5 +1,7 @@
 #ifndef __TPG_H__
 #define __TPG_H__
+
+//#include "xparameters.h"
 #if defined (XPAR_XV_TPG_NUM_INSTANCES)
 #include "xv_tpg.h"
 #include "xvidc.h"

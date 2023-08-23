@@ -168,17 +168,20 @@ int main()
 ////    clear_display();
 //	vdma_config_32();
 //
-//#if 1
-//	ret32 = Csi2TxSs_Init(XPAR_CSI2TXSS_0_DEVICE_ID);
-//	XCsi2TxSs_SetClkMode(&Csi2TxSsInst, 0);
-//	XCsi2TxSs_SetLineCountForVC(&Csi2TxSsInst, 0, 1080);
-//	XCsi2TxSs_Activate(&Csi2TxSsInst, XCSI2TX_ENABLE);
-//#endif
+#if defined (XPAR_XCSI2TX_NUM_INSTANCES)
+	Status = csi_tx_config();
+	{
+		Xil_Assert(__FILE__, __LINE__);
+		return XST_FAILURE ;
+	}
+#endif
 
     while(1)
     {
 //    	bsp_printf("pi=%f\n\r",3.1415);
+//    	ret32 = xgpio_i2c_reg16_read(I2C_NO_0, 0x80>>1, 0x0000, &ret8, STRETCH_ON);
     }
+	// never reached
     cleanup_platform();
     return 0;
 }
