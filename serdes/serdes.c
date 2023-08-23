@@ -8,6 +8,7 @@
 
 #if defined (SER_CFG) || defined (DES_CFG)
 
+#if defined (DES_CFG)
 struct reginfo max9296_rgb888_gmsl2[] =
 {
 	{0x90, 0x0313, 0x00},// CSI output disabled
@@ -93,8 +94,9 @@ struct reginfo max9296_rgb888_gmsl2[] =
 
 	{0x90, SEQUENCE_END, 0x00}
 };
+#endif // DES_CFG
 
-
+#if defined (SER_CFG)
 struct reginfo max96717_rgb888_gmsl2[] =
 {
 	{0x80, 0x0001, 0x08},// default 0x08, 6Gbps mode
@@ -108,6 +110,7 @@ struct reginfo max96717_rgb888_gmsl2[] =
 
 	{0x80, SEQUENCE_END, 0x00}
 };
+#endif // SER_CFG
 
 int max929x_write(i2c_no i2c, u8 addr, u16 reg, u8 data)
 {
