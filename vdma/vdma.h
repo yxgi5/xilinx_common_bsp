@@ -59,6 +59,39 @@ int vdma_write_init
 	UINTPTR FrameStoreStartAddr2
 );
 
+#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 1U)
+void vdma_config_m32_0(void);
+void vdma_config_m64_0(void);
+#endif
+#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 2U)
+void vdma_config_m32_1(void);
+void vdma_config_m64_1(void);
+#endif
+#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 3U)
+void vdma_config_m32_2(void);
+void vdma_config_m64_2(void);
+#endif
+#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 4U)
+void vdma_config_m32_3(void);
+void vdma_config_m64_3(void);
+#endif
+#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 5U)
+void vdma_config_m32_4(void);
+void vdma_config_m64_4(void);
+#endif
+#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 6U)
+void vdma_config_m32_5(void);
+void vdma_config_m64_5(void);
+#endif
+#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 7U)
+void vdma_config_m32_6(void);
+void vdma_config_m64_6(void);
+#endif
+#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 8U)
+void vdma_config_m32_7(void);
+void vdma_config_m64_7(void);
+#endif
+
 #endif // XPAR_XAXIVDMA_NUM_INSTANCES
 
 #endif // __VDMA_H__
