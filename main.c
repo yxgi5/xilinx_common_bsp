@@ -64,7 +64,7 @@ int main()
     	Xil_Assert(__FILE__, __LINE__);
 		return XST_FAILURE ;
 	}
-#endif
+#endif // XPAR_XGPIO_NUM_INSTANCES
 
 
 #if defined(XPAR_XGPIO_I2C_0_AXI_GPIO_0_DEVICE_ID)
@@ -74,7 +74,7 @@ int main()
 		Xil_Assert(__FILE__, __LINE__);
 		return XST_FAILURE ;
 	}
-#endif
+#endif // XPAR_XGPIO_I2C_0_AXI_GPIO_0_DEVICE_ID
 
 
     bsp_printf("***************************\n\r");
@@ -85,11 +85,11 @@ int main()
     {
     	bsp_printf("hardware ver = 0x%08x\n\r", AXI_LITE_REG_mReadReg(XPAR_AXI_LITE_REG_0_S00_AXI_BASEADDR, AXI_LITE_REG_S00_AXI_SLV_REG0_OFFSET));
     }
-#endif
+#endif // XPAR_AXI_LITE_REG_NUM_INSTANCES
 #if defined (__SW_VER__)
     bsp_printf("software ver = 0x%08x\n\r", __SW_VER__);
     bsp_printf("***************************\n\r");
-#endif
+#endif // __SW_VER__
 
 #if defined(XPAR_XGPIO_NUM_INSTANCES)
 	XGpio_DiscreteWrite(&XGpioOutput, 1, 0x24); // RGB888
@@ -103,7 +103,7 @@ int main()
 	XGpio_DiscreteWrite(&XGpioOutput, 2, (1920*24/8)<<16); // WC RGB888
 //	XGpio_DiscreteWrite(&XGpioOutput, 2, (VIDEO_COLUMNS*10/8)<<16); // WC RAW10
 //	XGpio_DiscreteWrite(&XGpioOutput, 2, (1920*16/8)<<16); // WC YUV422_8bit
-#endif
+#endif // XPAR_XGPIO_NUM_INSTANCES
 
 #if defined (SER_CFG) || defined (DES_CFG)
     // MAX9296 config
@@ -136,7 +136,7 @@ int main()
 		Xil_Assert(__FILE__, __LINE__);
 		return XST_FAILURE ;
 	}
-#endif
+#endif // XPAR_XAXIS_SWITCH_NUM_INSTANCES
 
 #if defined (XPAR_XCLK_WIZ_NUM_INSTANCES)
     Status = clkwiz_config();
@@ -145,8 +145,17 @@ int main()
 		Xil_Assert(__FILE__, __LINE__);
 		return XST_FAILURE ;
 	}
-#endif
-//	clkwiz_vtc_cfg();
+#endif // XPAR_XCLK_WIZ_NUM_INSTANCES
+
+#if defined (XPAR_XVTC_NUM_INSTANCES)
+    Status = vtc_config();
+    if (Status != XST_SUCCESS)
+	{
+		Xil_Assert(__FILE__, __LINE__);
+		return XST_FAILURE ;
+	}
+#endif // XPAR_XVTC_NUM_INSTANCES
+
 //	tpg_config();
 ////    clear_display();
 //	vdma_config_32();

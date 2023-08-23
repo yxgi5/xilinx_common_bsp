@@ -1,6 +1,6 @@
 
-#ifndef _VTIMING_GEN_H_
-#define _VTIMING_GEN_H_
+#ifndef __VTC_H__
+#define __VTC_H__
 
 #ifdef XPAR_XVTC_NUM_INSTANCES
 // *****************************************************
@@ -15,7 +15,7 @@
 // *****************************************************
 // Dependencies
 // *****************************************************
-#include "xbasic_types.h" // microblaze_0/include/
+#include "xil_types.h"
 #include "xvtc.h"
 
 
@@ -50,16 +50,16 @@ typedef enum video_resolution_no
 struct struct_vres_timing_t
 {
 	char *pName;
-	Xuint32 VActiveVideo;
-	Xuint32 VFrontPorch;
-	Xuint32 VSyncWidth;
-	Xuint32 VBackPorch;
-	Xuint32 VSyncPolarity;
-	Xuint32 HActiveVideo;
-	Xuint32 HFrontPorch;
-	Xuint32 HSyncWidth;
-	Xuint32 HBackPorch;
-	Xuint32 HSyncPolarity;
+	u32 VActiveVideo;
+	u32 VFrontPorch;
+	u32 VSyncWidth;
+	u32 VBackPorch;
+	u32 VSyncPolarity;
+	u32 HActiveVideo;
+	u32 HFrontPorch;
+	u32 HSyncWidth;
+	u32 HBackPorch;
+	u32 HSyncPolarity;
 };
 typedef struct struct_vres_timing_t vres_timing_t;
 
@@ -85,12 +85,12 @@ extern XVtc        VtcInst3;
 // Public functions
 // *****************************************************
 
-char *  vres_get_name(Xuint32 resolutionId);
-Xuint32 vres_get_width(Xuint32 resolutionId);
-Xuint32 vres_get_height(Xuint32 resolutionId);
-Xuint32 vres_get_timing(Xuint32 resolutionId, vres_timing_t *pTiming );
+char *  vres_get_name(u32 resolutionId);
+u32 vres_get_width(u32 resolutionId);
+u32 vres_get_height(u32 resolutionId);
+u32 vres_get_timing(u32 resolutionId, vres_timing_t *pTiming );
 
-Xint32 vres_detect( Xuint32 width, Xuint32 height );
+s32 vres_detect( u32 width, u32 height );
 
 // vtiming_gen_run() - Set up and start VTC generator registers and enable.
 //   - p_vtg_inst    - Pointer to object to work on
@@ -104,9 +104,9 @@ void vtiming_gen_run
 	int   verbose
 );
 
-
+int vtc_init(XVtc *InstancePtr, u16 DeviceId);
 int vtc_config(void);
 
 #endif // XPAR_XVTC_NUM_INSTANCES
-#endif // _VTIMING_GEN_H_
+#endif // __VTC_H__
 

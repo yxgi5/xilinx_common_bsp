@@ -48,7 +48,7 @@ vres_timing_t vres_resolutions[VIDEO_RESOLUTION_NO_BUTT] = {
    { "BAIDUSF",1536,    8,    8,    8,    1, 3840,    5,    5,    5,    1 } //VIDEO_RESOLUTION_BAIDUSF
 };
 
-char *vres_get_name(Xuint32 resolutionId)
+char *vres_get_name(u32 resolutionId)
 {
    if ( resolutionId < VIDEO_RESOLUTION_NO_BUTT )
    {
@@ -60,17 +60,17 @@ char *vres_get_name(Xuint32 resolutionId)
    }
 }
 
-Xuint32 vres_get_width(Xuint32 resolutionId)
+u32 vres_get_width(u32 resolutionId)
 {
    return vres_resolutions[resolutionId].HActiveVideo; // horizontal active
 }
 
-Xuint32 vres_get_height(Xuint32 resolutionId)
+u32 vres_get_height(u32 resolutionId)
 {
    return vres_resolutions[resolutionId].VActiveVideo; // vertical active
 }
 
-Xuint32 vres_get_timing(Xuint32 ResolutionId, vres_timing_t *pTiming )
+u32 vres_get_timing(u32 ResolutionId, vres_timing_t *pTiming )
 {
 	pTiming->pName         = vres_resolutions[ResolutionId].pName;
 	pTiming->HActiveVideo  = vres_resolutions[ResolutionId].HActiveVideo;
@@ -102,10 +102,10 @@ Xuint32 vres_get_timing(Xuint32 ResolutionId, vres_timing_t *pTiming )
 	return 0;
 }
 /////////////////////////////////////////////////////////////////////////
-Xint32 vres_detect( Xuint32 width, Xuint32 height )
+s32 vres_detect( u32 width, u32 height )
 {
-  Xint32 i;
-  Xint32 resolution = -1;
+  s32 i;
+  s32 resolution = -1;
 
   for ( i = 0; i < VIDEO_RESOLUTION_NO_BUTT; i++ )
   {
@@ -267,7 +267,7 @@ int vtc_config(void)
 	Status = vtc_init(&VtcInst0, XPAR_VTC_0_DEVICE_ID);
 	if(Status != XST_SUCCESS)
     {
-        bps_printf("VTC0 Initialization failed %d\r\n", Status);
+        bsp_printf("VTC0 Initialization failed %d\r\n", Status);
         return(XST_FAILURE);
     }
 
