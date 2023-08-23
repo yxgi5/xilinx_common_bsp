@@ -111,17 +111,41 @@ int main()
 #if defined (DES_CFG)
     Status = xgpio_i2c_reg16_read(I2C_NO_3, 0x90>>1, 0x0000, &ret8, STRETCH_ON);
     Status = xgpio_i2c_reg16_read(I2C_NO_3, 0x90>>1, 0x0001, &ret8, STRETCH_ON);
+#if defined (SERDES_3G)
+	ret32 = xgpio_i2c_reg16_write(I2C_NO_3, 0x90>>1, 0x0001, 0x01, STRETCH_ON); // 3Gbps
+	ret32 = xgpio_i2c_reg16_write(I2C_NO_3, 0x90>>1, 0x0010, 0x21, STRETCH_ON); // reset link
+#endif // SERDES_3G
     max929x_write_array(I2C_NO_3, max9296_rgb888_gmsl2);
 #endif // DES_CFG
 #if defined (SER_CFG)
     Status = xgpio_i2c_reg16_read(I2C_NO_3, 0x80>>1, 0x0000, &ret8, STRETCH_ON);
     Status = xgpio_i2c_reg16_read(I2C_NO_3, 0x80>>1, 0x0001, &ret8, STRETCH_ON);
-//    max929x_write_array(I2C_NO_3, max9295_gmsl2);
+#if defined (SERDES_3G)
+	ret32 = xgpio_i2c_reg16_write(I2C_NO_3, 0x80>>1, 0x0001, 0x04, STRETCH_ON); // 3Gbps
+	ret32 = xgpio_i2c_reg16_write(I2C_NO_3, 0x80>>1, 0x0010, 0x21, STRETCH_ON); // reset link
+#endif // SERDES_3G
+//    max929x_write_array(I2C_NO_3, max9295_rgb888_gmsl2);
     max929x_write_array(I2C_NO_3, max96717_rgb888_gmsl2);
 #endif // SER_CFG
+#endif // SER_CFG || DES_CFG
+
+#if defined (XPAR_XAXIS_SWITCH_NUM_INSTANCES)
+    Status = axis_switch_cfg();
+    if (Status != XST_SUCCESS)
+	{
+		Xil_Assert(__FILE__, __LINE__);
+		return XST_FAILURE ;
+	}
 #endif
 
-////    axis_switch_cfg();
+#if defined (XPAR_XCLK_WIZ_NUM_INSTANCES)
+    Status = clkwiz_config();
+    if (Status != XST_SUCCESS)
+	{
+		Xil_Assert(__FILE__, __LINE__);
+		return XST_FAILURE ;
+	}
+#endif
 //	clkwiz_vtc_cfg();
 //	tpg_config();
 ////    clear_display();

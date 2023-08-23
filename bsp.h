@@ -74,7 +74,8 @@
 
 // 自定义外设库头文件
 #include "xgpio_i2c/xgpio_i2c.h"
-
+#include "clk_wiz/clk_wiz.h"
+#include "xswitch/xswitch.h"
 
 // 自定义数据头文件
 #include "serdes/serdes.h"
