@@ -156,7 +156,15 @@ int main()
 	}
 #endif // XPAR_XVTC_NUM_INSTANCES
 
-//	tpg_config();
+#if defined (XPAR_XV_TPG_NUM_INSTANCES)
+    Status = tpg_config();
+	{
+		Xil_Assert(__FILE__, __LINE__);
+		return XST_FAILURE ;
+	}
+#endif // XPAR_XV_TPG_NUM_INSTANCES
+
+
 ////    clear_display();
 //	vdma_config_32();
 //
