@@ -92,6 +92,25 @@ void vdma_config_m32_7(void);
 void vdma_config_m64_7(void);
 #endif
 
+void vdma_reg_cfg
+(
+	XAxiVdma *InstancePtr,
+	u32 bytePerPixels,
+	s32 w_offset,	// offset (y*w+x)*Bpp
+	s32 r_offset,
+	u32 w_stride,
+	u32 w_width,
+	u32 w_height,
+	u32 r_stride,
+	u32 r_width,
+	u32 r_height,
+	UINTPTR *BufferAddr
+);
+int vdma_config(void);
+
+void vdma_config_m32(void);
+void vdma_config_m64(void);
+
 #endif // XPAR_XAXIVDMA_NUM_INSTANCES
 
 #endif // __VDMA_H__

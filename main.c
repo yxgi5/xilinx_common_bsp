@@ -112,8 +112,8 @@ int main()
     Status = xgpio_i2c_reg16_read(I2C_NO_3, 0x90>>1, 0x0000, &ret8, STRETCH_ON);
     Status = xgpio_i2c_reg16_read(I2C_NO_3, 0x90>>1, 0x0001, &ret8, STRETCH_ON);
 #if defined (SERDES_3G)
-	ret32 = xgpio_i2c_reg16_write(I2C_NO_3, 0x90>>1, 0x0001, 0x01, STRETCH_ON); // 3Gbps
-	ret32 = xgpio_i2c_reg16_write(I2C_NO_3, 0x90>>1, 0x0010, 0x21, STRETCH_ON); // reset link
+    Status = xgpio_i2c_reg16_write(I2C_NO_3, 0x90>>1, 0x0001, 0x01, STRETCH_ON); // 3Gbps
+    Status = xgpio_i2c_reg16_write(I2C_NO_3, 0x90>>1, 0x0010, 0x21, STRETCH_ON); // reset link
 #endif // SERDES_3G
     max929x_write_array(I2C_NO_3, max9296_rgb888_gmsl2);
 #endif // DES_CFG
@@ -121,8 +121,8 @@ int main()
     Status = xgpio_i2c_reg16_read(I2C_NO_3, 0x80>>1, 0x0000, &ret8, STRETCH_ON);
     Status = xgpio_i2c_reg16_read(I2C_NO_3, 0x80>>1, 0x0001, &ret8, STRETCH_ON);
 #if defined (SERDES_3G)
-	ret32 = xgpio_i2c_reg16_write(I2C_NO_3, 0x80>>1, 0x0001, 0x04, STRETCH_ON); // 3Gbps
-	ret32 = xgpio_i2c_reg16_write(I2C_NO_3, 0x80>>1, 0x0010, 0x21, STRETCH_ON); // reset link
+    Status = xgpio_i2c_reg16_write(I2C_NO_3, 0x80>>1, 0x0001, 0x04, STRETCH_ON); // 3Gbps
+    Status = xgpio_i2c_reg16_write(I2C_NO_3, 0x80>>1, 0x0010, 0x21, STRETCH_ON); // reset link
 #endif // SERDES_3G
 //    max929x_write_array(I2C_NO_3, max9295_rgb888_gmsl2);
     max929x_write_array(I2C_NO_3, max96717_rgb888_gmsl2);
@@ -158,6 +158,7 @@ int main()
 
 #if defined (XPAR_XV_TPG_NUM_INSTANCES)
     Status = tpg_config();
+    if (Status != XST_SUCCESS)
 	{
 		Xil_Assert(__FILE__, __LINE__);
 		return XST_FAILURE ;
@@ -166,15 +167,24 @@ int main()
 
 
 ////    clear_display();
-//	vdma_config_32();
-//
-#if defined (XPAR_XCSI2TX_NUM_INSTANCES)
-	Status = csi_tx_config();
+#if defined (XPAR_XAXIVDMA_NUM_INSTANCES)
+	Status = vdma_config();
+	if (Status != XST_SUCCESS)
 	{
 		Xil_Assert(__FILE__, __LINE__);
 		return XST_FAILURE ;
 	}
-#endif
+#endif // XPAR_XAXIVDMA_NUM_INSTANCES
+
+
+#if defined (XPAR_XCSI2TX_NUM_INSTANCES)
+	Status = csi_tx_config();
+	if (Status != XST_SUCCESS)
+	{
+		Xil_Assert(__FILE__, __LINE__);
+		return XST_FAILURE ;
+	}
+#endif // XPAR_XCSI2TX_NUM_INSTANCES
 
     while(1)
     {
