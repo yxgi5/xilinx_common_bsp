@@ -2,7 +2,16 @@
 
 #if defined (XPAR_XCLK_WIZ_NUM_INSTANCES)
 
-XClk_Wiz ClkWiz_Dynamic; /* The instance of the ClkWiz_Dynamic */
+#if (XPAR_XCLK_WIZ_NUM_INSTANCES == 1U)
+XClk_Wiz ClkWiz_Dynamic0;
+#elif (XPAR_XCLK_WIZ_NUM_INSTANCES == 2U)
+XClk_Wiz ClkWiz_Dynamic0;
+XClk_Wiz ClkWiz_Dynamic1;
+#elif (XPAR_XCLK_WIZ_NUM_INSTANCES == 3U)
+XClk_Wiz ClkWiz_Dynamic0;
+XClk_Wiz ClkWiz_Dynamic1;
+XClk_Wiz ClkWiz_Dynamic3;
+#endif
 
 /*****************************************************************************/
 /**
@@ -197,7 +206,7 @@ int clkwiz_config(void)
 	int Status;
 
     // dynamic config clkwiz
-    Status = XClk_Wiz_dynamic_reconfig(&ClkWiz_Dynamic, XPAR_CLK_WIZ_0_DEVICE_ID);
+    Status = XClk_Wiz_dynamic_reconfig(&ClkWiz_Dynamic0, XPAR_CLK_WIZ_0_DEVICE_ID);
     if (Status != XST_SUCCESS)
     {
     	bsp_printf("XClk_Wiz0 dynamic reconfig failed.\r\n");

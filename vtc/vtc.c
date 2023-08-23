@@ -8,16 +8,16 @@
 //#include <stdio.h>
 //#include <string.h>
 
-#if XPAR_XVTC_NUM_INSTANCES==1
+#if (XPAR_XVTC_NUM_INSTANCES == 1U)
 XVtc        VtcInst0;
-#elif XPAR_XVTC_NUM_INSTANCES==2
+#elif (XPAR_XVTC_NUM_INSTANCES == 2U)
 XVtc        VtcInst0;
 XVtc        VtcInst1;
-#elif XPAR_XVTC_NUM_INSTANCES==3
+#elif (XPAR_XVTC_NUM_INSTANCES == 3U)
 XVtc        VtcInst0;
 XVtc        VtcInst1;
 XVtc        VtcInst2;
-#elif XPAR_XVTC_NUM_INSTANCES==4
+#elif (XPAR_XVTC_NUM_INSTANCES == 4U)
 XVtc        VtcInst0;
 XVtc        VtcInst1;
 XVtc        VtcInst2;

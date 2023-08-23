@@ -64,16 +64,16 @@ struct struct_vres_timing_t
 typedef struct struct_vres_timing_t vres_timing_t;
 
 
-#if XPAR_XVTC_NUM_INSTANCES==1
+#if (XPAR_XVTC_NUM_INSTANCES == 1U)
 extern XVtc        VtcInst0;
-#elif XPAR_XVTC_NUM_INSTANCES==2
+#elif (XPAR_XVTC_NUM_INSTANCES == 2U)
 extern XVtc        VtcInst0;
 extern XVtc        VtcInst1;
-#elif XPAR_XVTC_NUM_INSTANCES==3
+#elif (XPAR_XVTC_NUM_INSTANCES == 3U)
 extern XVtc        VtcInst0;
 extern XVtc        VtcInst1;
 extern XVtc        VtcInst2;
-#elif XPAR_XVTC_NUM_INSTANCES==4
+#elif (XPAR_XVTC_NUM_INSTANCES == 4U)
 extern XVtc        VtcInst0;
 extern XVtc        VtcInst1;
 extern XVtc        VtcInst2;

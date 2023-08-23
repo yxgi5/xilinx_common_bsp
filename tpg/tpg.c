@@ -1,18 +1,20 @@
 #include "../bsp.h"
 #if defined (XPAR_XV_TPG_NUM_INSTANCES)
 
-#if XPAR_XV_TPG_NUM_INSTANCES==1
+#if (XPAR_XV_TPG_NUM_INSTANCES == 1U)
 XV_tpg tpg_inst0;
 XVidC_ColorFormat colorFmtIn0 = XVIDC_CSF_RGB;
 u32 bckgndId0=XTPG_BKGND_COLOR_BARS;
-#elif XPAR_XV_TPG_NUM_INSTANCES==2
+
+#elif (XPAR_XV_TPG_NUM_INSTANCES == 2U)
 XV_tpg tpg_inst0;
 XVidC_ColorFormat colorFmtIn0 = XVIDC_CSF_RGB;
 u32 bckgndId0=XTPG_BKGND_COLOR_BARS;
 XV_tpg tpg_inst1;
 XVidC_ColorFormat colorFmtIn1 = XVIDC_CSF_RGB;
 u32 bckgndId1=XTPG_BKGND_COLOR_BARS;
-#elif XPAR_XV_TPG_NUM_INSTANCES==3
+
+#elif (XPAR_XV_TPG_NUM_INSTANCES == 3U)
 XV_tpg tpg_inst0;
 XVidC_ColorFormat colorFmtIn0 = XVIDC_CSF_RGB;
 u32 bckgndId0=XTPG_BKGND_COLOR_BARS;
@@ -22,7 +24,8 @@ u32 bckgndId1=XTPG_BKGND_COLOR_BARS;
 XV_tpg tpg_inst2;
 XVidC_ColorFormat colorFmtIn2 = XVIDC_CSF_RGB;
 u32 bckgndId2=XTPG_BKGND_COLOR_BARS;
-#elif XPAR_XV_TPG_NUM_INSTANCES==4
+
+#elif (XPAR_XV_TPG_NUM_INSTANCES == 4U)
 XV_tpg tpg_inst0;
 XVidC_ColorFormat colorFmtIn0 = XVIDC_CSF_RGB;
 u32 bckgndId0=XTPG_BKGND_COLOR_BARS;
@@ -35,6 +38,7 @@ u32 bckgndId2=XTPG_BKGND_COLOR_BARS;
 XV_tpg tpg_inst3;
 XVidC_ColorFormat colorFmtIn3 = XVIDC_CSF_RGB;
 u32 bckgndId3=XTPG_BKGND_COLOR_BARS;
+
 #endif
 
 /************************** Function Definitions *****************************/

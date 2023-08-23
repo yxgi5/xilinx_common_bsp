@@ -2,6 +2,31 @@
 
 #if defined (XPAR_XAXIS_SWITCH_NUM_INSTANCES)
 
+#if (XPAR_XAXIS_SWITCH_NUM_INSTANCES >= 1U)
+XAxis_Switch AxisSwitch0;
+#endif
+#if (XPAR_XAXIS_SWITCH_NUM_INSTANCES >= 2U)
+XAxis_Switch AxisSwitch1;
+#endif
+#if (XPAR_XAXIS_SWITCH_NUM_INSTANCES >= 3U)
+XAxis_Switch AxisSwitch2;
+#endif
+#if (XPAR_XAXIS_SWITCH_NUM_INSTANCES >= 4U)
+XAxis_Switch AxisSwitch3;
+#endif
+#if (XPAR_XAXIS_SWITCH_NUM_INSTANCES >= 5U)
+XAxis_Switch AxisSwitch4;
+#endif
+#if (XPAR_XAXIS_SWITCH_NUM_INSTANCES >= 6U)
+XAxis_Switch AxisSwitch5;
+#endif
+#if (XPAR_XAXIS_SWITCH_NUM_INSTANCES >= 7U)
+XAxis_Switch AxisSwitch6;
+#endif
+#if (XPAR_XAXIS_SWITCH_NUM_INSTANCES >= 8U)
+XAxis_Switch AxisSwitch7;
+#endif
+
 int AxisSwitch(u16 DeviceId, XAxis_Switch * pAxisSwitch, u8 SiIndex, u8 MiIndex)
 {
     XAxis_Switch_Config *Config;

@@ -6,6 +6,8 @@
  */
 #include "../bsp.h"
 
+#if defined (SER_CFG) || defined (DES_CFG)
+
 struct reginfo max9296_rgb888_gmsl2[] =
 {
 	{0x90, 0x0313, 0x00},// CSI output disabled
@@ -132,3 +134,4 @@ void max929x_write_array(i2c_no i2c, struct reginfo *regarray)
 	}
 }
 
+#endif // SER_CFG || DES_CFG
