@@ -1,5 +1,5 @@
 #include "../bsp.h"
-#if defined (XPAR_XIICPS_NUM_INSTANCES) && defined (__PS_I2C_H__)
+#if defined (XPAR_XIICPS_NUM_INSTANCES)
 
 #define EEPROM_ADDR		0x50
 #define I2C_MUX_ADDR    0x74  /**< I2C Mux Address */
@@ -356,4 +356,4 @@ s32 IicPsEepromPolledExample()
 }
 #endif
 
-#endif // XPAR_XIICPS_NUM_INSTANCES && __PS_I2C_H__
+#endif // XPAR_XIICPS_NUM_INSTANCES
