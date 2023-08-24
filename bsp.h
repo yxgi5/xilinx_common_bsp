@@ -87,6 +87,7 @@
 #include "vpss/vpss.h"
 #include "demosaic/demosaic.h"
 #include "gamma_lut/gamma_lut.h"
+#include "ads7128/ads7128.h"
 
 // 自定义数据头文件
 #include "serdes/serdes.h"
