@@ -1,8 +1,7 @@
 #ifndef __XSWITCH_H__
-#define __XSWITCH_H__
-
 //#include "xparameters.h"
 #if defined (XPAR_XAXIS_SWITCH_NUM_INSTANCES)
+#define __XSWITCH_H__
 
 #include "xaxis_switch.h"
 
@@ -34,6 +33,8 @@ extern XAxis_Switch AxisSwitch7;
 int AxisSwitch(u16 DeviceId, XAxis_Switch * pAxisSwitch, u8 SiIndex, u8 MiIndex);
 int axis_switch_cfg(void);
 
+#endif // __XSWITCH_H__
+
 #endif // XPAR_XAXIS_SWITCH_NUM_INSTANCES
 
-#endif // __XSWITCH_H__
+

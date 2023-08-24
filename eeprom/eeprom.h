@@ -1,9 +1,8 @@
 #ifndef __EEPROM_H__
-#define __EEPROM_H__
 
 //#include "xparameters.h"
-#if defined (XPAR_XIICPS_NUM_INSTANCES)
-
+#if defined (XPAR_XIICPS_NUM_INSTANCES) && defined (__PS_I2C_H__)
+#define __EEPROM_H__
 #include "xil_types.h"
 //#if defined (ARMR5) || (__aarch64__) || (__arm__)
 #include "xiicps.h"
@@ -20,6 +19,8 @@ s32 EepromReadData(XIicPs *IicInstance, u8 *BufferPtr, u16 ByteCount);
 s32 IicPsEepromPolledExample();
 #endif
 
-#endif // XPAR_XIICPS_NUM_INSTANCES
-
 #endif // __EEPROM_H__
+
+#endif // XPAR_XIICPS_NUM_INSTANCES && __PS_I2C_H__
+
+

@@ -1,7 +1,7 @@
 #ifndef __PS_GPIO_H__
-#define __PS_GPIO_H__
 
 #if defined (XPAR_XGPIOPS_NUM_INSTANCES)
+#define __PS_GPIO_H__
 #include "xgpiops.h"
 
 #define RELAY_CUTOFF        (78+0)
@@ -20,6 +20,6 @@
 
 int PsGpioSetup(XGpioPs *InstancePtr, u16 DeviceId);
 
-#endif // XPAR_XGPIOPS_NUM_INSTANCES
-
 #endif // __PS_GPIO_H__
+
+#endif // XPAR_XGPIOPS_NUM_INSTANCES

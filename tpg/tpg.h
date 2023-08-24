@@ -1,8 +1,8 @@
 #ifndef __TPG_H__
-#define __TPG_H__
 
 //#include "xparameters.h"
 #if defined (XPAR_XV_TPG_NUM_INSTANCES)
+#define __TPG_H__
 #include "xv_tpg.h"
 #include "xvidc.h"
 
@@ -26,5 +26,7 @@ void tpg_cfg(XV_tpg *InstancePtr, u32 height, u32 width, u32 colorFormat, u32 bc
 void tpg_box(XV_tpg *InstancePtr, u32 boxSize, u32 motionSpeed);
 int tpg_config(void);
 
-#endif // XPAR_XV_TPG_NUM_INSTANCES
 #endif // __TPG_H__
+
+#endif // XPAR_XV_TPG_NUM_INSTANCES
+

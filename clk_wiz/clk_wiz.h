@@ -1,8 +1,8 @@
 #ifndef __CLK_WIZ_H__
-#define __CLK_WIZ_H__
 
 //#include "xparameters.h"
 #if defined (XPAR_XCLK_WIZ_NUM_INSTANCES)
+#define __CLK_WIZ_H__
 #include "xil_types.h"
 #include "xclk_wiz.h"
 
@@ -23,6 +23,6 @@ int Wait_For_Lock(XClk_Wiz_Config *CfgPtr_Dynamic);
 int XClk_Wiz_dynamic_reconfig(XClk_Wiz * ClkWizInstance, u32 DeviceId);
 int clkwiz_config(void);
 
-#endif // XPAR_XCLK_WIZ_NUM_INSTANCES
-
 #endif // __CLK_WIZ_H__
+
+#endif // XPAR_XCLK_WIZ_NUM_INSTANCES

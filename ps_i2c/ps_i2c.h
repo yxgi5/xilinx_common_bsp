@@ -1,8 +1,9 @@
 #ifndef __PS_I2C_H__
-#define __PS_I2C_H__
+
 
 //#include "xparameters.h"
 #if defined (XPAR_XIICPS_NUM_INSTANCES)
+#define __PS_I2C_H__
 //#include "xil_types.h"
 #include "xiicps.h"
 
@@ -20,6 +21,7 @@ char ps_i2c_reg16_read(XIicPs *InstancePtr, char IIC_ADDR, unsigned short Addr);
 int ps_i2c_init(XIicPs *Iic,short DeviceID ,u32 IIC_SCLK_RATE);
 int ps_i2c_config(void);
 
+#endif // __PS_I2C_H__
+
 #endif // XPAR_XIICPS_NUM_INSTANCES
 
-#endif // __PS_I2C_H__

@@ -1,9 +1,8 @@
-
 #ifndef __VTC_H__
-#define __VTC_H__
 
 //#include "xparameters.h"
 #ifdef XPAR_XVTC_NUM_INSTANCES
+#define __VTC_H__
 // *****************************************************
 // Notes
 // *****************************************************
@@ -108,6 +107,8 @@ void vtiming_gen_run
 int vtc_init(XVtc *InstancePtr, u16 DeviceId);
 int vtc_config(void);
 
-#endif // XPAR_XVTC_NUM_INSTANCES
 #endif // __VTC_H__
+
+#endif // XPAR_XVTC_NUM_INSTANCES
+
 
