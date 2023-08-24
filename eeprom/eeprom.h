@@ -19,8 +19,7 @@ s32 EepromReadData(XIicPs *IicInstance, u8 *BufferPtr, u16 ByteCount);
 s32 IicPsEepromPolledExample();
 #endif
 
-#endif // __EEPROM_H__
-
 #endif // XPAR_XIICPS_NUM_INSTANCES && __PS_I2C_H__
 
+#endif // __EEPROM_H__
 

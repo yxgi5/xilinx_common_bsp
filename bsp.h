@@ -85,6 +85,7 @@
 #include "ps_i2c/ps_i2c.h"
 #include "eeprom/eeprom.h"
 #include "vpss/vpss.h"
+#include "demosaic/demosaic.h"
 
 // 自定义数据头文件
 #include "serdes/serdes.h"

@@ -20,6 +20,7 @@
 
 int PsGpioSetup(XGpioPs *InstancePtr, u16 DeviceId);
 
+#endif // XPAR_XGPIOPS_NUM_INSTANCES
+
 #endif // __PS_GPIO_H__
 
-#endif // XPAR_XGPIOPS_NUM_INSTANCES

@@ -107,8 +107,8 @@ void vtiming_gen_run
 int vtc_init(XVtc *InstancePtr, u16 DeviceId);
 int vtc_config(void);
 
-#endif // __VTC_H__
 
 #endif // XPAR_XVTC_NUM_INSTANCES
 
+#endif // __VTC_H__
 

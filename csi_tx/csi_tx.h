@@ -21,7 +21,7 @@ extern XCsi2TxSs Csi2TxSsInst_3;
 int Csi2TxSs_Init(XCsi2TxSs *InstancePtr, u32 DeviceId);
 int csi_tx_config(void);
 
-#endif // __CSI_TX_H__
-
 #endif // XPAR_XCSI2TX_NUM_INSTANCES
+
+#endif // __CSI_TX_H__
 

@@ -28,9 +28,9 @@ int max929x_write(i2c_no i2c, u8 addr, u16 reg, u8 data);
 void max929x_write_array(i2c_no i2c, struct reginfo *regarray);
 
 
-#endif // __SERDES_H__
-
 #endif // SER_CFG || DES_CFG
 
 #endif // __XGPIO_I2C_H__
+
+#endif // __SERDES_H__
 

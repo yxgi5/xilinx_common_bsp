@@ -22,7 +22,7 @@ int Csi2RxSs_Init(XCsi *InstancePtr, u32 DeviceId);
 int csi_tx_config(void);
 void print_csi_rx_reg_info(XCsi *InstancePtr, u8 verbose);
 
-#endif // __CSI_RX_H__
-
 #endif // XPAR_XCSI_NUM_INSTANCES
+
+#endif // __CSI_RX_H__
 

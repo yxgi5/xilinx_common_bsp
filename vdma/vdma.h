@@ -110,7 +110,7 @@ int vdma_config(void);
 void vdma_config_m32(void);
 void vdma_config_m64(void);
 
-#endif // __VDMA_H__
-
 #endif // XPAR_XAXIVDMA_NUM_INSTANCES
+
+#endif // __VDMA_H__
 

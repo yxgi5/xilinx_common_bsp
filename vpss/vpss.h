@@ -8,6 +8,7 @@
 
 void vpss_config(void);
 
+#endif // XPAR_XVPROCSS_NUM_INSTANCES
+
 #endif // __VPSS_H__
 
-#endif // XPAR_XVPROCSS_NUM_INSTANCES
