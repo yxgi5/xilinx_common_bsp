@@ -7,4 +7,6 @@
 
 //#define ADS7128
 
+//#define IT6801
+
 #endif // __CONFIG_H__
