@@ -81,6 +81,8 @@
 #include "csi_rx/csi_rx.h"
 #include "csi_tx/csi_tx.h"
 #include "vdma/vdma.h"
+#include "ps_i2c/ps_i2c.h"
+#include "eeprom/eeprom.h"
 
 // 自定义数据头文件
 #include "serdes/serdes.h"
