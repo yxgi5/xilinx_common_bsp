@@ -127,6 +127,14 @@ int main()
 //    max929x_write_array(I2C_NO_3, max9295_rgb888_gmsl2);
     max929x_write_array(I2C_NO_3, max96717_rgb888_gmsl2);
 #endif // SER_CFG
+#if defined (DES_CFG)
+    Status = xgpio_i2c_reg16_read(I2C_NO_3, 0x90>>1, 0x0000, &ret8, STRETCH_ON);
+	Status = xgpio_i2c_reg16_read(I2C_NO_3, 0x90>>1, 0x0001, &ret8, STRETCH_ON);
+#endif // DES_CFG
+#if defined (SER_CFG)
+    Status = xgpio_i2c_reg16_read(I2C_NO_3, 0x80>>1, 0x0000, &ret8, STRETCH_ON);
+    Status = xgpio_i2c_reg16_read(I2C_NO_3, 0x80>>1, 0x0001, &ret8, STRETCH_ON);
+#endif // SER_CFG
 #endif // SER_CFG || DES_CFG
 
 #if defined (XPAR_XAXIS_SWITCH_NUM_INSTANCES)
