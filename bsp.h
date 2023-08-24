@@ -86,6 +86,7 @@
 #include "eeprom/eeprom.h"
 #include "vpss/vpss.h"
 #include "demosaic/demosaic.h"
+#include "gamma_lut/gamma_lut.h"
 
 // 自定义数据头文件
 #include "serdes/serdes.h"
