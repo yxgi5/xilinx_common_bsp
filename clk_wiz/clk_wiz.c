@@ -212,7 +212,7 @@ int clkwiz_config(void)
     	bsp_printf("XClk_Wiz0 dynamic reconfig failed.\r\n");
     	return XST_FAILURE;
     }
-    bsp_printf("XClk_Wiz0 dynamic reconfig ok\n\r");
+//    bsp_printf("XClk_Wiz0 dynamic reconfig ok\n\r");
 
     return XST_SUCCESS;
 }

@@ -60,6 +60,7 @@ int csi_rx_config(void)
 						 TXT_RST, Status);
 		return XST_FAILURE;
 	}
+//	bsp_printf(TXT_RED "CSI Rx Ss 0 config done!\r\n" TXT_RST);
 #endif
 
 #if (XPAR_XCSI_NUM_INSTANCES >= 2U)

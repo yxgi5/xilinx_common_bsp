@@ -273,7 +273,9 @@ int vtc_config(void)
         return(XST_FAILURE);
     }
 
-    vtiming_gen_run(&VtcInst0, VIDEO_RESOLUTION_1080P, 1);
+    vtiming_gen_run(&VtcInst0, VIDEO_RESOLUTION_1080P, 0);
+
+//    bsp_printf("VTC 0 config done!\r\n");
 
     return XST_SUCCESS;
 }
