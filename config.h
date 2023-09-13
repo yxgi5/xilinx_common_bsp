@@ -8,5 +8,6 @@
 //#define ADS7128
 
 //#define IT6801
+//#define SIL9136
 
 #endif // __CONFIG_H__
