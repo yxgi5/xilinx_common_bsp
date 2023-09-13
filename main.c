@@ -186,13 +186,13 @@ int main()
 
 #if defined (XPAR_XAXIVDMA_NUM_INSTANCES)
     clear_display();
-    vdma_config_regs();
-//	Status = vdma_config();
-//	if (Status != XST_SUCCESS)
-//	{
-//		Xil_Assert(__FILE__, __LINE__);
-//		return XST_FAILURE ;
-//	}
+//    vdma_config_direct();
+	Status = vdma_config();
+	if (Status != XST_SUCCESS)
+	{
+		Xil_Assert(__FILE__, __LINE__);
+		return XST_FAILURE ;
+	}
 #endif // XPAR_XAXIVDMA_NUM_INSTANCES
 
 
