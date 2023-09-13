@@ -184,14 +184,15 @@ int main()
 #endif // XPAR_XV_TPG_NUM_INSTANCES
 
 
-////    clear_display();
 #if defined (XPAR_XAXIVDMA_NUM_INSTANCES)
-	Status = vdma_config();
-	if (Status != XST_SUCCESS)
-	{
-		Xil_Assert(__FILE__, __LINE__);
-		return XST_FAILURE ;
-	}
+    clear_display();
+    vdma_config_regs();
+//	Status = vdma_config();
+//	if (Status != XST_SUCCESS)
+//	{
+//		Xil_Assert(__FILE__, __LINE__);
+//		return XST_FAILURE ;
+//	}
 #endif // XPAR_XAXIVDMA_NUM_INSTANCES
 
 

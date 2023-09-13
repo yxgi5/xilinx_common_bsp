@@ -1791,5 +1791,325 @@ void vdma_config_m64(void)
 #endif
 }
 
+void vdma_config_regs(void)
+{
+#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 1U)
+#if (XPAR_AXI_VDMA_0_ADDR_WIDTH == 32U)
+	vdma_config_m32_0();
+#endif // XPAR_AXI_VDMA_0_ADDR_WIDTH == 32U
+#if (XPAR_AXI_VDMA_0_ADDR_WIDTH == 64U)
+	vdma_config_m64_0();
+#endif // XPAR_AXI_VDMA_0_ADDR_WIDTH == 64U
+#endif
+#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 2U)
+#if (XPAR_AXI_VDMA_1_ADDR_WIDTH == 32U)
+	vdma_config_m32_1();
+#endif // XPAR_AXI_VDMA_1_ADDR_WIDTH == 32U
+#if (XPAR_AXI_VDMA_1_ADDR_WIDTH == 64U)
+	vdma_config_m64_1();
+#endif // XPAR_AXI_VDMA_1_ADDR_WIDTH == 64U
+#endif
+#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 3U)
+#if (XPAR_AXI_VDMA_2_ADDR_WIDTH == 32U)
+	vdma_config_m32_2();
+#endif // XPAR_AXI_VDMA_2_ADDR_WIDTH == 32U
+#if (XPAR_AXI_VDMA_2_ADDR_WIDTH == 64U)
+	vdma_config_m64_2();
+#endif // XPAR_AXI_VDMA_2_ADDR_WIDTH == 64U
+#endif
+#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 4U)
+#if (XPAR_AXI_VDMA_3_ADDR_WIDTH == 32U)
+	vdma_config_m32_3();
+#endif // XPAR_AXI_VDMA_3_ADDR_WIDTH == 32U
+#if (XPAR_AXI_VDMA_3_ADDR_WIDTH == 64U)
+	vdma_config_m64_3();
+#endif // XPAR_AXI_VDMA_3_ADDR_WIDTH == 64U
+#endif
+#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 5U)
+#if (XPAR_AXI_VDMA_4_ADDR_WIDTH == 32U)
+	vdma_config_m32_4();
+#endif // XPAR_AXI_VDMA_4_ADDR_WIDTH == 32U
+#if (XPAR_AXI_VDMA_4_ADDR_WIDTH == 64U)
+	vdma_config_m64_4();
+#endif // XPAR_AXI_VDMA_4_ADDR_WIDTH == 64U
+#endif
+#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 6U)
+#if (XPAR_AXI_VDMA_5_ADDR_WIDTH == 32U)
+	vdma_config_m32_5();
+#endif // XPAR_AXI_VDMA_5_ADDR_WIDTH == 32U
+#if (XPAR_AXI_VDMA_5_ADDR_WIDTH == 64U)
+	vdma_config_m64_5();
+#endif // XPAR_AXI_VDMA_5_ADDR_WIDTH == 64U
+#endif
+#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 7U)
+#if (XPAR_AXI_VDMA_6_ADDR_WIDTH == 32U)
+	vdma_config_m32_6();
+#endif // XPAR_AXI_VDMA_6_ADDR_WIDTH == 32U
+#if (XPAR_AXI_VDMA_6_ADDR_WIDTH == 64U)
+	vdma_config_m64_6();
+#endif // XPAR_AXI_VDMA_6_ADDR_WIDTH == 64U
+#endif
+#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 8U)
+#if (XPAR_AXI_VDMA_7_ADDR_WIDTH == 32U)
+	vdma_config_m32_7();
+#endif // XPAR_AXI_VDMA_7_ADDR_WIDTH == 32U
+#if (XPAR_AXI_VDMA_7_ADDR_WIDTH == 64U)
+	vdma_config_m64_7();
+#endif // XPAR_AXI_VDMA_7_ADDR_WIDTH == 64U
+#endif
+}
+
+#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 1U)
+void clear_display_0(void)
+{
+	u32 bytePerPixels = 3;
+	u32 line = 0;
+	u32 column = 0;
+
+	line = 1920;
+	column = 1080;
+
+    Xil_Out32(XPAR_AXIVDMA_0_BASEADDR + 0x00, 0x8A);//stop mm2s
+	Xil_Out32(XPAR_AXIVDMA_0_BASEADDR + 0x30, 0x8A);//stop s2mm
+
+	Xil_DCacheDisable();
+    memset(FRAME_BUFFER_0,0xff,line*column*bytePerPixels);//background
+    memset(FRAME_BUFFER_1,0xff,line*column*bytePerPixels);//background
+    memset(FRAME_BUFFER_2,0xff,line*column*bytePerPixels);//background
+	Xil_DCacheEnable();
+
+	bsp_printf("clear vdma_0 Done\n\r");
+#if (XPAR_AXI_VDMA_0_ADDR_WIDTH == 32U)
+	vdma_config_m32_0();
+#endif // XPAR_AXI_VDMA_0_ADDR_WIDTH == 32U
+#if (XPAR_AXI_VDMA_0_ADDR_WIDTH == 64U)
+	vdma_config_m64_0();
+#endif // XPAR_AXI_VDMA_0_ADDR_WIDTH == 64U
+}
+#endif
+#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 2U)
+void clear_display_1(void)
+{
+	u32 bytePerPixels = 3;
+	u32 line = 0;
+	u32 column = 0;
+
+	line = 1920;
+	column = 1080;
+
+    Xil_Out32(XPAR_AXIVDMA_1_BASEADDR + 0x00, 0x8A);//stop mm2s
+	Xil_Out32(XPAR_AXIVDMA_1_BASEADDR + 0x30, 0x8A);//stop s2mm
+
+	Xil_DCacheDisable();
+    memset(FRAME_BUFFER_3,0xff,line*column*bytePerPixels);//background
+    memset(FRAME_BUFFER_4,0xff,line*column*bytePerPixels);//background
+    memset(FRAME_BUFFER_5,0xff,line*column*bytePerPixels);//background
+	Xil_DCacheEnable();
+
+	bsp_printf("clear vdma_1 Done\n\r");
+#if (XPAR_AXI_VDMA_1_ADDR_WIDTH == 32U)
+	vdma_config_m32_1();
+#endif // XPAR_AXI_VDMA_1_ADDR_WIDTH == 32U
+#if (XPAR_AXI_VDMA_1_ADDR_WIDTH == 64U)
+	vdma_config_m64_1();
+#endif // XPAR_AXI_VDMA_1_ADDR_WIDTH == 64U
+}
+#endif
+#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 3U)
+void clear_display_2(void)
+{
+	u32 bytePerPixels = 3;
+	u32 line = 0;
+	u32 column = 0;
+
+	line = 1920;
+	column = 1080;
+
+    Xil_Out32(XPAR_AXIVDMA_2_BASEADDR + 0x00, 0x8A);//stop mm2s
+	Xil_Out32(XPAR_AXIVDMA_2_BASEADDR + 0x30, 0x8A);//stop s2mm
+
+	Xil_DCacheDisable();
+    memset(FRAME_BUFFER_6,0xff,line*column*bytePerPixels);//background
+    memset(FRAME_BUFFER_7,0xff,line*column*bytePerPixels);//background
+    memset(FRAME_BUFFER_8,0xff,line*column*bytePerPixels);//background
+	Xil_DCacheEnable();
+
+	bsp_printf("clear vdma_2 Done\n\r");
+#if (XPAR_AXI_VDMA_2_ADDR_WIDTH == 32U)
+	vdma_config_m32_2();
+#endif // XPAR_AXI_VDMA_2_ADDR_WIDTH == 32U
+#if (XPAR_AXI_VDMA_2_ADDR_WIDTH == 64U)
+	vdma_config_m64_2();
+#endif // XPAR_AXI_VDMA_2_ADDR_WIDTH == 64U
+}
+#endif
+#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 4U)
+void clear_display_3(void)
+{
+	u32 bytePerPixels = 3;
+	u32 line = 0;
+	u32 column = 0;
+
+	line = 1920;
+	column = 1080;
+
+    Xil_Out32(XPAR_AXIVDMA_3_BASEADDR + 0x00, 0x8A);//stop mm2s
+	Xil_Out32(XPAR_AXIVDMA_3_BASEADDR + 0x30, 0x8A);//stop s2mm
+
+	Xil_DCacheDisable();
+    memset(FRAME_BUFFER_9,0xff,line*column*bytePerPixels);//background
+    memset(FRAME_BUFFER_10,0xff,line*column*bytePerPixels);//background
+    memset(FRAME_BUFFER_11,0xff,line*column*bytePerPixels);//background
+	Xil_DCacheEnable();
+
+	bsp_printf("clear vdma_3 Done\n\r");
+#if (XPAR_AXI_VDMA_3_ADDR_WIDTH == 32U)
+	vdma_config_m32_3();
+#endif // XPAR_AXI_VDMA_3_ADDR_WIDTH == 32U
+#if (XPAR_AXI_VDMA_3_ADDR_WIDTH == 64U)
+	vdma_config_m64_3();
+#endif // XPAR_AXI_VDMA_3_ADDR_WIDTH == 64U
+}
+#endif
+#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 5U)
+void clear_display_4(void)
+{
+	u32 bytePerPixels = 3;
+	u32 line = 0;
+	u32 column = 0;
+
+	line = 1920;
+	column = 1080;
+
+    Xil_Out32(XPAR_AXIVDMA_4_BASEADDR + 0x00, 0x8A);//stop mm2s
+	Xil_Out32(XPAR_AXIVDMA_4_BASEADDR + 0x30, 0x8A);//stop s2mm
+
+	Xil_DCacheDisable();
+    memset(FRAME_BUFFER_12,0xff,line*column*bytePerPixels);//background
+    memset(FRAME_BUFFER_13,0xff,line*column*bytePerPixels);//background
+    memset(FRAME_BUFFER_14,0xff,line*column*bytePerPixels);//background
+	Xil_DCacheEnable();
+
+	bsp_printf("clear vdma_4 Done\n\r");
+#if (XPAR_AXI_VDMA_4_ADDR_WIDTH == 32U)
+	vdma_config_m32_4();
+#endif // XPAR_AXI_VDMA_4_ADDR_WIDTH == 32U
+#if (XPAR_AXI_VDMA_4_ADDR_WIDTH == 64U)
+	vdma_config_m64_4();
+#endif // XPAR_AXI_VDMA_4_ADDR_WIDTH == 64U
+}
+#endif
+#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 6U)
+void clear_display_5(void)
+{
+	u32 bytePerPixels = 3;
+	u32 line = 0;
+	u32 column = 0;
+
+	line = 1920;
+	column = 1080;
+
+    Xil_Out32(XPAR_AXIVDMA_5_BASEADDR + 0x00, 0x8A);//stop mm2s
+	Xil_Out32(XPAR_AXIVDMA_5_BASEADDR + 0x30, 0x8A);//stop s2mm
+
+	Xil_DCacheDisable();
+    memset(FRAME_BUFFER_15,0xff,line*column*bytePerPixels);//background
+    memset(FRAME_BUFFER_16,0xff,line*column*bytePerPixels);//background
+    memset(FRAME_BUFFER_17,0xff,line*column*bytePerPixels);//background
+	Xil_DCacheEnable();
+
+	bsp_printf("clear vdma_5 Done\n\r");
+#if (XPAR_AXI_VDMA_5_ADDR_WIDTH == 32U)
+	vdma_config_m32_5();
+#endif // XPAR_AXI_VDMA_5_ADDR_WIDTH == 32U
+#if (XPAR_AXI_VDMA_5_ADDR_WIDTH == 64U)
+	vdma_config_m64_5();
+#endif // XPAR_AXI_VDMA_5_ADDR_WIDTH == 64U
+}
+#endif
+#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 7U)
+void clear_display_6(void)
+{
+	u32 bytePerPixels = 3;
+	u32 line = 0;
+	u32 column = 0;
+
+	line = 1920;
+	column = 1080;
+
+    Xil_Out32(XPAR_AXIVDMA_6_BASEADDR + 0x00, 0x8A);//stop mm2s
+	Xil_Out32(XPAR_AXIVDMA_6_BASEADDR + 0x30, 0x8A);//stop s2mm
+
+	Xil_DCacheDisable();
+    memset(FRAME_BUFFER_18,0xff,line*column*bytePerPixels);//background
+    memset(FRAME_BUFFER_19,0xff,line*column*bytePerPixels);//background
+    memset(FRAME_BUFFER_20,0xff,line*column*bytePerPixels);//background
+	Xil_DCacheEnable();
+
+	bsp_printf("clear vdma_6 Done\n\r");
+#if (XPAR_AXI_VDMA_6_ADDR_WIDTH == 32U)
+	vdma_config_m32_6();
+#endif // XPAR_AXI_VDMA_6_ADDR_WIDTH == 32U
+#if (XPAR_AXI_VDMA_6_ADDR_WIDTH == 64U)
+	vdma_config_m64_6();
+#endif // XPAR_AXI_VDMA_6_ADDR_WIDTH == 64U
+}
+#endif
+#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 8U)
+void clear_display_7(void)
+{
+	u32 bytePerPixels = 3;
+	u32 line = 0;
+	u32 column = 0;
+
+	line = 1920;
+	column = 1080;
+
+    Xil_Out32(XPAR_AXIVDMA_7_BASEADDR + 0x00, 0x8A);//stop mm2s
+	Xil_Out32(XPAR_AXIVDMA_7_BASEADDR + 0x30, 0x8A);//stop s2mm
+
+	Xil_DCacheDisable();
+    memset(FRAME_BUFFER_21,0xff,line*column*bytePerPixels);//background
+    memset(FRAME_BUFFER_22,0xff,line*column*bytePerPixels);//background
+    memset(FRAME_BUFFER_23,0xff,line*column*bytePerPixels);//background
+	Xil_DCacheEnable();
+
+	bsp_printf("clear vdma_7 Done\n\r");
+#if (XPAR_AXI_VDMA_7_ADDR_WIDTH == 32U)
+	vdma_config_m32_7();
+#endif // XPAR_AXI_VDMA_7_ADDR_WIDTH == 32U
+#if (XPAR_AXI_VDMA_7_ADDR_WIDTH == 64U)
+	vdma_config_m64_7();
+#endif // XPAR_AXI_VDMA_7_ADDR_WIDTH == 64U
+}
+#endif
+
+void clear_display(void)
+{
+#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 1U)
+	clear_display_0();
+#endif
+#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 2U)
+	clear_display_1();
+#endif
+#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 3U)
+	clear_display_2();
+#endif
+#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 4U)
+	clear_display_3();
+#endif
+#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 5U)
+	clear_display_4();
+#endif
+#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 6U)
+	clear_display_5();
+#endif
+#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 7U)
+	clear_display_6();
+#endif
+#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 8U)
+	clear_display_7();
+#endif
+}
 
 #endif // XPAR_XAXIVDMA_NUM_INSTANCES

@@ -61,34 +61,43 @@ int vdma_write_init
 #if (XPAR_XAXIVDMA_NUM_INSTANCES >= 1U)
 void vdma_config_m32_0(void);
 void vdma_config_m64_0(void);
+void vdma_config_regs(void);
+void clear_display_0(void);
 #endif
 #if (XPAR_XAXIVDMA_NUM_INSTANCES >= 2U)
 void vdma_config_m32_1(void);
 void vdma_config_m64_1(void);
+void clear_display_1(void);
 #endif
 #if (XPAR_XAXIVDMA_NUM_INSTANCES >= 3U)
 void vdma_config_m32_2(void);
 void vdma_config_m64_2(void);
+void clear_display_2(void);
 #endif
 #if (XPAR_XAXIVDMA_NUM_INSTANCES >= 4U)
 void vdma_config_m32_3(void);
 void vdma_config_m64_3(void);
+void clear_display_3(void);
 #endif
 #if (XPAR_XAXIVDMA_NUM_INSTANCES >= 5U)
 void vdma_config_m32_4(void);
 void vdma_config_m64_4(void);
+void clear_display_4(void);
 #endif
 #if (XPAR_XAXIVDMA_NUM_INSTANCES >= 6U)
 void vdma_config_m32_5(void);
 void vdma_config_m64_5(void);
+void clear_display_5(void);
 #endif
 #if (XPAR_XAXIVDMA_NUM_INSTANCES >= 7U)
 void vdma_config_m32_6(void);
 void vdma_config_m64_6(void);
+void clear_display_6(void);
 #endif
 #if (XPAR_XAXIVDMA_NUM_INSTANCES >= 8U)
 void vdma_config_m32_7(void);
 void vdma_config_m64_7(void);
+void clear_display_7(void);
 #endif
 
 void vdma_reg_cfg
@@ -106,6 +115,7 @@ void vdma_reg_cfg
 	UINTPTR *BufferAddr
 );
 int vdma_config(void);
+void clear_display(void);
 
 void vdma_config_m32(void);
 void vdma_config_m64(void);
