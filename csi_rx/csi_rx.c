@@ -37,15 +37,15 @@ int Csi2RxSs_Init(XCsi *InstancePtr, u32 DeviceId)
 	return XST_SUCCESS;
 }
 
-int csi_tx_config(void)
+int csi_rx_config(void)
 {
 	int Status;
-
+#if (XPAR_XCSI_NUM_INSTANCES >= 1U)
 	Status = Csi2RxSs_Init(&Csi2RxSsInst_0, XPAR_CSI_0_DEVICE_ID);
 	if (Status != XST_SUCCESS)
 	{
 		Xil_Assert(__FILE__, __LINE__);
-		bsp_printf(TXT_RED "CSI Rx Ss Init failed status = %x.\r\n"
+		bsp_printf(TXT_RED "CSI Rx Ss 0 Init failed status = %x.\r\n"
 						 TXT_RST, Status);
 		return XST_FAILURE;
 	}
@@ -56,10 +56,77 @@ int csi_tx_config(void)
 	if (Status != XST_SUCCESS)
 	{
 		Xil_Assert(__FILE__, __LINE__);
-		bsp_printf(TXT_RED "CSI Rx Ss Activate failed status = %x.\r\n"
+		bsp_printf(TXT_RED "CSI Rx Ss 0 Activate failed status = %x.\r\n"
 						 TXT_RST, Status);
 		return XST_FAILURE;
 	}
+#endif
+
+#if (XPAR_XCSI_NUM_INSTANCES >= 2U)
+	Status = Csi2RxSs_Init(&Csi2RxSsInst_1, XPAR_CSI_1_DEVICE_ID);
+	if (Status != XST_SUCCESS)
+	{
+		Xil_Assert(__FILE__, __LINE__);
+		bsp_printf(TXT_RED "CSI Rx Ss 1 Init failed status = %x.\r\n"
+						 TXT_RST, Status);
+		return XST_FAILURE;
+	}
+//	XCsi_SetSoftReset(&Csi2RxSsInst_1);
+//	XCsi_SetActiveLaneCount(&Csi2RxSsInst_1, 4);
+//	XCsi_ClearSoftReset(&Csi2RxSsInst_1);
+	Status = XCsi_Activate(&Csi2RxSsInst_1, XCSI_ENABLE);
+	if (Status != XST_SUCCESS)
+	{
+		Xil_Assert(__FILE__, __LINE__);
+		bsp_printf(TXT_RED "CSI Rx Ss 1 Activate failed status = %x.\r\n"
+						 TXT_RST, Status);
+		return XST_FAILURE;
+	}
+#endif
+
+#if (XPAR_XCSI_NUM_INSTANCES >= 3U)
+	Status = Csi2RxSs_Init(&Csi2RxSsInst_2, XPAR_CSI_2_DEVICE_ID);
+	if (Status != XST_SUCCESS)
+	{
+		Xil_Assert(__FILE__, __LINE__);
+		bsp_printf(TXT_RED "CSI Rx Ss 2 Init failed status = %x.\r\n"
+						 TXT_RST, Status);
+		return XST_FAILURE;
+	}
+//	XCsi_SetSoftReset(&Csi2RxSsInst_2);
+//	XCsi_SetActiveLaneCount(&Csi2RxSsInst_2, 4);
+//	XCsi_ClearSoftReset(&Csi2RxSsInst_2);
+	Status = XCsi_Activate(&Csi2RxSsInst_2, XCSI_ENABLE);
+	if (Status != XST_SUCCESS)
+	{
+		Xil_Assert(__FILE__, __LINE__);
+		bsp_printf(TXT_RED "CSI Rx Ss 2 Activate failed status = %x.\r\n"
+						 TXT_RST, Status);
+		return XST_FAILURE;
+	}
+#endif
+
+#if (XPAR_XCSI_NUM_INSTANCES >= 4U)
+	Status = Csi2RxSs_Init(&Csi2RxSsInst_3, XPAR_CSI_3_DEVICE_ID);
+	if (Status != XST_SUCCESS)
+	{
+		Xil_Assert(__FILE__, __LINE__);
+		bsp_printf(TXT_RED "CSI Rx Ss 3 Init failed status = %x.\r\n"
+						 TXT_RST, Status);
+		return XST_FAILURE;
+	}
+//	XCsi_SetSoftReset(&Csi2RxSsInst_3);
+//	XCsi_SetActiveLaneCount(&Csi2RxSsInst_3, 4);
+//	XCsi_ClearSoftReset(&Csi2RxSsInst_3);
+	Status = XCsi_Activate(&Csi2RxSsInst_3, XCSI_ENABLE);
+	if (Status != XST_SUCCESS)
+	{
+		Xil_Assert(__FILE__, __LINE__);
+		bsp_printf(TXT_RED "CSI Rx Ss 3 Activate failed status = %x.\r\n"
+						 TXT_RST, Status);
+		return XST_FAILURE;
+	}
+#endif
 
 	return XST_SUCCESS;
 }

@@ -78,7 +78,7 @@ int main()
 
 
     bsp_printf("***************************\n\r");
-    bsp_printf("1920x1080@60_RGB888_out_9295\n\r");
+    bsp_printf("Test common API.\n\r");
     bsp_printf("\r\n%s,%s\r\n",__DATE__,__TIME__);
 #ifdef XPAR_AXI_LITE_REG_NUM_INSTANCES
     if(XPAR_AXI_LITE_REG_0_DEVICE_ID == 0)
@@ -199,6 +199,15 @@ int main()
 		return XST_FAILURE ;
 	}
 #endif // XPAR_XCSI2TX_NUM_INSTANCES
+
+#if defined (XPAR_XCSI_NUM_INSTANCES)
+	Status = csi_rx_config();
+	if (Status != XST_SUCCESS)
+	{
+		Xil_Assert(__FILE__, __LINE__);
+		return XST_FAILURE ;
+	}
+#endif // XPAR_XCSI_NUM_INSTANCES
 
     while(1)
     {
