@@ -87,6 +87,7 @@
 #include "vpss/vpss.h"
 #include "demosaic/demosaic.h"
 #include "gamma_lut/gamma_lut.h"
+#include "sil9136/sil9136.h"
 #include "ads7128/ads7128.h"
 #include "it6801/it6801.h"
 #include "qspi_flash/qspi_flash.h"

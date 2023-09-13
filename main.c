@@ -91,7 +91,11 @@ int main()
     bsp_printf("***************************\n\r");
 #endif // __SW_VER__
 
-#if defined(XPAR_XGPIO_NUM_INSTANCES)
+#if defined(__SIL9136_H__)
+    sil9136_config();
+#endif
+
+#if defined(XPAR_XGPIO_NUM_INSTANCES) && defined (XPAR_XCSI2TX_NUM_INSTANCES)
 	XGpio_DiscreteWrite(&XGpioOutput, 1, 0x24); // RGB888
 //	XGpio_DiscreteWrite(&XGpioOutput, 1, 0x2A); // RAW8
 //	XGpio_DiscreteWrite(&XGpioOutput, 1, 0x2B); // RAW10
