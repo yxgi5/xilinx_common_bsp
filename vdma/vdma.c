@@ -427,6 +427,7 @@ int vdma_write_init
 //}
 
 #if (XPAR_XAXIVDMA_NUM_INSTANCES >= 1U)
+#if (XPAR_AXI_VDMA_0_ADDR_WIDTH == 32U)
 void vdma_config_m32_0(void)
 {
     /* Start of VDMA Configuration */
@@ -477,7 +478,8 @@ void vdma_config_m32_0(void)
 //    bsp_printf("VDMA started!\r\n");
 	/* End of VDMA Configuration */
 }
-
+#endif // XPAR_AXI_VDMA_0_ADDR_WIDTH == 32U
+#if (XPAR_AXI_VDMA_0_ADDR_WIDTH == 64U)
 void vdma_config_m64_0(void)
 {
     /* Start of VDMA Configuration */
@@ -534,8 +536,10 @@ void vdma_config_m64_0(void)
 //    bsp_printf("VDMA started!\r\n");
     /* End of VDMA Configuration */
 }
-#endif
+#endif // XPAR_AXI_VDMA_0_ADDR_WIDTH == 64U
+#endif // XPAR_XAXIVDMA_NUM_INSTANCES == 1U
 #if (XPAR_XAXIVDMA_NUM_INSTANCES >= 2U)
+#if (XPAR_AXI_VDMA_1_ADDR_WIDTH == 32U)
 void vdma_config_m32_1(void)
 {
     /* Start of VDMA Configuration */
@@ -586,7 +590,8 @@ void vdma_config_m32_1(void)
 //    bsp_printf("VDMA started!\r\n");
 	/* End of VDMA Configuration */
 }
-
+#endif // XPAR_AXI_VDMA_1_ADDR_WIDTH == 32U
+#if (XPAR_AXI_VDMA_1_ADDR_WIDTH == 64U)
 void vdma_config_m64_1(void)
 {
     /* Start of VDMA Configuration */
@@ -643,8 +648,10 @@ void vdma_config_m64_1(void)
 //    bsp_printf("VDMA started!\r\n");
     /* End of VDMA Configuration */
 }
-#endif
+#endif // XPAR_AXI_VDMA_1_ADDR_WIDTH == 64U
+#endif // XPAR_XAXIVDMA_NUM_INSTANCES == 2U
 #if (XPAR_XAXIVDMA_NUM_INSTANCES >= 3U)
+#if (XPAR_AXI_VDMA_2_ADDR_WIDTH == 32U)
 void vdma_config_m32_2(void)
 {
     /* Start of VDMA Configuration */
@@ -695,7 +702,8 @@ void vdma_config_m32_2(void)
 //    bsp_printf("VDMA started!\r\n");
 	/* End of VDMA Configuration */
 }
-
+#endif // XPAR_AXI_VDMA_2_ADDR_WIDTH == 32U
+#if (XPAR_AXI_VDMA_2_ADDR_WIDTH == 64U)
 void vdma_config_m64_2(void)
 {
     /* Start of VDMA Configuration */
@@ -752,8 +760,10 @@ void vdma_config_m64_2(void)
 //    bsp_printf("VDMA started!\r\n");
     /* End of VDMA Configuration */
 }
-#endif
+#endif // XPAR_AXI_VDMA_2_ADDR_WIDTH == 64U
+#endif // XPAR_XAXIVDMA_NUM_INSTANCES == 3U
 #if (XPAR_XAXIVDMA_NUM_INSTANCES >= 4U)
+#if (XPAR_AXI_VDMA_3_ADDR_WIDTH == 32U)
 void vdma_config_m32_3(void)
 {
     /* Start of VDMA Configuration */
@@ -804,7 +814,8 @@ void vdma_config_m32_3(void)
 //    bsp_printf("VDMA started!\r\n");
 	/* End of VDMA Configuration */
 }
-
+#endif // XPAR_AXI_VDMA_3_ADDR_WIDTH == 32U
+#if (XPAR_AXI_VDMA_3_ADDR_WIDTH == 64U)
 void vdma_config_m64_3(void)
 {
     /* Start of VDMA Configuration */
@@ -861,8 +872,10 @@ void vdma_config_m64_3(void)
 //    bsp_printf("VDMA started!\r\n");
     /* End of VDMA Configuration */
 }
-#endif
+#endif // XPAR_AXI_VDMA_3_ADDR_WIDTH == 64U
+#endif // XPAR_XAXIVDMA_NUM_INSTANCES == 4U
 #if (XPAR_XAXIVDMA_NUM_INSTANCES >= 5U)
+#if (XPAR_AXI_VDMA_4_ADDR_WIDTH == 32U)
 void vdma_config_m32_4(void)
 {
     /* Start of VDMA Configuration */
@@ -913,7 +926,8 @@ void vdma_config_m32_4(void)
 //    bsp_printf("VDMA started!\r\n");
 	/* End of VDMA Configuration */
 }
-
+#endif // XPAR_AXI_VDMA_4_ADDR_WIDTH == 32U
+#if (XPAR_AXI_VDMA_4_ADDR_WIDTH == 64U)
 void vdma_config_m64_4(void)
 {
     /* Start of VDMA Configuration */
@@ -970,8 +984,10 @@ void vdma_config_m64_4(void)
 //    bsp_printf("VDMA started!\r\n");
     /* End of VDMA Configuration */
 }
-#endif
+#endif // XPAR_AXI_VDMA_4_ADDR_WIDTH == 64U
+#endif // XPAR_XAXIVDMA_NUM_INSTANCES == 5U
 #if (XPAR_XAXIVDMA_NUM_INSTANCES >= 6U)
+#if (XPAR_AXI_VDMA_5_ADDR_WIDTH == 32U)
 void vdma_config_m32_5(void)
 {
     /* Start of VDMA Configuration */
@@ -1022,7 +1038,8 @@ void vdma_config_m32_5(void)
 //    bsp_printf("VDMA started!\r\n");
 	/* End of VDMA Configuration */
 }
-
+#endif // XPAR_AXI_VDMA_5_ADDR_WIDTH == 32U
+#if (XPAR_AXI_VDMA_5_ADDR_WIDTH == 64U)
 void vdma_config_m64_5(void)
 {
     /* Start of VDMA Configuration */
@@ -1079,8 +1096,10 @@ void vdma_config_m64_5(void)
 //    bsp_printf("VDMA started!\r\n");
     /* End of VDMA Configuration */
 }
-#endif
+#endif // XPAR_AXI_VDMA_5_ADDR_WIDTH == 64U
+#endif // XPAR_XAXIVDMA_NUM_INSTANCES == 6U
 #if (XPAR_XAXIVDMA_NUM_INSTANCES >= 7U)
+#if (XPAR_AXI_VDMA_6_ADDR_WIDTH == 32U)
 void vdma_config_m32_6(void)
 {
     /* Start of VDMA Configuration */
@@ -1131,7 +1150,8 @@ void vdma_config_m32_6(void)
 //    bsp_printf("VDMA started!\r\n");
 	/* End of VDMA Configuration */
 }
-
+#endif // XPAR_AXI_VDMA_6_ADDR_WIDTH == 32U
+#if (XPAR_AXI_VDMA_6_ADDR_WIDTH == 64U)
 void vdma_config_m64_6(void)
 {
     /* Start of VDMA Configuration */
@@ -1188,8 +1208,10 @@ void vdma_config_m64_6(void)
 //    bsp_printf("VDMA started!\r\n");
     /* End of VDMA Configuration */
 }
-#endif
+#endif // XPAR_AXI_VDMA_6_ADDR_WIDTH == 64U
+#endif // XPAR_XAXIVDMA_NUM_INSTANCES == 7U
 #if (XPAR_XAXIVDMA_NUM_INSTANCES >= 8U)
+#if (XPAR_AXI_VDMA_7_ADDR_WIDTH == 32U)
 void vdma_config_m32_7(void)
 {
     /* Start of VDMA Configuration */
@@ -1240,7 +1262,8 @@ void vdma_config_m32_7(void)
 //    bsp_printf("VDMA started!\r\n");
 	/* End of VDMA Configuration */
 }
-
+#endif // XPAR_AXI_VDMA_7_ADDR_WIDTH == 32U
+#if (XPAR_AXI_VDMA_7_ADDR_WIDTH == 64U)
 void vdma_config_m64_7(void)
 {
     /* Start of VDMA Configuration */
@@ -1297,7 +1320,8 @@ void vdma_config_m64_7(void)
 //    bsp_printf("VDMA started!\r\n");
     /* End of VDMA Configuration */
 }
-#endif
+#endif // XPAR_AXI_VDMA_7_ADDR_WIDTH == 64U
+#endif // XPAR_XAXIVDMA_NUM_INSTANCES == 8U
 
 void vdma_reg_cfg
 (
@@ -1680,28 +1704,28 @@ void vdma_config_m32(void)
 //	memcpy(FRAME_BUFFER_9+2880*2*1087, ar0233_embd_tail_line[3], 2880*2);
 //	Xil_DCacheEnable();
 
-#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 1U)
+#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 1U) && (XPAR_AXI_VDMA_0_ADDR_WIDTH == 32U)
 	vdma_config_m32_0();
 #endif
-#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 2U)
+#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 2U) && (XPAR_AXI_VDMA_1_ADDR_WIDTH == 32U)
 	vdma_config_m32_1();
 #endif
-#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 3U)
+#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 3U) && (XPAR_AXI_VDMA_2_ADDR_WIDTH == 32U)
 	vdma_config_m32_2();
 #endif
-#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 4U)
+#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 4U) && (XPAR_AXI_VDMA_3_ADDR_WIDTH == 32U)
 	vdma_config_m32_3();
 #endif
-#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 5U)
+#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 5U) && (XPAR_AXI_VDMA_4_ADDR_WIDTH == 32U)
 	vdma_config_m32_4();
 #endif
-#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 6U)
+#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 6U) && (XPAR_AXI_VDMA_5_ADDR_WIDTH == 32U)
 	vdma_config_m32_5();
 #endif
-#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 7U)
+#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 7U) && (XPAR_AXI_VDMA_6_ADDR_WIDTH == 32U)
 	vdma_config_m32_6();
 #endif
-#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 8U)
+#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 8U) && (XPAR_AXI_VDMA_7_ADDR_WIDTH == 32U)
 	vdma_config_m32_7();
 #endif
 }
@@ -1741,28 +1765,28 @@ void vdma_config_m64(void)
 	//	memcpy(FRAME_BUFFER_9+2880*2*1087, ar0233_embd_tail_line[3], 2880*2);
 	//	Xil_DCacheEnable();
 
-#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 1U)
+#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 1U) && (XPAR_AXI_VDMA_0_ADDR_WIDTH == 64U)
 	vdma_config_m64_0();
 #endif
-#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 2U)
+#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 2U) && (XPAR_AXI_VDMA_1_ADDR_WIDTH == 64U)
 	vdma_config_m64_1();
 #endif
-#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 3U)
+#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 3U) && (XPAR_AXI_VDMA_2_ADDR_WIDTH == 64U)
 	vdma_config_m64_2();
 #endif
-#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 4U)
+#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 4U) && (XPAR_AXI_VDMA_3_ADDR_WIDTH == 64U)
 	vdma_config_m64_3();
 #endif
-#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 5U)
+#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 5U) && (XPAR_AXI_VDMA_4_ADDR_WIDTH == 64U)
 	vdma_config_m64_4();
 #endif
-#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 6U)
+#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 6U) && (XPAR_AXI_VDMA_5_ADDR_WIDTH == 64U)
 	vdma_config_m64_5();
 #endif
-#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 7U)
+#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 7U) && (XPAR_AXI_VDMA_6_ADDR_WIDTH == 64U)
 	vdma_config_m64_6();
 #endif
-#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 8U)
+#if (XPAR_XAXIVDMA_NUM_INSTANCES >= 8U) && (XPAR_AXI_VDMA_7_ADDR_WIDTH == 64U)
 	vdma_config_m64_7();
 #endif
 }
