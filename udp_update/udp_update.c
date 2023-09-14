@@ -4,8 +4,8 @@
 
 static struct udp_pcb *client_pcb = NULL;
 ip_addr_t target_addr;
-unsigned char ip_export[4];
-unsigned char mac_export[6];
+//unsigned char ip_export[4];
+//unsigned char mac_export[6];
 
 //char FlashRxBuffer[MAX_FLASH_LEN] ;
 u8 rxbuffer[MAX_FLASH_LEN];
@@ -269,69 +269,88 @@ int udp_server_setup(void)
 	 int Status;
 	 struct netif *netif;
 
-	#if LWIP_IPV6==0
-		ip_addr_t ipaddr, netmask, gw;
+//#if LWIP_IPV6==0
+//	 ip_addr_t ipaddr, netmask, gw;
+//#endif
 
-	#endif
+	/* the mac address of the board. this should be unique per board */
+	unsigned char mac_ethernet_address[] = { 0x10, 0x0a, 0x35, 0x00, 0x01, 0x02 };
 
-		/* the mac address of the board. this should be unique per board */
-		unsigned char mac_ethernet_address[] =
-		{ 0x00, 0x0a, 0x35, 0x00, 0x01, 0x02 };
+	netif = &server_netif;
 
-		netif = &server_netif;
-	#if defined (__arm__) && !defined (ARMR5)
-	#if XPAR_GIGE_PCS_PMA_SGMII_CORE_PRESENT == 1 || XPAR_GIGE_PCS_PMA_1000BASEX_CORE_PRESENT == 1
-		ProgramSi5324();
-		ProgramSfpPhy();
-	#endif
-	#endif
+#if defined (__arm__) && !defined (ARMR5)
+#if XPAR_GIGE_PCS_PMA_SGMII_CORE_PRESENT == 1 || XPAR_GIGE_PCS_PMA_1000BASEX_CORE_PRESENT == 1
+	ProgramSi5324();
+	ProgramSfpPhy();
+#endif
+#endif
 
 		/* Define this board specific macro in order perform PHY reset on ZCU102 */
-	#ifdef XPS_BOARD_ZCU102
-		if(IicPhyReset()) {
-			xil_printf("Error performing PHY reset \n\r");
-			return -1;
-		}
-	#endif
-#if LWIP_IPV6==0
-#if LWIP_DHCP==1
-	ipaddr.addr = 0;
-	gw.addr = 0;
-	netmask.addr = 0;
-#else
-	/* initliaze IP addresses to be used */
-	IP4_ADDR(&ipaddr,  192, 168,   1, 10);
-	IP4_ADDR(&netmask, 255, 255, 255,  0);
-	IP4_ADDR(&gw,      192, 168,   1,  1);
+#ifdef XPS_BOARD_ZCU102
+	if(IicPhyReset()) {
+		xil_printf("Error performing PHY reset \n\r");
+		return -1;
+	}
 #endif
-#endif
+
+//	init_platform();
+
+//#if LWIP_IPV6==0
+//#if LWIP_DHCP==1
+//	ipaddr.addr = 0;
+//	gw.addr = 0;
+//	netmask.addr = 0;
+//#else
+//	/* initliaze IP addresses to be used */
+//	IP4_ADDR(&ipaddr,  192, 168,   1, 10);
+//	IP4_ADDR(&netmask, 255, 255, 255,  0);
+//	IP4_ADDR(&gw,      192, 168,   1,  1);
+//#endif
+//#endif
+
 	print_app_header();
 
 	lwip_init();
 
-#if (LWIP_IPV6 == 0)
-	/* Add network interface to the netif_list, and set it as default */
-	if (!xemac_add(netif, &ipaddr, &netmask,
-			&gw, mac_ethernet_address,
-			PLATFORM_EMAC_BASEADDR)) {
-		xil_printf("Error adding N/W interface\n\r");
-		return -1;
-	}
-#else
+//#if (LWIP_IPV6 == 0)
+//	/* Add network interface to the netif_list, and set it as default */
+//	if (!xemac_add(netif, &ipaddr, &netmask,
+//			&gw, mac_ethernet_address,
+//			PLATFORM_EMAC_BASEADDR)) {
+//		xil_printf("Error adding N/W interface\n\r");
+//		return -1;
+//	}
+//#else
+//	/* Add network interface to the netif_list, and set it as default */
+//	if (!xemac_add(netif, NULL, NULL, NULL, mac_ethernet_address,
+//			PLATFORM_EMAC_BASEADDR)) {
+//		xil_printf("Error adding N/W interface\n\r");
+//		return -1;
+//	}
+//	netif->ip6_autoconfig_enabled = 1;
+//
+//	netif_create_ip6_linklocal_address(netif, 1);
+//	netif_ip6_addr_set_state(netif, 0, IP6_ADDR_VALID);
+//
+//	print_ip6("\n\rBoard IPv6 address ", &netif->ip6_addr[0].u_addr.ip6);
+//
+//#endif
+
 	/* Add network interface to the netif_list, and set it as default */
 	if (!xemac_add(netif, NULL, NULL, NULL, mac_ethernet_address,
-			PLATFORM_EMAC_BASEADDR)) {
-		xil_printf("Error adding N/W interface\n\r");
+				PLATFORM_EMAC_BASEADDR)) {
+		xil_printf("Error adding N/W interface\r\n");
 		return -1;
 	}
+#if (LWIP_IPV6 == 1)
 	netif->ip6_autoconfig_enabled = 1;
 
 	netif_create_ip6_linklocal_address(netif, 1);
 	netif_ip6_addr_set_state(netif, 0, IP6_ADDR_VALID);
 
 	print_ip6("\n\rBoard IPv6 address ", &netif->ip6_addr[0].u_addr.ip6);
-
 #endif
+
 	netif_set_default(netif);
 
 	/* now enable interrupts */
@@ -356,22 +375,26 @@ int udp_server_setup(void)
 		if ((netif->ip_addr.addr) == 0) {
 			xil_printf("DHCP Timeout\r\n");
 			xil_printf("Configuring default IP of 192.168.1.10\r\n");
-			IP4_ADDR(&(netif->ip_addr),  192, 168,   1, 10);
-			IP4_ADDR(&(netif->netmask), 255, 255, 255,  0);
-			IP4_ADDR(&(netif->gw),      192, 168,   1,  1);
+//			IP4_ADDR(&(netif->ip_addr),  192, 168,   1, 10);
+//			IP4_ADDR(&(netif->netmask), 255, 255, 255,  0);
+//			IP4_ADDR(&(netif->gw),      192, 168,   1,  1);
+			assign_default_ip(&(netif->ip_addr), &(netif->netmask), &(netif->gw));
 		}
 	}
 
-	ipaddr.addr = netif->ip_addr.addr;
-	gw.addr = netif->gw.addr;
-	netmask.addr = netif->netmask.addr;
-#endif
+//	ipaddr.addr = netif->ip_addr.addr;
+//	gw.addr = netif->gw.addr;
+//	netmask.addr = netif->netmask.addr;
+#else
+	assign_default_ip(&(netif->ip_addr), &(netif->netmask), &(netif->gw));
+#endif // LWIP_DHCP
+//	print_ip_settings(&ipaddr, &netmask, &gw);
+	print_ip_settings(&(netif->ip_addr), &(netif->netmask), &(netif->gw));
 
-	print_ip_settings(&ipaddr, &netmask, &gw);
-	memcpy(ip_export, &ipaddr, 4);
-	memcpy(mac_export, &mac_ethernet_address, 6);
+//	memcpy(ip_export, &ipaddr, 4);
+//	memcpy(mac_export, &mac_ethernet_address, 6);
+#endif // LWIP_IPV6
 
-#endif
 	/* start the application (web server, rxtest, txtest, etc..) */
 	start_udp();
 }
