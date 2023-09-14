@@ -2,31 +2,31 @@
 #if defined (XPAR_XCSI_NUM_INSTANCES)
 
 #if (XPAR_XCSI_NUM_INSTANCES >= 1U)
-XCsi Csi2RxSsInst_0;
+XCsiSs Csi2RxSsInst_0;
 #endif
 #if (XPAR_XCSI_NUM_INSTANCES >= 2U)
-XCsi Csi2RxSsInst_1;
+XCsiSs Csi2RxSsInst_1;
 #endif
 #if (XPAR_XCSI_NUM_INSTANCES >= 3U)
-XCsi Csi2RxSsInst_2;
+XCsiSs Csi2RxSsInst_2;
 #endif
 #if (XPAR_XCSI_NUM_INSTANCES >= 4U)
-XCsi Csi2RxSsInst_3;
+XCsiSs Csi2RxSsInst_3;
 #endif
 
-int Csi2RxSs_Init(XCsi *InstancePtr, u32 DeviceId)
+int Csi2RxSs_Init(XCsiSs *InstancePtr, u32 DeviceId)
 {
 	int Status;
-	XCsi_Config *ConfigPtr;
+	XCsiSs_Config *ConfigPtr;
 
-	ConfigPtr = XCsi_LookupConfig(DeviceId);
+	ConfigPtr = XCsiSs_LookupConfig(DeviceId);
 	if (!ConfigPtr)
 	{
 		bsp_printf("CSI2RxSs LookupCfg failed\r\n");
 		return XST_FAILURE;
 	}
 
-	Status = XCsi_CfgInitialize(InstancePtr, ConfigPtr,
+	Status = XCsiSs_CfgInitialize(InstancePtr, ConfigPtr,
 			ConfigPtr->BaseAddr);
 	if (Status != XST_SUCCESS)
 	{
@@ -41,7 +41,7 @@ int csi_rx_config(void)
 {
 	int Status;
 #if (XPAR_XCSI_NUM_INSTANCES >= 1U)
-	Status = Csi2RxSs_Init(&Csi2RxSsInst_0, XPAR_CSI_0_DEVICE_ID);
+	Status = Csi2RxSs_Init(&Csi2RxSsInst_0, XPAR_MIPI_CSI2_RX_SUBSYST_0_DEVICE_ID);
 	if (Status != XST_SUCCESS)
 	{
 		Xil_Assert(__FILE__, __LINE__);
@@ -49,10 +49,16 @@ int csi_rx_config(void)
 						 TXT_RST, Status);
 		return XST_FAILURE;
 	}
-//	XCsi_SetSoftReset(&Csi2RxSsInst_0);
-//	XCsi_SetActiveLaneCount(&Csi2RxSsInst_0, 4);
-//	XCsi_ClearSoftReset(&Csi2RxSsInst_0);
-	Status = XCsi_Activate(&Csi2RxSsInst_0, XCSI_ENABLE);
+
+//	XCsiSs_ReportCoreInfo(&Csi2RxSsInst_0);
+	Status = XCsiSs_Reset(&Csi2RxSsInst_0);
+	if (Status != XST_SUCCESS)
+	{
+		Xil_Assert(__FILE__, __LINE__);
+		return XST_FAILURE;
+	}
+
+	Status = XCsiSs_Activate(&Csi2RxSsInst_0, XCSI_ENABLE);
 	if (Status != XST_SUCCESS)
 	{
 		Xil_Assert(__FILE__, __LINE__);
