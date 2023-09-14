@@ -11,11 +11,6 @@
 //#include <assert.h>
 //#include <ctype.h>
 
-//自定义通用头文件
-#include "version.h"
-#include "config.h"
-#include "dbg_trace.h"
-#include "bitmanip.h"
 
 //引入xilinx定义的通用头文件
 #include "platform.h"
@@ -25,6 +20,12 @@
 #include "xil_cache.h"
 #include "xstatus.h"
 #include "sleep.h"
+
+//自定义通用头文件
+#include "config.h"
+#include "dbg_trace.h"
+#include "bitmanip.h"
+#include "version.h"
 
 //直接引入的外设库头文件
 

@@ -47,7 +47,11 @@
 
 #include "bsp.h"
 
-#if defined(XPAR_XGPIO_NUM_INSTANCES)
+#if defined (XPAR_AXI_LITE_REG_NUM_INSTANCES) && (XPAR_AXI_LITE_REG_0_DEVICE_ID == 0)
+volatile u32 __HW_VER__;
+#endif
+
+#if defined(XPAR_XGPIO_NUM_INSTANCES) && (XPAR_XCSI2TX_NUM_INSTANCES)
 XGpio XGpioOutput;
 #endif
 
@@ -57,7 +61,7 @@ int main()
 
     init_platform();
 
-#if defined(XPAR_XGPIO_NUM_INSTANCES)
+#if defined(XPAR_XGPIO_NUM_INSTANCES) && (XPAR_XCSI2TX_NUM_INSTANCES)
     Status = xgpio_setup(&XGpioOutput, XPAR_GPIO_0_DEVICE_ID, 0, 0) ;
     if (Status != XST_SUCCESS)
 	{
@@ -80,11 +84,9 @@ int main()
     bsp_printf("***************************\n\r");
     bsp_printf("Test common API.\n\r");
     bsp_printf("\r\n%s,%s\r\n",__DATE__,__TIME__);
-#ifdef XPAR_AXI_LITE_REG_NUM_INSTANCES
-    if(XPAR_AXI_LITE_REG_0_DEVICE_ID == 0)
-    {
-    	bsp_printf("hardware ver = 0x%08x\n\r", AXI_LITE_REG_mReadReg(XPAR_AXI_LITE_REG_0_S00_AXI_BASEADDR, AXI_LITE_REG_S00_AXI_SLV_REG0_OFFSET));
-    }
+#if defined (XPAR_AXI_LITE_REG_NUM_INSTANCES) && (XPAR_AXI_LITE_REG_0_DEVICE_ID == 0)
+	__HW_VER__ = AXI_LITE_REG_mReadReg(XPAR_AXI_LITE_REG_0_S00_AXI_BASEADDR, AXI_LITE_REG_S00_AXI_SLV_REG0_OFFSET);
+	bsp_printf("hardware ver = 0x%08x\n\r", __HW_VER__);
 #endif // XPAR_AXI_LITE_REG_NUM_INSTANCES
 #if defined (__SW_VER__)
     bsp_printf("software ver = 0x%08x\n\r", __SW_VER__);

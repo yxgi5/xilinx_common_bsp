@@ -1,72 +1,45 @@
-/******************************************************************************
-*
-* Copyright (C) 2010 - 2015 Xilinx, Inc.  All rights reserved.
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* Use of the Software is limited solely to applications:
-* (a) running on a Xilinx device, or
-* (b) that interact with a Xilinx device through a bus or interconnect.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
-* XILINX  BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-* WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF
-* OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-* SOFTWARE.
-*
-* Except as contained in this notice, the name of the Xilinx shall not be used
-* in advertising or otherwise to promote the sale, use or other dealings in
-* this Software without prior written authorization from Xilinx.
-*
-******************************************************************************/
+#include "bsp.h"
 
-#include "xparameters.h"
-#include "xil_cache.h"
-
-#include "platform_config.h"
 
 /*
  * Uncomment one of the following two lines, depending on the target,
  * if ps7/psu init source files are added in the source directory for
  * compiling example outside of SDK.
  */
-/*#include "ps7_init.h"*/
-/*#include "psu_init.h"*/
-
+//#if defined (ARMR5) || (__arm__)
+//#include "ps7_init.h"
+//#endif
+//#if defined (__aarch64__)
+//#include "psu_init.h"
+//#endif 
 #ifdef STDOUT_IS_16550
  #include "xuartns550_l.h"
 
  #define UART_BAUD 9600
 #endif
 
-void
-enable_caches()
+void enable_caches(void)
 {
 #ifdef __PPC__
     Xil_ICacheEnableRegion(CACHEABLE_REGION_MASK);
     Xil_DCacheEnableRegion(CACHEABLE_REGION_MASK);
 #elif __MICROBLAZE__
 #ifdef XPAR_MICROBLAZE_USE_ICACHE
+    Xil_ICacheInvalidate();
     Xil_ICacheEnable();
 #endif
 #ifdef XPAR_MICROBLAZE_USE_DCACHE
+    Xil_DCacheInvalidate();
     Xil_DCacheEnable();
 #endif
 #endif
+#if defined (ARMR5) || (__aarch64__) || (__arm__)
+	Xil_ICacheEnable();
+	Xil_DCacheEnable();
+#endif
 }
 
-void
-disable_caches()
+void disable_caches(void)
 {
 #ifdef __MICROBLAZE__
 #ifdef XPAR_MICROBLAZE_USE_DCACHE
@@ -76,10 +49,13 @@ disable_caches()
     Xil_ICacheDisable();
 #endif
 #endif
+#if defined (ARMR5) || (__aarch64__) || (__arm__) || (__PPC__)
+	Xil_ICacheDisable();
+	Xil_DCacheDisable();
+#endif
 }
 
-void
-init_uart()
+void init_uart(void)
 {
 #ifdef STDOUT_IS_16550
     XUartNs550_SetBaud(STDOUT_BASEADDR, XPAR_XUARTNS550_CLOCK_HZ, UART_BAUD);
@@ -88,8 +64,7 @@ init_uart()
     /* Bootrom/BSP configures PS7/PSU UART to 115200 bps */
 }
 
-void
-init_platform()
+void init_platform(void)
 {
     /*
      * If you want to run this example outside of SDK,
@@ -98,14 +73,18 @@ init_platform()
      * Make sure that the ps7/psu_init.c and ps7/psu_init.h files are included
      * along with this example source files for compilation.
      */
-    /* ps7_init();*/
-    /* psu_init();*/
+//#if defined (ARMR5) || (__arm__)
+//    ps7_init();
+//#endif
+//#if defined (__aarch64__)
+//    psu_init();
+//#endif
+
     enable_caches();
     init_uart();
 }
 
-void
-cleanup_platform()
+void cleanup_platform(void)
 {
     disable_caches();
 }
