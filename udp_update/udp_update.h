@@ -12,14 +12,18 @@
 #include "lwip/udp.h" //
 
 #if LWIP_IPV6==1
-#include "lwip/ip6_addr.h"
-#include "lwip/ip6.h"
+	#include "lwip/ip6_addr.h"
+	#include "lwip/ip6.h"
 #else
-#if LWIP_DHCP==1
-#include "lwip/dhcp.h"
-extern volatile int dhcp_timoutcntr;
-#endif
-#endif
+	#if LWIP_DHCP==1
+		#include "lwip/dhcp.h"
+		extern volatile int dhcp_timoutcntr;
+		err_t dhcp_start(struct netif *netif);
+	#endif // LWIP_DHCP
+#endif // LWIP_IPV6
+
+extern volatile int TcpFastTmrFlag;
+extern volatile int TcpSlowTmrFlag;
 
 #define PLATFORM_EMAC_BASEADDR XPAR_XEMACPS_0_BASEADDR
 #define MAX_FLASH_LEN   32*1024*1024
