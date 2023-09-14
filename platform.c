@@ -52,7 +52,7 @@
 		static XInterval Interval;
 		static u8 Prescaler;
 		XTtcPs TimerInstance;
-		//extern struct netif *echo_netif;
+		//extern struct netif *netif;
 	#endif // PLATFORM_ZYNQMP
 
 	#if defined (PLATFORM_ZYNQ)
@@ -64,7 +64,7 @@
 			static int ResetRxCntr = 0;
 		#endif
 		XScuTimer TimerInstance;
-		//extern struct netif *echo_netif;
+		//extern struct netif *netif;
 	#endif // PLATFORM_ZYNQ
 
 #endif // __UDP_UPDATE_H__
@@ -160,13 +160,13 @@ void timer_callback(XScuTimer * TimerInstance)
 	 */
 #ifndef USE_SOFTETH_ON_ZYNQ
 	if (ResetRxCntr >= RESET_RX_CNTR_LIMIT) {
-		xemacpsif_resetrx_on_no_rxdata(echo_netif);
+		xemacpsif_resetrx_on_no_rxdata(&server_netif);
 		ResetRxCntr = 0;
 	}
 #endif
 	/* For detecting Ethernet phy link status periodically */
 	if (DetectEthLinkStatus == ETH_LINK_DETECT_INTERVAL) {
-		eth_link_detect(echo_netif);
+		eth_link_detect(&server_netif);
 		DetectEthLinkStatus = 0;
 	}
 
@@ -214,7 +214,7 @@ void timer_callback(XTtcPs * TimerInstance)
 
 	/* For detecting Ethernet phy link status periodically */
 	if (DetectEthLinkStatus == ETH_LINK_DETECT_INTERVAL) {
-		eth_link_detect(echo_netif);
+		eth_link_detect(&server_netif);
 		DetectEthLinkStatus = 0;
 	}
 

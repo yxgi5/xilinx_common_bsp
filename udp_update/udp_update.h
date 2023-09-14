@@ -31,7 +31,7 @@ extern volatile int TcpSlowTmrFlag;
 #define PLATFORM_EMAC_BASEADDR XPAR_XEMACPS_0_BASEADDR
 #define MAX_FLASH_LEN   32*1024*1024
 
-extern struct netif *echo_netif;
+extern struct netif server_netif;
 
 void Start_UDP_Updata(void);
 void Udp_Setting(void);

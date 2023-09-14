@@ -2,7 +2,6 @@
 
 #if defined (XPAR_XEMACPS_NUM_INSTANCES) && defined (UDP_UPDATE)
 
-struct netif *netif;
 static struct udp_pcb *udp8080_pcb = NULL;
 ip_addr_t target_addr;
 unsigned char ip_export[4];
@@ -32,40 +31,60 @@ err_t dhcp_start(struct netif *netif);
 #endif
 #endif
 
-static struct netif server_netif;
+struct netif server_netif;
 
 
 #if LWIP_IPV6==1
-void print_ip6(char *msg, ip_addr_t *ip)
-{
-	print(msg);
-	xil_printf(" %x:%x:%x:%x:%x:%x:%x:%x\n\r",
-			IP6_ADDR_BLOCK1(&ip->u_addr.ip6),
-			IP6_ADDR_BLOCK2(&ip->u_addr.ip6),
-			IP6_ADDR_BLOCK3(&ip->u_addr.ip6),
-			IP6_ADDR_BLOCK4(&ip->u_addr.ip6),
-			IP6_ADDR_BLOCK5(&ip->u_addr.ip6),
-			IP6_ADDR_BLOCK6(&ip->u_addr.ip6),
-			IP6_ADDR_BLOCK7(&ip->u_addr.ip6),
-			IP6_ADDR_BLOCK8(&ip->u_addr.ip6));
+	void print_ip6(char *msg, ip_addr_t *ip)
+	{
+		print(msg);
+	//	xil_printf(" %s\n\r", inet6_ntoa(*ip));
+		xil_printf(" %x:%x:%x:%x:%x:%x:%x:%x\n\r",
+				IP6_ADDR_BLOCK1(&ip->u_addr.ip6),
+				IP6_ADDR_BLOCK2(&ip->u_addr.ip6),
+				IP6_ADDR_BLOCK3(&ip->u_addr.ip6),
+				IP6_ADDR_BLOCK4(&ip->u_addr.ip6),
+				IP6_ADDR_BLOCK5(&ip->u_addr.ip6),
+				IP6_ADDR_BLOCK6(&ip->u_addr.ip6),
+				IP6_ADDR_BLOCK7(&ip->u_addr.ip6),
+				IP6_ADDR_BLOCK8(&ip->u_addr.ip6));
 
-}
+	}
 #else
-void print_ip(char *msg, ip_addr_t *ip)
-{
-	print(msg);
-	xil_printf("%d.%d.%d.%d\n\r", ip4_addr1(ip), ip4_addr2(ip),
-			ip4_addr3(ip), ip4_addr4(ip));
-}
+	void print_ip(char *msg, ip_addr_t *ip)
+	{
+		print(msg);
+		xil_printf("%d.%d.%d.%d\n\r", ip4_addr1(ip), ip4_addr2(ip),
+				ip4_addr3(ip), ip4_addr4(ip));
+	}
 
-void print_ip_settings(ip_addr_t *ip, ip_addr_t *mask, ip_addr_t *gw)
-{
+	void print_ip_settings(ip_addr_t *ip, ip_addr_t *mask, ip_addr_t *gw)
+	{
 
-	print_ip("Board IP: ", ip);
-	print_ip("Netmask : ", mask);
-	print_ip("Gateway : ", gw);
-}
-#endif
+		print_ip("Board IP: ", ip);
+		print_ip("Netmask : ", mask);
+		print_ip("Gateway : ", gw);
+	}
+
+	void assign_default_ip(ip_addr_t *ip, ip_addr_t *mask, ip_addr_t *gw)
+	{
+	    int err;
+
+	    xil_printf("Configuring default IP %s \r\n", DEFAULT_IP_ADDRESS);
+
+	    err = inet_aton(DEFAULT_IP_ADDRESS, ip);
+	    if (!err)
+	        xil_printf("Invalid default IP address: %d\r\n", err);
+
+	    err = inet_aton(DEFAULT_IP_MASK, mask);
+	    if (!err)
+	        xil_printf("Invalid default IP MASK: %d\r\n", err);
+
+	    err = inet_aton(DEFAULT_GW_ADDRESS, gw);
+	    if (!err)
+	        xil_printf("Invalid default gateway address: %d\r\n", err);
+	}
+#endif // LWIP_IPV6
 
 void print_app_header() {
 	xil_printf("\n\r\n\r-----LwIP UDP Remote Update------\n\r");
@@ -135,6 +154,7 @@ void Udp_Setting(void)
 {
 
 	 int Status;
+	 struct netif *netif;
 
 	#if LWIP_IPV6==0
 		ip_addr_t ipaddr, netmask, gw;
@@ -255,7 +275,7 @@ void Start_UDP_Updata(void)
         tcp_slowtmr();
         TcpSlowTmrFlag = 0;
     }
-	xemacif_input(netif);
+	xemacif_input(&server_netif);
 	if (StartUpdate)
 	{
 		Status = update_qspi(&QspiInstance, QSPIPSU_DEVICE_ID, ReceivedCount, FlashRxBuffer) ;
