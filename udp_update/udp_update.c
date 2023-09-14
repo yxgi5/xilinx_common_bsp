@@ -2,7 +2,7 @@
 
 #if defined (XPAR_XEMACPS_NUM_INSTANCES) && defined (UDP_UPDATE)
 
-struct netif *echo_netif;
+struct netif *netif;
 static struct udp_pcb *udp8080_pcb = NULL;
 ip_addr_t target_addr;
 unsigned char ip_export[4];
@@ -145,7 +145,7 @@ void Udp_Setting(void)
 		unsigned char mac_ethernet_address[] =
 		{ 0x00, 0x0a, 0x35, 0x00, 0x01, 0x02 };
 
-		echo_netif = &server_netif;
+		netif = &server_netif;
 	#if defined (__arm__) && !defined (ARMR5)
 	#if XPAR_GIGE_PCS_PMA_SGMII_CORE_PRESENT == 1 || XPAR_GIGE_PCS_PMA_1000BASEX_CORE_PRESENT == 1
 		ProgramSi5324();
@@ -178,7 +178,7 @@ void Udp_Setting(void)
 
 #if (LWIP_IPV6 == 0)
 	/* Add network interface to the netif_list, and set it as default */
-	if (!xemac_add(echo_netif, &ipaddr, &netmask,
+	if (!xemac_add(netif, &ipaddr, &netmask,
 			&gw, mac_ethernet_address,
 			PLATFORM_EMAC_BASEADDR)) {
 		xil_printf("Error adding N/W interface\n\r");
@@ -186,26 +186,26 @@ void Udp_Setting(void)
 	}
 #else
 	/* Add network interface to the netif_list, and set it as default */
-	if (!xemac_add(echo_netif, NULL, NULL, NULL, mac_ethernet_address,
+	if (!xemac_add(netif, NULL, NULL, NULL, mac_ethernet_address,
 			PLATFORM_EMAC_BASEADDR)) {
 		xil_printf("Error adding N/W interface\n\r");
 		return -1;
 	}
-	echo_netif->ip6_autoconfig_enabled = 1;
+	netif->ip6_autoconfig_enabled = 1;
 
-	netif_create_ip6_linklocal_address(echo_netif, 1);
-	netif_ip6_addr_set_state(echo_netif, 0, IP6_ADDR_VALID);
+	netif_create_ip6_linklocal_address(netif, 1);
+	netif_ip6_addr_set_state(netif, 0, IP6_ADDR_VALID);
 
-	print_ip6("\n\rBoard IPv6 address ", &echo_netif->ip6_addr[0].u_addr.ip6);
+	print_ip6("\n\rBoard IPv6 address ", &netif->ip6_addr[0].u_addr.ip6);
 
 #endif
-	netif_set_default(echo_netif);
+	netif_set_default(netif);
 
 	/* now enable interrupts */
 	platform_enable_interrupts();
 
 	/* specify that the network if is up */
-	netif_set_up(echo_netif);
+	netif_set_up(netif);
 
 #if (LWIP_IPV6 == 0)
 #if (LWIP_DHCP==1)
@@ -213,25 +213,25 @@ void Udp_Setting(void)
 	 * Note: you must call dhcp_fine_tmr() and dhcp_coarse_tmr() at
 	 * the predefined regular intervals after starting the client.
 	 */
-	dhcp_start(echo_netif);
+	dhcp_start(netif);
 	dhcp_timoutcntr = 24;
 
-	while(((echo_netif->ip_addr.addr) == 0) && (dhcp_timoutcntr > 0))
-		xemacif_input(echo_netif);
+	while(((netif->ip_addr.addr) == 0) && (dhcp_timoutcntr > 0))
+		xemacif_input(netif);
 
 	if (dhcp_timoutcntr <= 0) {
-		if ((echo_netif->ip_addr.addr) == 0) {
+		if ((netif->ip_addr.addr) == 0) {
 			xil_printf("DHCP Timeout\r\n");
 			xil_printf("Configuring default IP of 192.168.1.10\r\n");
-			IP4_ADDR(&(echo_netif->ip_addr),  192, 168,   1, 10);
-			IP4_ADDR(&(echo_netif->netmask), 255, 255, 255,  0);
-			IP4_ADDR(&(echo_netif->gw),      192, 168,   1,  1);
+			IP4_ADDR(&(netif->ip_addr),  192, 168,   1, 10);
+			IP4_ADDR(&(netif->netmask), 255, 255, 255,  0);
+			IP4_ADDR(&(netif->gw),      192, 168,   1,  1);
 		}
 	}
 
-	ipaddr.addr = echo_netif->ip_addr.addr;
-	gw.addr = echo_netif->gw.addr;
-	netmask.addr = echo_netif->netmask.addr;
+	ipaddr.addr = netif->ip_addr.addr;
+	gw.addr = netif->gw.addr;
+	netmask.addr = netif->netmask.addr;
 #endif
 
 	print_ip_settings(&ipaddr, &netmask, &gw);
@@ -247,7 +247,15 @@ void Udp_Setting(void)
 void Start_UDP_Updata(void)
 {
     int Status;
-	xemacif_input(echo_netif);
+    if (TcpFastTmrFlag) {
+        tcp_fasttmr();
+        TcpFastTmrFlag = 0;
+    }
+    if (TcpSlowTmrFlag) {
+        tcp_slowtmr();
+        TcpSlowTmrFlag = 0;
+    }
+	xemacif_input(netif);
 	if (StartUpdate)
 	{
 		Status = update_qspi(&QspiInstance, QSPIPSU_DEVICE_ID, ReceivedCount, FlashRxBuffer) ;

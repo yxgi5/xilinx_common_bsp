@@ -20,6 +20,9 @@
 		extern volatile int dhcp_timoutcntr;
 		err_t dhcp_start(struct netif *netif);
 	#endif // LWIP_DHCP
+	#define DEFAULT_IP_ADDRESS  "192.168.1.10"
+	#define DEFAULT_IP_MASK     "255.255.255.0"
+	#define DEFAULT_GW_ADDRESS  "192.168.1.1"
 #endif // LWIP_IPV6
 
 extern volatile int TcpFastTmrFlag;
