@@ -33,8 +33,7 @@
 #ifndef __PLATFORM_H_
 #define __PLATFORM_H_
 
-
-void init_platform();
-void cleanup_platform();
+void init_platform(void);
+void cleanup_platform(void);
 
 #endif // __PLATFORM_H_
