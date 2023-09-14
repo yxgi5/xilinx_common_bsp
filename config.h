@@ -9,4 +9,6 @@
 //#define IT6801
 //#define ADS7128
 
+#define UDP_UPDATE
+
 #endif // __CONFIG_H__

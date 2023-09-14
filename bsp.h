@@ -52,6 +52,8 @@
 #include "axis_passthrough_monitor.h"
 #endif
 
+// udp_update
+#include "udp_update/udp_update.h"
 
 // 中断发生器
 //#if defined (__MICROBLAZE__)

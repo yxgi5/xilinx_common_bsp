@@ -36,4 +36,10 @@
 void init_platform(void);
 void cleanup_platform(void);
 
+#if defined (UDP_UPDATE)
+void timer_callback();
+void platform_setup_timer();
+void platform_enable_interrupts();
+#endif // UDP_UPDATE
+
 #endif // __PLATFORM_H_
