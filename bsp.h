@@ -13,7 +13,6 @@
 
 
 //引入xilinx定义的通用头文件
-#include "platform.h"
 #include "xparameters.h"
 #if defined (PLATFORM_ZYNQMP) || defined (PLATFORM_ZYNQ)
 #include "xparameters_ps.h"	// defines XPAR values
@@ -26,6 +25,7 @@
 
 //自定义通用头文件
 #include "config.h"
+#include "platform.h"
 #include "dbg_trace.h"
 #include "bitmanip.h"
 #include "version.h"
