@@ -15,6 +15,9 @@
 //引入xilinx定义的通用头文件
 #include "platform.h"
 #include "xparameters.h"
+#if defined (PLATFORM_ZYNQMP) || defined (PLATFORM_ZYNQ)
+#include "xparameters_ps.h"	// defines XPAR values
+#endif
 #include "xil_types.h"
 #include "xil_assert.h"
 #include "xil_cache.h"
