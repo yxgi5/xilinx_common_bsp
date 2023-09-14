@@ -3,15 +3,21 @@
 //#include "xparameters.h"
 #if defined (XPAR_XEMACPS_NUM_INSTANCES) && defined (UDP_UPDATE)
 #define __UDP_UPDATE_H__
-
+#include "lwipopts.h"
+#include "lwip/priv/tcp_priv.h"
+#include "lwip/init.h"
+#include "lwip/inet.h" //
+#include "lwip/err.h"
 #include "netif/xadapter.h"
-#include "lwip/udp.h"
+#include "lwip/udp.h" //
 
 #if LWIP_IPV6==1
-#include "lwip/ip.h"
+#include "lwip/ip6_addr.h"
+#include "lwip/ip6.h"
 #else
 #if LWIP_DHCP==1
 #include "lwip/dhcp.h"
+extern volatile int dhcp_timoutcntr;
 #endif
 #endif
 

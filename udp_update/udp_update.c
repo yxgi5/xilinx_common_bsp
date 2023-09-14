@@ -126,7 +126,7 @@ int start_udp(unsigned int port) {
 		return -2;
 	}
 	udp_recv(udp8080_pcb, udp_recive, 0);
-	IP4_ADDR(&target_addr, 192,168,1,35);
+//	IP4_ADDR(&target_addr, 192,168,1,35);
 
 	return 0;
 }
