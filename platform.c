@@ -374,7 +374,7 @@ void platform_enable_interrupts()
 }
 
 #if defined (ARMR5) || (__aarch64__) || (__arm__)
-u64_t get_time_ms()
+uint64_t get_time_ms(void)
 {
 #define COUNTS_PER_MILLI_SECOND (COUNTS_PER_SECOND/1000)
 
@@ -387,11 +387,29 @@ u64_t get_time_ms()
 		tHigh++;
 	tlast = tCur;
 	time = (((u64_t) tHigh) << 32U) | (u64_t)tCur;
-	return (time/COUNTS_PER_MILLI_SECOND);
+	return (time / COUNTS_PER_MILLI_SECOND);
 #else // (__aarch64__) || (__arm__)
 	XTime tCur = 0;
 	XTime_GetTime(&tCur);
-	return (tCur/COUNTS_PER_MILLI_SECOND);
+	return (tCur / COUNTS_PER_MILLI_SECOND);
+#endif
+}
+float get_time_s(void)
+{
+#if defined(ARMR5)
+	XTime tCur = 0;
+	static XTime tlast = 0, tHigh = 0;
+	u64_t time;
+	XTime_GetTime(&tCur);
+	if (tCur < tlast)
+		tHigh++;
+	tlast = tCur;
+	time = (((u64_t) tHigh) << 32U) | (u64_t)tCur;
+	return (time / (float) COUNTS_PER_SECOND);
+#else // (__aarch64__) || (__arm__)
+    XTime tCur = 0;
+    XTime_GetTime(&tCur);
+    return (tCur / (float) COUNTS_PER_SECOND);
 #endif
 }
 #endif

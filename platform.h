@@ -41,5 +41,8 @@ void timer_callback();
 void platform_setup_timer();
 void platform_enable_interrupts();
 #endif // UDP_UPDATE
-
+#if defined (ARMR5) || (__aarch64__) || (__arm__)
+uint64_t get_time_ms(void);
+float get_time_s(void);
+#endif
 #endif // __PLATFORM_H_

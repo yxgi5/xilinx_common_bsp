@@ -2,7 +2,7 @@
 
 #if defined (XPAR_XEMACPS_NUM_INSTANCES) && defined (UDP_UPDATE)
 
-static struct udp_pcb *udp8080_pcb = NULL;
+static struct udp_pcb *client_pcb = NULL;
 ip_addr_t target_addr;
 unsigned char ip_export[4];
 unsigned char mac_export[6];
@@ -17,7 +17,7 @@ int StartUpdate = 0 ;
 int FrameLengthCurr = 0 ;
 
 /* defined by each RAW mode application */
-int start_udp(unsigned int port);
+int start_udp();
 //int transfer_data(const char *pData, int len, const ip_addr_t *addr) ;
 int send_data(const char *frame, int data_len);
 
@@ -91,6 +91,73 @@ void print_app_header() {
 	xil_printf("UDP packets sent to port 8080\n\r");
 }
 
+void process_print(u8 percent)
+{
+    switch (percent) {
+    case 0:
+        sent_msg("0%..");
+        xil_printf("0%%..");
+        break;
+    case 1:
+        sent_msg("10%..");
+        xil_printf("10%%..");
+        break;
+    case 2:
+        sent_msg("20%..");
+        xil_printf("20%%..");
+        break;
+    case 3:
+        sent_msg("30%..");
+        xil_printf("30%%..");
+        break;
+    case 4:
+        sent_msg("40%..");
+        xil_printf("40%%..");
+        break;
+    case 5:
+        sent_msg("50%..");
+        xil_printf("50%%..");
+        break;
+    case 6:
+        sent_msg("60%..");
+        xil_printf("60%%..");
+        break;
+    case 7:
+        sent_msg("70%..");
+        xil_printf("70%%..");
+        break;
+    case 8:
+        sent_msg("80%..");
+        xil_printf("80%%..");
+        break;
+    case 9:
+        sent_msg("90%..");
+        xil_printf("90%%..");
+        break;
+    case 10:
+        sent_msg("100%\r\n");
+        xil_printf("100%%\r\n");
+    default:
+        break;
+    }
+}
+
+void sent_msg(const char *msg)
+{
+	static struct pbuf *pbuf2sent;
+
+	pbuf2sent = pbuf_alloc(PBUF_TRANSPORT, strlen(msg), PBUF_POOL);
+    if (!pbuf2sent)
+        xil_printf("Error allocating pbuf\r\n");
+
+    memcpy(pbuf2sent->payload, msg, strlen(msg));
+
+    if (udp_send(client_pcb, pbuf2sent) != ERR_OK)
+        xil_printf("UDP send error\r\n");
+
+    pbuf_free(pbuf2sent);
+}
+
 /*
  * Call back funtion for udp receiver
  *
@@ -101,10 +168,14 @@ void print_app_header() {
  * @param port is udp port
  *
  */
-void udp_recive(void *arg, struct udp_pcb *pcb, struct pbuf *p_rx,
-		const ip_addr_t *addr, u16_t port) {
+void udp_recv_callback(void *arg, struct udp_pcb *pcb, struct pbuf *p_rx,
+		const ip_addr_t *ip, u16_t port) {
 
 	char *pData;
+	pcb->remote_ip = *ip;
+	pcb->remote_port = port;
+	client_pcb = pcb;
+
 	if (p_rx != NULL)
 	{
 		pData = (char *) p_rx->payload;
@@ -131,26 +202,37 @@ void udp_recive(void *arg, struct udp_pcb *pcb, struct pbuf *p_rx,
 /*
  * Create new pcb, bind pcb and port, set call back function
  */
-int start_udp(unsigned int port) {
+int start_udp(void)
+{
+	struct udp_pcb *pcb;
 	err_t err;
-	udp8080_pcb = udp_new();
-	if (!udp8080_pcb) {
-		xil_printf("Error creating PCB. Out of Memory\n\r");
+
+//    err = qspi_init();
+//    if (err != XST_SUCCESS) {
+//        bsp_printf("QSPI init Failed\r\n");
+//    }
+//    bsp_printf("Successfully init QSPI\r\n");
+
+	pcb = udp_new();
+	if (!pcb) {
+		bsp_printf("Error creating PCB. Out of Memory\n\r");
 		return -1;
 	}
 	/* bind to specified @port */
-	err = udp_bind(udp8080_pcb, IP_ADDR_ANY, port);
+	err = udp_bind(pcb, IP_ADDR_ANY, UDP_SER_PORT);
 	if (err != ERR_OK) {
-		xil_printf("Unable to bind to port %d: err = %d\n\r", port, err);
+		bsp_printf("Unable to bind to port %d: err = %d\n\r", UDP_SER_PORT, err);
+		udp_remove(pcb);
 		return -2;
 	}
-	udp_recv(udp8080_pcb, udp_recive, 0);
+	udp_recv(pcb, udp_recv_callback, NULL);
 //	IP4_ADDR(&target_addr, 192,168,1,35);
+	bsp_printf("UDP server started @ port %d\n\r", UDP_SER_PORT);
 
 	return 0;
 }
 
-void Udp_Setting(void)
+int udp_server_setup(void)
 {
 
 	 int Status;
@@ -260,11 +342,11 @@ void Udp_Setting(void)
 
 #endif
 	/* start the application (web server, rxtest, txtest, etc..) */
-	start_udp(8080);
+	start_udp();
 }
 
 
-void Start_UDP_Updata(void)
+void udp_transfer_data(void)
 {
     int Status;
     if (TcpFastTmrFlag) {
