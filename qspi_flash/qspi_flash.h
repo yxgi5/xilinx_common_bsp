@@ -6,9 +6,9 @@
 //#include "xparameters.h"	/* SDK generated parameters */
 #include "xqspipsu.h"		/* QSPI device driver */
 //#include "xil_printf.h"
-#if defined (ARMR5) || (__aarch64__) || (__arm__)
-#include "xtime_l.h"
-#endif
+//#if defined (ARMR5) || (__aarch64__) || (__arm__)
+//#include "xtime_l.h"
+//#endif
 /************************** Constant Definitions *****************************/
 
 /*
@@ -139,8 +139,9 @@ typedef struct{
 
 /************************** Function Prototypes ******************************/
 
-
-int update_qspi(XQspiPsu *QspiPsuInstancePtr, u16 QspiPsuDeviceId, unsigned int TotoalLen, char *FlashDataToSend) ;
+int qspi_init(void);
+int qspi_update(u32 total_bytes, const u8 *flash_data);
+//int update_qspi(XQspiPsu *QspiPsuInstancePtr, u16 QspiPsuDeviceId, unsigned int TotoalLen, char *FlashDataToSend) ;
 
 int FlashReadID(XQspiPsu *QspiPsuPtr);
 int FlashErase(XQspiPsu *QspiPsuPtr, u32 Address, u32 ByteCount, u8 *WriteBfrPtr);

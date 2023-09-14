@@ -7,14 +7,16 @@ ip_addr_t target_addr;
 unsigned char ip_export[4];
 unsigned char mac_export[6];
 
-char FlashRxBuffer[MAX_FLASH_LEN] ;
-unsigned int ReceivedCount = 0 ;
+//char FlashRxBuffer[MAX_FLASH_LEN] ;
+u8 rxbuffer[MAX_FLASH_LEN];
+//unsigned int ReceivedCount = 0 ;
+u32 total_bytes = 0;
 
 extern XQspiPsu QspiInstance;
 
-int StartUpdate = 0 ;
+int start_update_flag = 0 ;
 
-int FrameLengthCurr = 0 ;
+//int FrameLengthCurr = 0 ;
 
 /* defined by each RAW mode application */
 int start_udp();
@@ -88,7 +90,7 @@ struct netif server_netif;
 
 void print_app_header() {
 	xil_printf("\n\r\n\r-----LwIP UDP Remote Update------\n\r");
-	xil_printf("UDP packets sent to port 8080\n\r");
+	xil_printf("UDP packets sent to port %d\n\r", UDP_SER_PORT);
 }
 
 void process_print(u8 percent)
@@ -168,36 +170,65 @@ void sent_msg(const char *msg)
  * @param port is udp port
  *
  */
-void udp_recv_callback(void *arg, struct udp_pcb *pcb, struct pbuf *p_rx,
-		const ip_addr_t *ip, u16_t port) {
+//void udp_recv_callback(void *arg, struct udp_pcb *pcb, struct pbuf *p_rx,
+//		const ip_addr_t *ip, u16_t port) {
+//
+//	char *pData;
+//	pcb->remote_ip = *ip;
+//	pcb->remote_port = port;
+//	client_pcb = pcb;
+//
+//	if (p_rx != NULL)
+//	{
+//		pData = (char *) p_rx->payload;
+//
+//		int udp_len = p_rx->len ;
+//
+//		if (!(memcmp("update", p_rx->payload + p_rx->len - 6, 6)))
+//		{
+//			memcpy(&FlashRxBuffer[ReceivedCount], pData, udp_len - 6);
+//			ReceivedCount += udp_len - 6 ;
+//			xil_printf("Received Size is %u Bytes\r\n", ReceivedCount) ;
+//			xil_printf("Initialization done, programming the memory\r\n") ;
+//			start_update_flag = 1 ;
+//		}
+//		else
+//		{
+//			memcpy(&FlashRxBuffer[ReceivedCount], pData, udp_len);
+//			ReceivedCount += udp_len ;
+//		}
+//
+//		pbuf_free(p_rx);
+//	}
+//}
+void udp_recv_callback(void *arg, struct udp_pcb *upcb, struct pbuf *p,
+		const ip_addr_t *ip, u16_t port)
+{
+    struct pbuf *q;
+    q = p;
+    upcb->remote_ip = *ip;
+    upcb->remote_port = port;
+    client_pcb = upcb;
 
-	char *pData;
-	pcb->remote_ip = *ip;
-	pcb->remote_port = port;
-	client_pcb = pcb;
+    if (q->tot_len == 6 && !(memcmp("update", p->payload, 6))) {
+        start_update_flag = 1;
+        sent_msg("Start QSPI Update\r\n");
+    } else if (q->tot_len == 5 && !(memcmp("clear", p->payload, 5))) {
+        start_update_flag = 0;
+        total_bytes = 0;
+        sent_msg("Clear received data\r\n");
+        xil_printf("Clear received data\r\n");
+    } else {
+        while (q->tot_len != q->len) {
+            memcpy(&rxbuffer[total_bytes], q->payload, q->len);
+            total_bytes += q->len;
+            q = q->next;
+        }
+        memcpy(&rxbuffer[total_bytes], q->payload, q->len);
+        total_bytes += q->len;
+    }
 
-	if (p_rx != NULL)
-	{
-		pData = (char *) p_rx->payload;
-
-		int udp_len = p_rx->len ;
-
-		if (!(memcmp("update", p_rx->payload + p_rx->len - 6, 6)))
-		{
-			memcpy(&FlashRxBuffer[ReceivedCount], pData, udp_len - 6);
-			ReceivedCount += udp_len - 6 ;
-			xil_printf("Received Size is %u Bytes\r\n", ReceivedCount) ;
-			xil_printf("Initialization done, programming the memory\r\n") ;
-			StartUpdate = 1 ;
-		}
-		else
-		{
-			memcpy(&FlashRxBuffer[ReceivedCount], pData, udp_len);
-			ReceivedCount += udp_len ;
-		}
-
-		pbuf_free(p_rx);
-	}
+    pbuf_free(p);
 }
 /*
  * Create new pcb, bind pcb and port, set call back function
@@ -207,11 +238,11 @@ int start_udp(void)
 	struct udp_pcb *pcb;
 	err_t err;
 
-//    err = qspi_init();
-//    if (err != XST_SUCCESS) {
-//        bsp_printf("QSPI init Failed\r\n");
-//    }
-//    bsp_printf("Successfully init QSPI\r\n");
+    err = qspi_init();
+    if (err != XST_SUCCESS) {
+        bsp_printf("QSPI init Failed\r\n");
+    }
+    bsp_printf("Successfully init QSPI\r\n");
 
 	pcb = udp_new();
 	if (!pcb) {
@@ -349,6 +380,8 @@ int udp_server_setup(void)
 void udp_transfer_data(void)
 {
     int Status;
+    char msg[60];
+
     if (TcpFastTmrFlag) {
         tcp_fasttmr();
         TcpFastTmrFlag = 0;
@@ -358,14 +391,28 @@ void udp_transfer_data(void)
         TcpSlowTmrFlag = 0;
     }
 	xemacif_input(&server_netif);
-	if (StartUpdate)
+	if (start_update_flag)
 	{
-		Status = update_qspi(&QspiInstance, QSPIPSU_DEVICE_ID, ReceivedCount, FlashRxBuffer) ;
-		if (Status != XST_SUCCESS)
-			xil_printf("Update Flash Error!\r\n") ;
-		StartUpdate = 0 ;
-		ReceivedCount = 0;
+//		Status = update_qspi(&QspiInstance, QSPIPSU_DEVICE_ID, ReceivedCount, FlashRxBuffer) ;
+//		if (Status != XST_SUCCESS)
+//			xil_printf("Update Flash Error!\r\n") ;
+//		StartUpdate = 0 ;
+//		ReceivedCount = 0;
+        xil_printf("Start QSPI Update!\r\n");
+        xil_printf("file size of BOOT.bin is %lu Bytes\r\n", total_bytes);
+        sprintf(msg, "file size of BOOT.bin is %lu Bytes\r\n", total_bytes);
+        sent_msg(msg);
+        if (qspi_update(total_bytes, rxbuffer) != XST_SUCCESS)
+        {
+            sent_msg("Update Qspi Error!\r\n");
+            xil_printf("Update Qspi Error!\r\n");
+        }
+        else
+        {
+            total_bytes = 0;
+        }
 	}
+    start_update_flag = 0;
 }
 
 #endif // XPAR_XEMACPS_NUM_INSTANCES && UDP_UPDATE

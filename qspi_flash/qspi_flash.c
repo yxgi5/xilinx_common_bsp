@@ -48,79 +48,60 @@ u8 WriteBuffer[PAGE_SIZE + DATA_OFFSET] __attribute__ ((aligned(64)));
 u8 CmdBfr[8];
 
 
-/*****************************************************************************/
-/**
- *Update flash data
- *
- * @param	None.
- *
- * @return	XST_SUCCESS if successful, else XST_FAILURE.
- *
- * @note	None.
- *
- *****************************************************************************/
-int update_qspi(XQspiPsu *QspiPsuInstancePtr, u16 QspiPsuDeviceId, unsigned int TotoalLen, char *FlashDataToSend)
+int qspi_init()
 {
-	int Status;
-	int i ;
-	unsigned int HasSendNum = 0 ;
-	unsigned int WriteAddr = 0 ;
-	unsigned int HasRecvNum = 0 ;
-	unsigned int ReadAddr = 0 ;
-	XTime TimerStart, TimerEnd;
-	float elapsed_time ;
+    int Status;
 
-	int PercentCurr = -1 ;
-	int PercentLast = -1 ;
-
-
+    //XQspiPs_Config *QspiConfig;
 	XQspiPsu_Config *QspiPsuConfig;
 
-	/*
-	 * Initialize the QSPIPSU driver so that it's ready to use
-	 */
-	QspiPsuConfig = XQspiPsu_LookupConfig(QspiPsuDeviceId);
+//    QspiConfig = XQspiPs_LookupConfig(QSPIPS_DEVICE_ID);
+//    if (QspiConfig == NULL) {
+//        return XST_FAILURE;
+//    }
+	QspiPsuConfig = XQspiPsu_LookupConfig(QSPIPSU_DEVICE_ID);
 	if (QspiPsuConfig == NULL) {
 		return XST_FAILURE;
 	}
 
-	/* To test, change connection mode here if not obtained from HDF */
-
-	Status = XQspiPsu_CfgInitialize(QspiPsuInstancePtr, QspiPsuConfig,
+//    Status = XQspiPs_CfgInitialize(&QspiInstance, QspiConfig,
+//            QspiConfig->BaseAddress);
+//    if (Status != XST_SUCCESS) {
+//        return XST_FAILURE;
+//    }
+	Status = XQspiPsu_CfgInitialize(&QspiInstance, QspiPsuConfig,
 			QspiPsuConfig->BaseAddress);
 	if (Status != XST_SUCCESS) {
 		return XST_FAILURE;
 	}
 
-	/*
-	 * Set Manual Start
-	 */
-	XQspiPsu_SetOptions(QspiPsuInstancePtr, XQSPIPSU_MANUAL_START_OPTION);
 
-	/*
-	 * Set the prescaler for QSPIPSU clock
-	 */
-	XQspiPsu_SetClkPrescaler(QspiPsuInstancePtr, XQSPIPSU_CLK_PRESCALE_8);
+//    XQspiPs_SetOptions(&QspiInstance, XQSPIPS_FORCE_SSELECT_OPTION | XQSPIPS_HOLD_B_DRIVE_OPTION);
+    XQspiPsu_SetOptions(&QspiInstance, XQSPIPSU_MANUAL_START_OPTION);
 
-	XQspiPsu_SelectFlash(QspiPsuInstancePtr,
+//    XQspiPs_SetClkPrescaler(&QspiInstance, XQSPIPS_CLK_PRESCALE_8);
+	XQspiPsu_SetClkPrescaler(&QspiInstance, XQSPIPSU_CLK_PRESCALE_8);
+
+//    XQspiPs_SetSlaveSelect(&QspiInstance);
+	XQspiPsu_SelectFlash(&QspiInstance,
 			XQSPIPSU_SELECT_FLASH_CS_LOWER,
 			XQSPIPSU_SELECT_FLASH_BUS_LOWER);
 
-	/*
-	 * Read flash ID and obtain all flash related information
-	 * It is important to call the read id function before
-	 * performing proceeding to any operation, including
-	 * preparing the WriteBuffer
-	 */
-	Status = FlashReadID(QspiPsuInstancePtr);
+
+//    FlashReadID();
+	Status = FlashReadID(&QspiInstance);
 	if (Status != XST_SUCCESS) {
 		return XST_FAILURE;
 	}
 
-	xil_printf("Flash connection mode : %d\n\r",
+	xil_printf("Flash connection mode : %d \n\r",
 			QspiPsuConfig->ConnectionMode);
-	xil_printf("where 0 - Single; 1 - Stacked; 2 - Parallel\n\r");
-	xil_printf("FCTIndex: %d\n\r", FCTIndex);
+	xil_printf("where 0 - Single; 1 - Stacked; 2 - Parallel \n\r");
+	xil_printf("FCTIndex: %d \n\r", FCTIndex);
+
+//	show_flash_info(FCTIndex);
+
+//    FlashQuadEnable(&QspiInstance);
 	/*
 	 * Address size and read command selection
 	 * Micron flash on REMUS doesn't support this 4B write/erase cmd
@@ -140,144 +121,341 @@ int update_qspi(XQspiPsu *QspiPsuInstancePtr, u16 QspiPsuDeviceId, unsigned int 
 			ReadCmd, WriteCmd, StatusCmd, FSRFlag);
 
 	if (Flash_Config_Table[FCTIndex].FlashDeviceSize > SIXTEENMB) {
-		Status = FlashEnterExit4BAddMode(QspiPsuInstancePtr, ENTER_4B);
+		Status = FlashEnterExit4BAddMode(&QspiInstance, ENTER_4B);
 		if (Status != XST_SUCCESS) {
 			return XST_FAILURE;
 		}
 	}
 
+    return XST_SUCCESS;
+}
 
-	/*
-	 * Erase the flash.
-	 */
-	printf("Performing Erase Operation...\r\n") ;
+int qspi_update(u32 total_bytes, const u8 *flash_data)
+{
+	int Status;
+    u8 *BufferPtr;
+    u8 pre_precent = -1;
+    u8 process_percent = 0;
+    u32 writed_len = 0;
+    u32 readed_len = 0;
+    u32 write_addr = 0;
+    u32 read_addr = 0;
+    char msg[60];
+    float start_time, over_time;
+    float elapsed_time;
+    int i;
+    int total_page = total_bytes / PAGE_SIZE + 1;
 
-	XTime_SetTime(0) ;
-	XTime_GetTime(&TimerStart) ;
-	Status = FlashErase(QspiPsuInstancePtr, 0, TotoalLen, CmdBfr);
+    bsp_printf("Performing Erase Operation...\r\n");
+    sent_msg("Performing Erase Operation...\r\n");
+    start_time = get_time_s();
+	Status = FlashErase(&QspiInstance, 0, total_bytes, CmdBfr);
 	if (Status != XST_SUCCESS) {
 		return XST_FAILURE;
 	}
-	XTime_GetTime(&TimerEnd) ;
-	printf("100%%\r\n") ;
-	elapsed_time = ((float)(TimerEnd-TimerStart))/((float)COUNTS_PER_SECOND) ;
-	printf("INFO:Elapsed time = %.2f sec\r\n", elapsed_time) ;
-	printf("Erase Operation Successful.\r\n") ;
+    over_time = get_time_s();
+    elapsed_time = over_time - start_time;
+    bsp_printf("Erase Operation Successful.\r\n");
+    bsp_printf("INFO:Elapsed time = %2.3f sec.\r\n", elapsed_time);
+    sent_msg("Erase Operation Successful.\r\n");
+    sprintf(msg, "INFO:Elapsed time = %2.3f sec.\r\n",elapsed_time);
+    sent_msg(msg);
 
-	/*
-	 * Program the flash.
-	 */
-	printf("Performing Program Operation...\r\n") ;
-	XTime_SetTime(0) ;
-	XTime_GetTime(&TimerStart) ;
-	do{
-		PercentCurr = (int)(((float)HasSendNum/(float)TotoalLen)*10) ;
+    bsp_printf("Performing Program Operation...\r\n");
+    sent_msg("Performing Program Operation...\r\n");
+    start_time = get_time_s();
+    for (i = 0; i < total_page; i++) {
+        process_percent = writed_len / (float) total_bytes * 10 + (float)1/2;
+        if (process_percent != pre_precent)
+            process_print(process_percent);
+        pre_precent = process_percent;
 
-		if (PercentCurr != PercentLast)
-			print_percent(PercentCurr) ;
-
-		PercentLast = PercentCurr ;
-
-		if ((HasSendNum+Flash_Config_Table[FCTIndex].PageSize) >= TotoalLen)
-		{
-			for (i = 0 ; i < Flash_Config_Table[FCTIndex].PageSize ; i++)
-			{
-				if (i >= TotoalLen-HasSendNum)
-				{
-					WriteBuffer[i] = 0 ;
-				}
-				else
-				{
-					WriteBuffer[i] = (u8)(FlashDataToSend[HasSendNum+i]);
-				}
-			}
-			FlashWrite(QspiPsuInstancePtr, WriteAddr, Flash_Config_Table[FCTIndex].PageSize, WriteCmd, WriteBuffer);
-			printf("100%%\r\n") ;
-			XTime_GetTime(&TimerEnd) ;
-			elapsed_time = (float)(TimerEnd-TimerStart)/(COUNTS_PER_SECOND) ;
-			printf("INFO:Elapsed time = %.2f sec\r\n", elapsed_time) ;
-			printf("Program Operation Successful.\r\n") ;
-			HasSendNum+= Flash_Config_Table[FCTIndex].PageSize ;
-		}
-		else
-		{
-			for (i = 0 ; i < Flash_Config_Table[FCTIndex].PageSize ; i++)
-			{
-				WriteBuffer[i] = (u8)(FlashDataToSend[HasSendNum+i]);
-			}
-			FlashWrite(QspiPsuInstancePtr, WriteAddr, Flash_Config_Table[FCTIndex].PageSize, WriteCmd, WriteBuffer);
-			HasSendNum+= Flash_Config_Table[FCTIndex].PageSize ;
-			WriteAddr+= Flash_Config_Table[FCTIndex].PageSize ;
-		}
-	}while(HasSendNum < TotoalLen) ;
-
-	HasSendNum = 0 ;
-	WriteAddr = 0 ;
-
-	/*
-	 * Verify the flash.
-	 */
-	printf("Performing Verify Operation...\r\n") ;
-	memset(ReadBuffer, 0x00, sizeof(ReadBuffer));
-	XTime_SetTime(0) ;
-	XTime_GetTime(&TimerStart) ;
-	do{
-		PercentCurr = (int)(((float)HasRecvNum/(float)TotoalLen)*10) ;
-
-		if (PercentCurr != PercentLast)
-			print_percent(PercentCurr) ;
-
-		PercentLast = PercentCurr ;
-
-		if ((HasRecvNum+Flash_Config_Table[FCTIndex].PageSize) >= TotoalLen)
-		{
-			FlashRead(QspiPsuInstancePtr, ReadAddr, Flash_Config_Table[FCTIndex].PageSize, ReadCmd, CmdBfr, ReadBuffer);
-			for (i = 0 ; i < TotoalLen-HasRecvNum; i++)
-			{
-				if (ReadBuffer[i] != (u8)(FlashDataToSend[HasRecvNum+i]))
-				{
-					printf("Verify data error, address is 0x%x\tSend Data is 0x%x\tRead Data is 0x%x\r\n",
-							ReadAddr+i+1,FlashDataToSend[HasRecvNum+i], ReadBuffer[i]) ;
-					break ;
-				}
-			}
-			HasRecvNum+= Flash_Config_Table[FCTIndex].PageSize ;
-			printf("100%%\r\n") ;
-			XTime_GetTime(&TimerEnd) ;
-			elapsed_time = (float)(TimerEnd-TimerStart)/(COUNTS_PER_SECOND) ;
-			printf("INFO:Elapsed time = %.2f sec\r\n", elapsed_time) ;
-			printf("Verify Operation Successful.\r\n") ;
-		}
-		else
-		{
-			FlashRead(QspiPsuInstancePtr, ReadAddr, Flash_Config_Table[FCTIndex].PageSize, ReadCmd, CmdBfr, ReadBuffer);
-			for (i = 0 ; i < Flash_Config_Table[FCTIndex].PageSize ; i++)
-			{
-				if (ReadBuffer[i] != (u8)(FlashDataToSend[HasRecvNum+i]))
-				{
-					printf("Verify data error, address is 0x%x\tSend Data is 0x%x\tRead Data is 0x%x\r\n",
-							ReadAddr+i+1,FlashDataToSend[HasRecvNum+i], ReadBuffer[i]) ;
-					break ;
-				}
-			}
-			HasRecvNum+= Flash_Config_Table[FCTIndex].PageSize ;
-			ReadAddr+= Flash_Config_Table[FCTIndex].PageSize ;
-		}
-	}while(HasRecvNum < TotoalLen) ;
-
-	HasRecvNum = 0 ;
-	ReadAddr = 0 ;
+        memcpy(&WriteBuffer[0], &flash_data[writed_len], PAGE_SIZE);
+        FlashWrite(&QspiInstance, write_addr, PAGE_SIZE, WRITE_CMD, WriteBuffer);
+        writed_len += PAGE_SIZE;
+        write_addr += PAGE_SIZE;
+    }
+    over_time = get_time_s();
+    elapsed_time = over_time - start_time;
+    bsp_printf("Program Operation Successful.\r\n");
+    printf("INFO:Elapsed time = %2.3f sec.\r\n", elapsed_time);
+    sent_msg("Program Operation Successful.\r\n");
+    sprintf(msg, "INFO:Elapsed time = %2.3f sec.\r\n",elapsed_time);
+    sent_msg(msg);
 
 
-	if (Flash_Config_Table[FCTIndex].FlashDeviceSize > SIXTEENMB) {
-		Status = FlashEnterExit4BAddMode(QspiPsuInstancePtr, EXIT_4B);
-		if (Status != XST_SUCCESS) {
-			return XST_FAILURE;
-		}
-	}
+//    BufferPtr = &ReadBuffer[DATA_OFFSET + DUMMY_SIZE];
+    printf("Performing Verify Operation...\r\n");
+    sent_msg("Performing Verify Operation...\r\n");
+    memset(ReadBuffer, 0x00, sizeof(ReadBuffer));
+    start_time = get_time_s();
+    while (readed_len < total_bytes) {
+        process_percent = readed_len / (float) total_bytes * 10 + (float)1/2;
+        if (process_percent != pre_precent)
+            process_print(process_percent);
+        pre_precent = process_percent;
 
-	return XST_SUCCESS;
+        FlashRead(&QspiInstance, read_addr, PAGE_SIZE, QUAD_READ_CMD, CmdBfr, ReadBuffer);
+        if ((readed_len + PAGE_SIZE) <= total_bytes) {
+            for (i = 0; i < PAGE_SIZE; i++)
+                if (ReadBuffer[i] != flash_data[readed_len + i])
+                    goto error_printf;
+        } else {
+            for (i = 0; i < total_bytes - readed_len; i++)
+                if (ReadBuffer[i] != flash_data[readed_len + i])
+                    goto error_printf;
+            over_time = get_time_s();
+            elapsed_time = over_time - start_time;
+            bsp_printf("Verify Operation Successful.\r\n");
+            printf("INFO:Elapsed time = %2.3f sec.\r\n", elapsed_time);
+            sent_msg("Verify Operation Successful.\r\n");
+            sprintf(msg, "INFO:Elapsed time = %2.3f sec.\r\n",elapsed_time);
+            sent_msg(msg);
+        }
+        readed_len += PAGE_SIZE;
+        read_addr += PAGE_SIZE;
+    }
+
+    return XST_SUCCESS;
+
+error_printf:
+	bsp_printf("Verify data error at address 0x%lx\tSend Data is 0x%x\tRead Data is 0x%x\r\n",
+            read_addr + i, flash_data[readed_len + i], BufferPtr[i]);
+    sprintf(msg, "Verify data error at address 0x%lx.\r\n",read_addr + i);
+    sent_msg(msg);
+    return XST_FAILURE;
 }
+
+/*****************************************************************************/
+/**
+ *Update flash data
+ *
+ * @param	None.
+ *
+ * @return	XST_SUCCESS if successful, else XST_FAILURE.
+ *
+ * @note	None.
+ *
+ *****************************************************************************/
+//int update_qspi(XQspiPsu *QspiPsuInstancePtr, u16 QspiPsuDeviceId, unsigned int TotoalLen, char *FlashDataToSend)
+//{
+//	int Status;
+//	int i ;
+//	unsigned int HasSendNum = 0 ;
+//	unsigned int WriteAddr = 0 ;
+//	unsigned int HasRecvNum = 0 ;
+//	unsigned int ReadAddr = 0 ;
+//	XTime TimerStart, TimerEnd;
+//	float elapsed_time ;
+//
+//	int PercentCurr = -1 ;
+//	int PercentLast = -1 ;
+//
+//
+//	XQspiPsu_Config *QspiPsuConfig;
+//
+//	/*
+//	 * Initialize the QSPIPSU driver so that it's ready to use
+//	 */
+//	QspiPsuConfig = XQspiPsu_LookupConfig(QspiPsuDeviceId);
+//	if (QspiPsuConfig == NULL) {
+//		return XST_FAILURE;
+//	}
+//
+//	/* To test, change connection mode here if not obtained from HDF */
+//
+//	Status = XQspiPsu_CfgInitialize(QspiPsuInstancePtr, QspiPsuConfig,
+//			QspiPsuConfig->BaseAddress);
+//	if (Status != XST_SUCCESS) {
+//		return XST_FAILURE;
+//	}
+//
+//	/*
+//	 * Set Manual Start
+//	 */
+//	XQspiPsu_SetOptions(QspiPsuInstancePtr, XQSPIPSU_MANUAL_START_OPTION);
+//
+//	/*
+//	 * Set the prescaler for QSPIPSU clock
+//	 */
+//	XQspiPsu_SetClkPrescaler(QspiPsuInstancePtr, XQSPIPSU_CLK_PRESCALE_8);
+//
+//	XQspiPsu_SelectFlash(QspiPsuInstancePtr,
+//			XQSPIPSU_SELECT_FLASH_CS_LOWER,
+//			XQSPIPSU_SELECT_FLASH_BUS_LOWER);
+//
+//	/*
+//	 * Read flash ID and obtain all flash related information
+//	 * It is important to call the read id function before
+//	 * performing proceeding to any operation, including
+//	 * preparing the WriteBuffer
+//	 */
+//	Status = FlashReadID(QspiPsuInstancePtr);
+//	if (Status != XST_SUCCESS) {
+//		return XST_FAILURE;
+//	}
+//
+//	xil_printf("Flash connection mode : %d\n\r",
+//			QspiPsuConfig->ConnectionMode);
+//	xil_printf("where 0 - Single; 1 - Stacked; 2 - Parallel\n\r");
+//	xil_printf("FCTIndex: %d\n\r", FCTIndex);
+//	/*
+//	 * Address size and read command selection
+//	 * Micron flash on REMUS doesn't support this 4B write/erase cmd
+//	 */
+//	ReadCmd = QUAD_READ_CMD;
+//	WriteCmd = WRITE_CMD;
+//	SectorEraseCmd = SEC_ERASE_CMD;
+//
+//	/* Status cmd  */
+//
+//	StatusCmd = READ_STATUS_CMD;
+//	FSRFlag = 0;
+//
+//
+//	xil_printf("ReadCmd: 0x%x, WriteCmd: 0x%x,"
+//			" StatusCmd: 0x%x, FSRFlag: %d\n\r",
+//			ReadCmd, WriteCmd, StatusCmd, FSRFlag);
+//
+//	if (Flash_Config_Table[FCTIndex].FlashDeviceSize > SIXTEENMB) {
+//		Status = FlashEnterExit4BAddMode(QspiPsuInstancePtr, ENTER_4B);
+//		if (Status != XST_SUCCESS) {
+//			return XST_FAILURE;
+//		}
+//	}
+//
+//
+//	/*
+//	 * Erase the flash.
+//	 */
+//	printf("Performing Erase Operation...\r\n") ;
+//
+//	XTime_SetTime(0) ;
+//	XTime_GetTime(&TimerStart) ;
+//	Status = FlashErase(QspiPsuInstancePtr, 0, TotoalLen, CmdBfr);
+//	if (Status != XST_SUCCESS) {
+//		return XST_FAILURE;
+//	}
+//	XTime_GetTime(&TimerEnd) ;
+//	printf("100%%\r\n") ;
+//	elapsed_time = ((float)(TimerEnd-TimerStart))/((float)COUNTS_PER_SECOND) ;
+//	printf("INFO:Elapsed time = %.2f sec\r\n", elapsed_time) ;
+//	printf("Erase Operation Successful.\r\n") ;
+//
+//	/*
+//	 * Program the flash.
+//	 */
+//	printf("Performing Program Operation...\r\n") ;
+//	XTime_SetTime(0) ;
+//	XTime_GetTime(&TimerStart) ;
+//	do{
+//		PercentCurr = (int)(((float)HasSendNum/(float)TotoalLen)*10) ;
+//
+//		if (PercentCurr != PercentLast)
+//			print_percent(PercentCurr) ;
+//
+//		PercentLast = PercentCurr ;
+//
+//		if ((HasSendNum+Flash_Config_Table[FCTIndex].PageSize) >= TotoalLen)
+//		{
+//			for (i = 0 ; i < Flash_Config_Table[FCTIndex].PageSize ; i++)
+//			{
+//				if (i >= TotoalLen-HasSendNum)
+//				{
+//					WriteBuffer[i] = 0 ;
+//				}
+//				else
+//				{
+//					WriteBuffer[i] = (u8)(FlashDataToSend[HasSendNum+i]);
+//				}
+//			}
+//			FlashWrite(QspiPsuInstancePtr, WriteAddr, Flash_Config_Table[FCTIndex].PageSize, WriteCmd, WriteBuffer);
+//			printf("100%%\r\n") ;
+//			XTime_GetTime(&TimerEnd) ;
+//			elapsed_time = (float)(TimerEnd-TimerStart)/(COUNTS_PER_SECOND) ;
+//			printf("INFO:Elapsed time = %.2f sec\r\n", elapsed_time) ;
+//			printf("Program Operation Successful.\r\n") ;
+//			HasSendNum+= Flash_Config_Table[FCTIndex].PageSize ;
+//		}
+//		else
+//		{
+//			for (i = 0 ; i < Flash_Config_Table[FCTIndex].PageSize ; i++)
+//			{
+//				WriteBuffer[i] = (u8)(FlashDataToSend[HasSendNum+i]);
+//			}
+//			FlashWrite(QspiPsuInstancePtr, WriteAddr, Flash_Config_Table[FCTIndex].PageSize, WriteCmd, WriteBuffer);
+//			HasSendNum+= Flash_Config_Table[FCTIndex].PageSize ;
+//			WriteAddr+= Flash_Config_Table[FCTIndex].PageSize ;
+//		}
+//	}while(HasSendNum < TotoalLen) ;
+//
+//	HasSendNum = 0 ;
+//	WriteAddr = 0 ;
+//
+//	/*
+//	 * Verify the flash.
+//	 */
+//	printf("Performing Verify Operation...\r\n") ;
+//	memset(ReadBuffer, 0x00, sizeof(ReadBuffer));
+//	XTime_SetTime(0) ;
+//	XTime_GetTime(&TimerStart) ;
+//	do{
+//		PercentCurr = (int)(((float)HasRecvNum/(float)TotoalLen)*10) ;
+//
+//		if (PercentCurr != PercentLast)
+//			print_percent(PercentCurr) ;
+//
+//		PercentLast = PercentCurr ;
+//
+//		if ((HasRecvNum+Flash_Config_Table[FCTIndex].PageSize) >= TotoalLen)
+//		{
+//			FlashRead(QspiPsuInstancePtr, ReadAddr, Flash_Config_Table[FCTIndex].PageSize, ReadCmd, CmdBfr, ReadBuffer);
+//			for (i = 0 ; i < TotoalLen-HasRecvNum; i++)
+//			{
+//				if (ReadBuffer[i] != (u8)(FlashDataToSend[HasRecvNum+i]))
+//				{
+//					printf("Verify data error, address is 0x%x\tSend Data is 0x%x\tRead Data is 0x%x\r\n",
+//							ReadAddr+i+1,FlashDataToSend[HasRecvNum+i], ReadBuffer[i]) ;
+//					break ;
+//				}
+//			}
+//			HasRecvNum+= Flash_Config_Table[FCTIndex].PageSize ;
+//			printf("100%%\r\n") ;
+//			XTime_GetTime(&TimerEnd) ;
+//			elapsed_time = (float)(TimerEnd-TimerStart)/(COUNTS_PER_SECOND) ;
+//			printf("INFO:Elapsed time = %.2f sec\r\n", elapsed_time) ;
+//			printf("Verify Operation Successful.\r\n") ;
+//		}
+//		else
+//		{
+//			FlashRead(QspiPsuInstancePtr, ReadAddr, Flash_Config_Table[FCTIndex].PageSize, ReadCmd, CmdBfr, ReadBuffer);
+//			for (i = 0 ; i < Flash_Config_Table[FCTIndex].PageSize ; i++)
+//			{
+//				if (ReadBuffer[i] != (u8)(FlashDataToSend[HasRecvNum+i]))
+//				{
+//					printf("Verify data error, address is 0x%x\tSend Data is 0x%x\tRead Data is 0x%x\r\n",
+//							ReadAddr+i+1,FlashDataToSend[HasRecvNum+i], ReadBuffer[i]) ;
+//					break ;
+//				}
+//			}
+//			HasRecvNum+= Flash_Config_Table[FCTIndex].PageSize ;
+//			ReadAddr+= Flash_Config_Table[FCTIndex].PageSize ;
+//		}
+//	}while(HasRecvNum < TotoalLen) ;
+//
+//	HasRecvNum = 0 ;
+//	ReadAddr = 0 ;
+//
+//
+//	if (Flash_Config_Table[FCTIndex].FlashDeviceSize > SIXTEENMB) {
+//		Status = FlashEnterExit4BAddMode(QspiPsuInstancePtr, EXIT_4B);
+//		if (Status != XST_SUCCESS) {
+//			return XST_FAILURE;
+//		}
+//	}
+//
+//	return XST_SUCCESS;
+//}
 
 /*****************************************************************************/
 /**
