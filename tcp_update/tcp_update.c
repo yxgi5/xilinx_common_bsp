@@ -155,14 +155,31 @@ void sent_msg(const char *msg)
 #endif
 }
 
+/** Close a tcp session */
+static void tcp_server_close(struct tcp_pcb *pcb)
+{
+	err_t err;
+
+	if (pcb != NULL) {
+		tcp_recv(pcb, NULL);
+		tcp_err(pcb, NULL);
+		err = tcp_close(pcb);
+		if (err != ERR_OK) {
+			/* Free memory with abort */
+			tcp_abort(pcb);
+		}
+	}
+}
+
 static err_t recv_callback(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, err_t err)
 {
 #if 1
     struct pbuf *q;
 
     if (!p) {
-        tcp_close(tpcb);
-        tcp_recv(tpcb, NULL);
+//        tcp_close(tpcb);
+//        tcp_recv(tpcb, NULL);
+    	tcp_server_close(tpcb);
         xil_printf("tcp connection closed\r\n");
         return ERR_OK;
     }
@@ -215,6 +232,19 @@ static err_t recv_callback(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, err_
 #endif
 }
 
+
+/** Error callback, tcp session aborted */
+static void tcp_server_err(void *arg, err_t err)
+{
+	LWIP_UNUSED_ARG(err);
+//	u64_t now = get_time_ms();
+//	u64_t diff_ms = now - server.start_time;
+	tcp_server_close(client_pcb);
+	client_pcb = NULL;
+//	tcp_conn_report(diff_ms, TCP_ABORTED_REMOTE);
+	xil_printf("TCP connection aborted\n\r");
+}
+
 err_t accept_callback(void *arg, struct tcp_pcb *newpcb, err_t err)
 {
     xil_printf("tcp_server: Connection Accepted\r\n");
@@ -222,6 +252,7 @@ err_t accept_callback(void *arg, struct tcp_pcb *newpcb, err_t err)
 
     tcp_recv(client_pcb, recv_callback);
     tcp_arg(client_pcb, NULL);
+    tcp_err(client_pcb, tcp_server_err);
 
     return ERR_OK;
 }
