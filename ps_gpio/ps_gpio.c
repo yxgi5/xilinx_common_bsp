@@ -6,6 +6,7 @@
  */
 
 #include "../bsp.h"
+#if defined (XPAR_XGPIOPS_NUM_INSTANCES)
 
 XGpioPs Gpio;
 
@@ -73,3 +74,6 @@ int PsGpioSetup(XGpioPs *InstancePtr, u16 DeviceId)
 
 	return XST_SUCCESS ;
 }
+
+#endif // XPAR_XGPIOPS_NUM_INSTANCES
+

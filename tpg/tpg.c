@@ -139,7 +139,7 @@ int tpg_config(void)
     //Start the TPG0
     XV_tpg_EnableAutoRestart(&tpg_inst0);
     XV_tpg_Start(&tpg_inst0);
-    bsp_printf("TPG0 started!\r\n");
+    //bsp_printf("TPG0 started!\r\n");
 
     return XST_SUCCESS;
 }
