@@ -8,21 +8,35 @@
 //#include <stdio.h>
 //#include <string.h>
 
-#if (XPAR_XVTC_NUM_INSTANCES == 1U)
+//#if (XPAR_XVTC_NUM_INSTANCES == 1U)
+//XVtc        VtcInst0;
+//#elif (XPAR_XVTC_NUM_INSTANCES == 2U)
+//XVtc        VtcInst0;
+//XVtc        VtcInst1;
+//#elif (XPAR_XVTC_NUM_INSTANCES == 3U)
+//XVtc        VtcInst0;
+//XVtc        VtcInst1;
+//XVtc        VtcInst2;
+//#elif (XPAR_XVTC_NUM_INSTANCES == 4U)
+//XVtc        VtcInst0;
+//XVtc        VtcInst1;
+//XVtc        VtcInst2;
+//XVtc        VtcInst3;
+//#endif
+
+#if (XPAR_XVTC_NUM_INSTANCES >= 1U)
 XVtc        VtcInst0;
-#elif (XPAR_XVTC_NUM_INSTANCES == 2U)
-XVtc        VtcInst0;
+#endif // XPAR_XVTC_NUM_INSTANCES == 1U
+#if (XPAR_XVTC_NUM_INSTANCES >= 2U)
 XVtc        VtcInst1;
-#elif (XPAR_XVTC_NUM_INSTANCES == 3U)
-XVtc        VtcInst0;
-XVtc        VtcInst1;
+#endif // XPAR_XVTC_NUM_INSTANCES == 2U
+#if (XPAR_XVTC_NUM_INSTANCES >= 3U)
 XVtc        VtcInst2;
-#elif (XPAR_XVTC_NUM_INSTANCES == 4U)
-XVtc        VtcInst0;
-XVtc        VtcInst1;
-XVtc        VtcInst2;
+#endif // XPAR_XVTC_NUM_INSTANCES == 3U
+#if (XPAR_XVTC_NUM_INSTANCES >= 4U)
 XVtc        VtcInst3;
-#endif
+#endif // XPAR_XVTC_NUM_INSTANCES == 4U
+
 
 vres_timing_t vres_resolutions[VIDEO_RESOLUTION_NO_BUTT] = {
    // name     	vav,  vfp,  vsw,  vbp,  vsp,  hav,  hfp,  hsw,  hbp,  hsp
