@@ -16,7 +16,7 @@
 #include "xparameters.h"
 #if defined (PLATFORM_ZYNQMP) || defined (PLATFORM_ZYNQ)
 #include "xparameters_ps.h"	// defines XPAR values
-#endif
+#endif // PLATFORM_ZYNQMP || PLATFORM_ZYNQ
 #include "xil_types.h"
 #include "xil_assert.h"
 #include "xil_cache.h"
@@ -35,25 +35,31 @@
 //简单串口打印，不支持浮点数
 #ifndef __PPC__ // znyq zynqmp mb都可以用，排除PPC架构
 #include "xil_printf.h"
-#endif
+#endif // __PPC__
 
 //下面是串口非打印所需
+//#if defined (XPAR_XUARTLITE_NUM_INSTANCES)	// 一般用 uart lite，znyq zynqmp mb都可以用
+//#include "xuartlite_l.h"
+////#elif defined (ARMR5) || defined (__aarch64__) || defined (__arm__)	// zynqmp 有 r5 核， a53 核， znyq有 a9 核
+//#elif defined (XPAR_XUARTPS_NUM_INSTANCES)  // 如果没有 uart lite，再检查是否有 ps uart
+//#include "xuartps.h"
+//#endif
 #if defined (XPAR_XUARTLITE_NUM_INSTANCES)	// 一般用 uart lite，znyq zynqmp mb都可以用
 #include "xuartlite_l.h"
-//#elif defined (ARMR5) || defined (__aarch64__) || defined (__arm__)	// zynqmp 有 r5 核， a53 核， znyq有 a9 核
-#elif defined (XPAR_XUARTPS_NUM_INSTANCES)  // 如果没有 uart lite，再检查是否有 ps uart
+#endif // XPAR_XUARTLITE_NUM_INSTANCESs
+#if defined (XPAR_XUARTPS_NUM_INSTANCES)  // ps uart
 #include "xuartps.h"
-#endif
+#endif // XPAR_XUARTPS_NUM_INSTANCES
 
 // 一般都会设置hw的版本号
 #ifdef XPAR_AXI_LITE_REG_NUM_INSTANCES
 #include "AXI_LITE_REG.h"
-#endif
+#endif // XPAR_AXI_LITE_REG_NUM_INSTANCES
 
 // axis stream 监测
 #ifdef XPAR_AXI_PASSTHROUGH_MONITOR_NUM_INSTANCES
 #include "axis_passthrough_monitor.h"
-#endif
+#endif // XPAR_AXI_PASSTHROUGH_MONITOR_NUM_INSTANCES
 
 // IAP methods
 // udp remote update
