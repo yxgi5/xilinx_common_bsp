@@ -21,7 +21,7 @@
 	#include "xtime_l.h"
 #endif
 
-#if defined (__UDP_UPDATE_H__)
+#if defined (__UDP_UPDATE_H__) || defined (__TCP_UPDATE_H__)
 	#if defined (PLATFORM_ZYNQ) || defined (PLATFORM_ZYNQMP)
 		#include "arch/cc.h"
 //		#define INTC_DEVICE_ID			XPAR_SCUGIC_SINGLE_DEVICE_ID
@@ -115,7 +115,7 @@ void init_uart(void)
     /* Bootrom/BSP configures PS7/PSU UART to 115200 bps */
 }
 
-#if defined (UDP_UPDATE)
+#if defined (UDP_UPDATE) || defined (TCP_UPDATE)
 
 #if defined (PLATFORM_ZYNQ)
 void timer_callback(XScuTimer * TimerInstance)
@@ -414,7 +414,7 @@ float get_time_s(void)
 }
 #endif
 
-#endif // UDP_UPDATE
+#endif // UDP_UPDATE || TCP_UPDATE
 
 void init_platform(void)
 {
@@ -434,7 +434,7 @@ void init_platform(void)
 
     enable_caches();
     init_uart();
-#if defined (UDP_UPDATE)
+#if defined (UDP_UPDATE) || defined (TCP_UPDATE)
 	platform_setup_timer();
 	platform_setup_interrupts();
 #endif

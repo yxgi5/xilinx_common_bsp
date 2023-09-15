@@ -36,7 +36,7 @@
 void init_platform(void);
 void cleanup_platform(void);
 
-#if defined (UDP_UPDATE)
+#if defined (UDP_UPDATE) || defined (TCP_UPDATE)
 void timer_callback();
 void platform_setup_timer();
 void platform_enable_interrupts();

@@ -10,5 +10,6 @@
 //#define ADS7128
 
 //#define UDP_UPDATE
+#define TCP_UPDATE
 
 #endif // __CONFIG_H__

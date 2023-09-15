@@ -129,7 +129,7 @@ int qspi_init()
 
     return XST_SUCCESS;
 }
-#if defined (UDP_UPDATE)
+#if defined (UDP_UPDATE) || defined (TCP_UPDATE)
 int qspi_update(u32 total_bytes, const u8 *flash_data)
 {
 	int Status;
@@ -225,7 +225,7 @@ error_printf:
     sent_msg(msg);
     return XST_FAILURE;
 }
-#endif // UDP_UPDATE
+#endif // UDP_UPDATE || TCP_UPDATE
 
 /*****************************************************************************/
 /**

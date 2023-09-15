@@ -40,7 +40,7 @@
 //下面是串口非打印所需
 #if defined (XPAR_XUARTLITE_NUM_INSTANCES)	// 一般用 uart lite，znyq zynqmp mb都可以用
 #include "xuartlite_l.h"
-//#elif defined (ARMR5) || (__aarch64__) || (__arm__)	// zynqmp 有 r5 核， a53 核， znyq有 a9 核
+//#elif defined (ARMR5) || defined (__aarch64__) || defined (__arm__)	// zynqmp 有 r5 核， a53 核， znyq有 a9 核
 #elif defined (XPAR_XUARTPS_NUM_INSTANCES)  // 如果没有 uart lite，再检查是否有 ps uart
 #include "xuartps.h"
 #endif
@@ -55,8 +55,12 @@
 #include "axis_passthrough_monitor.h"
 #endif
 
-// udp_update
+// IAP methods
+// udp remote update
 #include "udp_update/udp_update.h"
+// tcp remote update
+#include "tcp_update/tcp_update.h"
+
 
 // 中断发生器
 //#if defined (__MICROBLAZE__)
@@ -65,7 +69,7 @@
 //#include "xscugic.h"
 //#endif
 
-//#if defined (ARMR5) || (__aarch64__) || (__arm__)
+//#if defined (ARMR5) || defined (__aarch64__) || defined (__arm__)
 //#include "xscugic.h"
 //#else
 //#include "xintc.h"

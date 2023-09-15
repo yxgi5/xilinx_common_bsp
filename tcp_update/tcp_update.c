@@ -1,27 +1,15 @@
 #include "../bsp.h"
 
-#if defined (XPAR_XEMACPS_NUM_INSTANCES) && defined (UDP_UPDATE)
+#if defined (XPAR_XEMACPS_NUM_INSTANCES) && defined (TCP_UPDATE)
 
-static struct udp_pcb *client_pcb = NULL;
-//ip_addr_t target_addr;
-//unsigned char ip_export[4];
-//unsigned char mac_export[6];
+static struct tcp_pcb *client_pcb = NULL;
 
-//char FlashRxBuffer[MAX_FLASH_LEN] ;
 u8 rxbuffer[MAX_FLASH_LEN];
-//unsigned int ReceivedCount = 0 ;
 u32 total_bytes = 0;
 
 extern XQspiPsu QspiInstance;
 
-int start_update_flag = 0 ;
-
-//int FrameLengthCurr = 0 ;
-
-/* defined by each RAW mode application */
-//int start_udp();
-//int transfer_data(const char *pData, int len, const ip_addr_t *addr) ;
-//int send_data(const char *frame, int data_len);
+u8 start_update_flag = 0;
 
 /* missing declaration in lwIP */
 void lwip_init();
@@ -90,8 +78,8 @@ struct netif server_netif;
 
 void print_app_header(void)
 {
-	xil_printf("\n\r\n\r-----LwIP UDP Remote Update------\n\r");
-	xil_printf("UDP packets sent to port %d\n\r", UDP_SER_PORT);
+	xil_printf("\n\r\n\r-----LwIP TCP Remote Update------\n\r");
+	xil_printf("TCP packets sent to port %d\n\r", TCP_SER_PORT);
 }
 
 void process_print(u8 percent)
@@ -147,73 +135,42 @@ void process_print(u8 percent)
 
 void sent_msg(const char *msg)
 {
-	static struct pbuf *pbuf2sent;
-
-	pbuf2sent = pbuf_alloc(PBUF_TRANSPORT, strlen(msg), PBUF_POOL);
-    if (!pbuf2sent)
-        xil_printf("Error allocating pbuf\r\n");
-
-    memcpy(pbuf2sent->payload, msg, strlen(msg));
-
-    if (udp_send(client_pcb, pbuf2sent) != ERR_OK)
-        xil_printf("UDP send error\r\n");
-
-    pbuf_free(pbuf2sent);
+#if 1
+	err_t err;
+    tcp_nagle_disable(client_pcb);
+    u32 tmp = tcp_sndbuf(client_pcb);
+//    if (tcp_sndbuf(client_pcb) > strlen(msg))
+    if(tmp > strlen(msg))
+    {
+        err = tcp_write(client_pcb, msg, strlen(msg), TCP_WRITE_FLAG_COPY);
+        if (err != ERR_OK)
+            xil_printf("tcp_server: Error on tcp_write: %d\r\n", err);
+        err = tcp_output(client_pcb);
+        if (err != ERR_OK)
+            xil_printf("tcp_server: Error on tcp_output: %d\r\n", err);
+    } else
+    {
+        xil_printf("no space in tcp_sndbuf\r\n");
+    }
+#endif
 }
 
-/*
- * Call back funtion for udp receiver
- *
- * @param arg is argument
- * @param pcb is udp pcb pointer
- * @param p_rx is pbuf pointer
- * @param addr is IP address
- * @param port is udp port
- *
- */
-//void udp_recv_callback(void *arg, struct udp_pcb *pcb, struct pbuf *p_rx,
-//		const ip_addr_t *ip, u16_t port) {
-//
-//	char *pData;
-//	pcb->remote_ip = *ip;
-//	pcb->remote_port = port;
-//	client_pcb = pcb;
-//
-//	if (p_rx != NULL)
-//	{
-//		pData = (char *) p_rx->payload;
-//
-//		int udp_len = p_rx->len ;
-//
-//		if (!(memcmp("update", p_rx->payload + p_rx->len - 6, 6)))
-//		{
-//			memcpy(&FlashRxBuffer[ReceivedCount], pData, udp_len - 6);
-//			ReceivedCount += udp_len - 6 ;
-//			xil_printf("Received Size is %u Bytes\r\n", ReceivedCount) ;
-//			xil_printf("Initialization done, programming the memory\r\n") ;
-//			start_update_flag = 1 ;
-//		}
-//		else
-//		{
-//			memcpy(&FlashRxBuffer[ReceivedCount], pData, udp_len);
-//			ReceivedCount += udp_len ;
-//		}
-//
-//		pbuf_free(p_rx);
-//	}
-//}
-void udp_recv_callback(void *arg, struct udp_pcb *upcb, struct pbuf *p,
-		const ip_addr_t *ip, u16_t port)
+static err_t recv_callback(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, err_t err)
 {
+#if 1
     struct pbuf *q;
+
+    if (!p) {
+        tcp_close(tpcb);
+        tcp_recv(tpcb, NULL);
+        xil_printf("tcp connection closed\r\n");
+        return ERR_OK;
+    }
     q = p;
-    upcb->remote_ip = *ip;
-    upcb->remote_port = port;
-    client_pcb = upcb;
 
     if (q->tot_len == 6 && !(memcmp("update", p->payload, 6))) {
         start_update_flag = 1;
-        sent_msg("Start QSPI Update\r\n");
+        sent_msg("\r\nStart QSPI Update\r\n");
     } else if (q->tot_len == 5 && !(memcmp("clear", p->payload, 5))) {
         start_update_flag = 0;
         total_bytes = 0;
@@ -229,50 +186,91 @@ void udp_recv_callback(void *arg, struct udp_pcb *upcb, struct pbuf *p,
         total_bytes += q->len;
     }
 
+    tcp_recved(tpcb, p->tot_len);
     pbuf_free(p);
+
+    return ERR_OK;
+#else
+	/* do not read the packet if we are not in ESTABLISHED state */
+	if (!p) {
+		tcp_close(tpcb);
+		tcp_recv(tpcb, NULL);
+		return ERR_OK;
+	}
+
+	/* indicate that the packet has been received */
+	tcp_recved(tpcb, p->len);
+
+	/* echo back the payload */
+	/* in this case, we assume that the payload is < TCP_SND_BUF */
+	if (tcp_sndbuf(tpcb) > p->len) {
+		err = tcp_write(tpcb, p->payload, p->len, 1);
+	} else
+		xil_printf("no space in tcp_sndbuf\n\r");
+
+	/* free the received pbuf */
+	pbuf_free(p);
+
+	return ERR_OK;
+#endif
 }
-/*
- * Create new pcb, bind pcb and port, set call back function
- */
-int start_udp(void)
+
+err_t accept_callback(void *arg, struct tcp_pcb *newpcb, err_t err)
 {
-	struct udp_pcb *pcb;
-	err_t err;
+    xil_printf("tcp_server: Connection Accepted\r\n");
+    client_pcb = newpcb;
+
+    tcp_recv(client_pcb, recv_callback);
+    tcp_arg(client_pcb, NULL);
+
+    return ERR_OK;
+}
+
+int start_tcp(void)
+{
+    struct tcp_pcb *pcb;
+    err_t err;
 
     err = qspi_init();
     if (err != XST_SUCCESS) {
-        bsp_printf("QSPI init Failed\r\n");
+        xil_printf("QSPI init Failed\r\n");
+        return XST_FAILURE;
     }
-    bsp_printf("Successfully init QSPI\r\n");
+    xil_printf("Successfully init QSPI\r\n");
 
-	pcb = udp_new();
-	if (!pcb) {
-		bsp_printf("Error creating PCB. Out of Memory\n\r");
-		return -1;
-	}
-	/* bind to specified @port */
-	err = udp_bind(pcb, IP_ADDR_ANY, UDP_SER_PORT);
-	if (err != ERR_OK) {
-		bsp_printf("Unable to bind to port %d: err = %d\n\r", UDP_SER_PORT, err);
-		udp_remove(pcb);
-		return -2;
-	}
-	udp_recv(pcb, udp_recv_callback, NULL);
-//	IP4_ADDR(&target_addr, 192,168,1,35);
-	bsp_printf("UDP server started @ port %d\n\r", UDP_SER_PORT);
+//    pcb = tcp_new_ip_type(IPADDR_TYPE_ANY);
+    pcb = tcp_new();
+    if (!pcb) {
+        xil_printf("Error creating PCB. Out of Memory\n\r");
+        return -1;
+    }
 
-	return 0;
+    err = tcp_bind(pcb, IP_ANY_TYPE, TCP_SER_PORT);
+    if (err != ERR_OK) {
+        xil_printf("Unable to bind to port %d: err = %d\n\r", TCP_SER_PORT, err);
+        tcp_close(pcb);
+        return -2;
+    }
+
+    tcp_arg(pcb, NULL);
+
+    pcb = tcp_listen(pcb);
+    if (!pcb) {
+        xil_printf("Out of memory while tcp_listen\n\r");
+        return -3;
+    }
+
+    tcp_accept(pcb, accept_callback);
+
+    xil_printf("TCP server started @ port %d\n\r", TCP_SER_PORT);
+
+    return 0;
 }
 
-int udp_server_setup(void)
+int tcp_server_setup(void)
 {
-
-	 int Status;
-	 struct netif *netif;
-
-//#if LWIP_IPV6==0
-//	 ip_addr_t ipaddr, netmask, gw;
-//#endif
+	int Status;
+	struct netif *netif;
 
 	/* the mac address of the board. this should be unique per board */
 	unsigned char mac_ethernet_address[] = { 0x10, 0x0a, 0x35, 0x00, 0x01, 0x02 };
@@ -296,46 +294,9 @@ int udp_server_setup(void)
 
 //	init_platform();
 
-//#if LWIP_IPV6==0
-//#if LWIP_DHCP==1
-//	ipaddr.addr = 0;
-//	gw.addr = 0;
-//	netmask.addr = 0;
-//#else
-//	/* initliaze IP addresses to be used */
-//	IP4_ADDR(&ipaddr,  192, 168,   1, 10);
-//	IP4_ADDR(&netmask, 255, 255, 255,  0);
-//	IP4_ADDR(&gw,      192, 168,   1,  1);
-//#endif
-//#endif
-
 	print_app_header();
 
 	lwip_init();
-
-//#if (LWIP_IPV6 == 0)
-//	/* Add network interface to the netif_list, and set it as default */
-//	if (!xemac_add(netif, &ipaddr, &netmask,
-//			&gw, mac_ethernet_address,
-//			PLATFORM_EMAC_BASEADDR)) {
-//		xil_printf("Error adding N/W interface\n\r");
-//		return -1;
-//	}
-//#else
-//	/* Add network interface to the netif_list, and set it as default */
-//	if (!xemac_add(netif, NULL, NULL, NULL, mac_ethernet_address,
-//			PLATFORM_EMAC_BASEADDR)) {
-//		xil_printf("Error adding N/W interface\n\r");
-//		return -1;
-//	}
-//	netif->ip6_autoconfig_enabled = 1;
-//
-//	netif_create_ip6_linklocal_address(netif, 1);
-//	netif_ip6_addr_set_state(netif, 0, IP6_ADDR_VALID);
-//
-//	print_ip6("\n\rBoard IPv6 address ", &netif->ip6_addr[0].u_addr.ip6);
-//
-//#endif
 
 	/* Add network interface to the netif_list, and set it as default */
 	if (!xemac_add(netif, NULL, NULL, NULL, mac_ethernet_address,
@@ -360,51 +321,66 @@ int udp_server_setup(void)
 	/* specify that the network if is up */
 	netif_set_up(netif);
 
-#if (LWIP_IPV6 == 0)
+#if (LWIP_IPV6==0)
 #if (LWIP_DHCP==1)
 	/* Create a new DHCP client for this interface.
 	 * Note: you must call dhcp_fine_tmr() and dhcp_coarse_tmr() at
 	 * the predefined regular intervals after starting the client.
 	 */
-	dhcp_start(netif);
-	dhcp_timoutcntr = 24;
+    dhcp_start(netif);
+    dhcp_timoutcntr = 24;
 
-	while(((netif->ip_addr.addr) == 0) && (dhcp_timoutcntr > 0))
-		xemacif_input(netif);
+    while (((netif->ip_addr.addr) == 0) && (dhcp_timoutcntr > 0))
+        xemacif_input(netif);
 
-	if (dhcp_timoutcntr <= 0) {
-		if ((netif->ip_addr.addr) == 0) {
-			xil_printf("ERROR: DHCP request timed out\r\n");
-			xil_printf("Configuring default IP of 192.168.1.10\r\n");
-//			IP4_ADDR(&(netif->ip_addr),  192, 168,   1, 10);
-//			IP4_ADDR(&(netif->netmask), 255, 255, 255,  0);
-//			IP4_ADDR(&(netif->gw),      192, 168,   1,  1);
-			assign_default_ip(&(netif->ip_addr), &(netif->netmask), &(netif->gw));
-		}
-	}
+    if (dhcp_timoutcntr <= 0) {
+        if ((netif->ip_addr.addr) == 0) {
+            xil_printf("ERROR: DHCP request timed out\r\n");
+            xil_printf("Configuring default IP of 192.168.1.10\r\n");
+            assign_default_ip(&(netif->ip_addr), &(netif->netmask), &(netif->gw));
+        }
+    }
 
-//	ipaddr.addr = netif->ip_addr.addr;
-//	gw.addr = netif->gw.addr;
-//	netmask.addr = netif->netmask.addr;
 #else
-	assign_default_ip(&(netif->ip_addr), &(netif->netmask), &(netif->gw));
-#endif // LWIP_DHCP
-//	print_ip_settings(&ipaddr, &netmask, &gw);
-	print_ip_settings(&(netif->ip_addr), &(netif->netmask), &(netif->gw));
-
-//	memcpy(ip_export, &ipaddr, 4);
-//	memcpy(mac_export, &mac_ethernet_address, 6);
+    assign_default_ip(&(netif->ip_addr), &(netif->netmask), &(netif->gw));
+#endif
+    print_ip_settings(&(netif->ip_addr), &(netif->netmask), &(netif->gw));
 #endif // LWIP_IPV6
 
-	/* start the application (web server, rxtest, txtest, etc..) */
-	start_udp();
+	start_tcp();
 }
 
+///** Close a tcp session */
+//void tcp_server_close(struct tcp_pcb *pcb)
+//{
+//	err_t err;
+//
+//	if (pcb != NULL) {
+//		tcp_recv(pcb, NULL);
+//		tcp_err(pcb, NULL);
+//		err = tcp_close(pcb);
+//		if (err != ERR_OK) {
+//			/* Free memory with abort */
+//			tcp_abort(pcb);
+//		}
+//	}
+//}
+///** Error callback, tcp session aborted */
+//static void tcp_server_err(void *arg, err_t err)
+//{
+//	LWIP_UNUSED_ARG(err);
+//	u64_t now = get_time_ms();
+//	u64_t diff_ms = now - server.start_time;
+//	tcp_server_close(client_pcb);
+//	c_pcb = NULL;
+//	tcp_conn_report(diff_ms, TCP_ABORTED_REMOTE);
+//	xil_printf("TCP connection aborted\n\r");
+//}
 
-void udp_transfer_data(void)
+void tcp_transfer_data(void)
 {
-    int Status;
-    char msg[60];
+	int Status;
+	char msg[60];
 
     if (TcpFastTmrFlag) {
         tcp_fasttmr();
@@ -439,4 +415,4 @@ void udp_transfer_data(void)
     start_update_flag = 0;
 }
 
-#endif // XPAR_XEMACPS_NUM_INSTANCES && UDP_UPDATE
+#endif // XPAR_XEMACPS_NUM_INSTANCES && TCP_UPDATE

@@ -216,14 +216,18 @@ int main()
 	}
 #endif // XPAR_XCSI_NUM_INSTANCES
 
-#ifdef UDP_UPDATE
+#if defined (UDP_UPDATE)
 	udp_server_setup();
+#elif defined (TCP_UPDATE)
+	tcp_server_setup();
 #endif
 
     while(1)
     {
-#ifdef UDP_UPDATE
+#if defined (UDP_UPDATE)
     	udp_transfer_data();
+#elif defined (TCP_UPDATE)
+    	tcp_transfer_data();
 #endif
 //    	bsp_printf("pi=%f\n\r",3.1415);
 //    	ret32 = xgpio_i2c_reg16_read(I2C_NO_0, 0x80>>1, 0x0000, &ret8, STRETCH_ON);

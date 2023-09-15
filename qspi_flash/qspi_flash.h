@@ -140,7 +140,9 @@ typedef struct{
 /************************** Function Prototypes ******************************/
 
 int qspi_init(void);
+#if defined (UDP_UPDATE) || defined (TCP_UPDATE)
 int qspi_update(u32 total_bytes, const u8 *flash_data);
+#endif // UDP_UPDATE || TCP_UPDATE
 //int update_qspi(XQspiPsu *QspiPsuInstancePtr, u16 QspiPsuDeviceId, unsigned int TotoalLen, char *FlashDataToSend) ;
 
 int FlashReadID(XQspiPsu *QspiPsuPtr);
