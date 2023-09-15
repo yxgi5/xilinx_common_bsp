@@ -147,6 +147,7 @@ void process_print(u8 percent)
 
 void sent_msg(const char *msg)
 {
+#if (SEND_MSG == 1U)
 	static struct pbuf *pbuf2sent;
 
 	pbuf2sent = pbuf_alloc(PBUF_TRANSPORT, strlen(msg), PBUF_POOL);
@@ -159,6 +160,7 @@ void sent_msg(const char *msg)
         xil_printf("UDP send error\r\n");
 
     pbuf_free(pbuf2sent);
+#endif
 }
 
 /*

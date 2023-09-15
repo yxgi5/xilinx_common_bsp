@@ -25,6 +25,8 @@
 	#define DEFAULT_GW_ADDRESS  "192.168.1.1"
 #endif // LWIP_IPV6
 
+#define SEND_MSG	(0U)		// 1 - enable, 0 - disable
+
 extern volatile int TcpFastTmrFlag;
 extern volatile int TcpSlowTmrFlag;
 

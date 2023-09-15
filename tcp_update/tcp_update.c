@@ -135,7 +135,7 @@ void process_print(u8 percent)
 
 void sent_msg(const char *msg)
 {
-#if 1
+#if (SEND_MSG == 1U)
 	err_t err;
     tcp_nagle_disable(client_pcb);
     u32 tmp = tcp_sndbuf(client_pcb);
