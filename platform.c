@@ -67,6 +67,35 @@
 		//extern struct netif *netif;
 	#endif // PLATFORM_ZYNQ
 
+
+	#if defined (__MICROBLAZE__) || defined (__PPC__)
+		#include "arch/cc.h"
+		/* Platform timer is calibrated for 250 ms, so kept interval value 4 to call
+		 * eth_link_detect() at every one second
+		 */
+		#define ETH_LINK_DETECT_INTERVAL (4)
+		void tcp_fasttmr(void);
+		void tcp_slowtmr(void);
+		volatile int TcpFastTmrFlag = 0;
+		volatile int TcpSlowTmrFlag = 0;
+		XIntc intc;
+		#if LWIP_DHCP==1
+			volatile int dhcp_timoutcntr = 24;
+			void dhcp_fine_tmr();
+			void dhcp_coarse_tmr();
+		#endif // LWIP_DHCP
+		//extern struct netif *echo_netif;
+	#endif // __MICROBLAZE__ || __PPC__
+
+	#if defined (__MICROBLAZE__)
+		#include "xtmrctr_l.h"
+	#endif // __MICROBLAZE__
+
+	#if defined (__PPC__)
+		#include "xexception_l.h"
+//		#include "xtime_l.h"
+	#endif // __PPC__
+
 #endif // __UDP_UPDATE_H__
 
 void enable_caches(void)
@@ -116,6 +145,45 @@ void init_uart(void)
 }
 
 #if defined (UDP_UPDATE) || defined (TCP_UPDATE)
+
+#if defined (__MICROBLAZE__) || defined (__PPC__)
+void timer_callback(void)
+{
+	static int DetectEthLinkStatus = 0;
+	/* we need to call tcp_fasttmr & tcp_slowtmr at intervals specified by lwIP.
+	 * It is not important that the timing is absoluetly accurate.
+	 */
+	static int odd = 1;
+#if LWIP_DHCP==1
+    static int dhcp_timer = 0;
+#endif
+	DetectEthLinkStatus++;
+
+	TcpFastTmrFlag = 1;
+	odd = !odd;
+	if (odd) {
+
+#if LWIP_DHCP==1
+		dhcp_timer++;
+		dhcp_timoutcntr--;
+#endif
+		TcpSlowTmrFlag = 1;
+#if LWIP_DHCP==1
+		dhcp_fine_tmr();
+		if (dhcp_timer >= 120) {
+			dhcp_coarse_tmr();
+			dhcp_timer = 0;
+		}
+#endif
+	}
+
+	/* For detecting Ethernet phy link status periodically */
+	if (DetectEthLinkStatus == ETH_LINK_DETECT_INTERVAL) {
+		eth_link_detect(echo_netif);
+		DetectEthLinkStatus = 0;
+	}
+}
+#endif // __MICROBLAZE__ || __PPC__
 
 #if defined (PLATFORM_ZYNQ)
 void timer_callback(XScuTimer * TimerInstance)
@@ -222,8 +290,86 @@ void timer_callback(XTtcPs * TimerInstance)
 }
 #endif // PLATFORM_ZYNQMP
 
+
+#if defined (__MICROBLAZE__)
+void xadapter_timer_handler(void *p)
+{
+	timer_callback();
+
+	/* Load timer, clear interrupt bit */
+	XTmrCtr_SetControlStatusReg(PLATFORM_TIMER_BASEADDR, 0,
+			XTC_CSR_INT_OCCURED_MASK
+			| XTC_CSR_LOAD_MASK);
+
+	XTmrCtr_SetControlStatusReg(PLATFORM_TIMER_BASEADDR, 0,
+			XTC_CSR_ENABLE_TMR_MASK
+			| XTC_CSR_ENABLE_INT_MASK
+			| XTC_CSR_AUTO_RELOAD_MASK
+			| XTC_CSR_DOWN_COUNT_MASK);
+
+	XIntc_AckIntr(XPAR_INTC_0_BASEADDR, PLATFORM_TIMER_INTERRUPT_MASK);
+}
+
+#define MHZ (66)
+#define TIMER_TLR (25000000*((float)MHZ/100))
+#endif // __MICROBLAZE__
+
+#if defined (__PPC__)
+void xadapter_timer_handler(void *p)
+{
+	timer_callback();
+
+	XTime_TSRClearStatusBits(XREG_TSR_CLEAR_ALL);
+}
+
+#define MHZ 400
+#define PIT_INTERVAL (250*MHZ*1000)
+#endif // __PPC__
+
 void platform_setup_timer(void)
 {
+#if defined (__MICROBLAZE__)
+	/* set the number of cycles the timer counts before interrupting */
+	/* 100 Mhz clock => .01us for 1 clk tick. For 100ms, 10000000 clk ticks need to elapse  */
+	XTmrCtr_SetLoadReg(PLATFORM_TIMER_BASEADDR, 0, TIMER_TLR);
+
+	/* reset the timers, and clear interrupts */
+	XTmrCtr_SetControlStatusReg(PLATFORM_TIMER_BASEADDR, 0, XTC_CSR_INT_OCCURED_MASK | XTC_CSR_LOAD_MASK );
+
+	/* start the timers */
+	XTmrCtr_SetControlStatusReg(PLATFORM_TIMER_BASEADDR, 0,
+			XTC_CSR_ENABLE_TMR_MASK | XTC_CSR_ENABLE_INT_MASK
+			| XTC_CSR_AUTO_RELOAD_MASK | XTC_CSR_DOWN_COUNT_MASK);
+
+	/* Register Timer handler */
+	XIntc_RegisterHandler(XPAR_INTC_0_BASEADDR,
+			PLATFORM_TIMER_INTERRUPT_INTR,
+			(XInterruptHandler)xadapter_timer_handler,
+			0);
+#endif // __MICROBLAZE__
+
+#if  defined (__PPC__)
+#ifdef XPAR_CPU_PPC440_CORE_CLOCK_FREQ_HZ
+	Xil_ExceptionRegisterHandler(XIL_EXCEPTION_ID_DEC_INT,
+			(XExceptionHandler)xadapter_timer_handler, NULL);
+
+	/* Set DEC to interrupt every 250 mseconds */
+	XTime_DECSetInterval(PIT_INTERVAL);
+	XTime_TSRClearStatusBits(XREG_TSR_CLEAR_ALL);
+	XTime_DECEnableAutoReload();
+	XTime_DECEnableInterrupt();
+#else
+	Xil_ExceptionRegisterHandler(XIL_EXCEPTION_ID_PIT_INT,
+			(XExceptionHandler)xadapter_timer_handler, NULL);
+
+	/* Set PIT to interrupt every 250 mseconds */
+	XTime_PITSetInterval(PIT_INTERVAL);
+	XTime_TSRClearStatusBits(XREG_TSR_CLEAR_ALL);
+	XTime_PITEnableAutoReload();
+	XTime_PITEnableInterrupt();
+#endif
+#endif // __PPC__
+
 #if defined (PLATFORM_ZYNQ)
 	int Status = XST_SUCCESS;
 	XScuTimer_Config *ConfigPtr;
@@ -335,11 +481,73 @@ void platform_setup_interrupts(void)
 	}
 
 	return;
-#endif // PLATFORM_ZYNQMP
+#endif // PLATFORM_ZYNQMP || PLATFORM_ZYNQ
+
+#if defined (__MICROBLAZE__) || defined (__PPC__)
+	XIntc *intcp;
+	intcp = &intc;
+
+	XIntc_Initialize(intcp, XPAR_INTC_0_DEVICE_ID);
+	XIntc_Start(intcp, XIN_REAL_MODE);
+
+	/* Start the interrupt controller */
+	XIntc_MasterEnable(XPAR_INTC_0_BASEADDR);
+
+#ifdef __PPC__
+	Xil_ExceptionInit();
+	Xil_ExceptionRegisterHandler(XIL_EXCEPTION_ID_INT,
+			(XExceptionHandler)XIntc_DeviceInterruptHandler,
+			(void*) XPAR_INTC_0_DEVICE_ID);
+#elif __MICROBLAZE__
+	microblaze_register_handler((XInterruptHandler)XIntc_InterruptHandler, intcp);
+#endif
+
+	platform_setup_timer();
+
+#ifdef XPAR_ETHERNET_MAC_IP2INTC_IRPT_MASK
+	/* Enable timer and EMAC interrupts in the interrupt controller */
+	XIntc_EnableIntr(XPAR_INTC_0_BASEADDR,
+#ifdef __MICROBLAZE__
+			PLATFORM_TIMER_INTERRUPT_MASK |
+#endif
+			XPAR_ETHERNET_MAC_IP2INTC_IRPT_MASK);
+#endif
+
+
+#ifdef XPAR_INTC_0_LLTEMAC_0_VEC_ID
+#ifdef __MICROBLAZE__
+	XIntc_Enable(intcp, PLATFORM_TIMER_INTERRUPT_INTR);
+#endif
+	XIntc_Enable(intcp, XPAR_INTC_0_LLTEMAC_0_VEC_ID);
+#endif
+
+
+#ifdef XPAR_INTC_0_AXIETHERNET_0_VEC_ID
+	XIntc_Enable(intcp, PLATFORM_TIMER_INTERRUPT_INTR);
+	XIntc_Enable(intcp, XPAR_INTC_0_AXIETHERNET_0_VEC_ID);
+#endif
+
+
+#ifdef XPAR_INTC_0_EMACLITE_0_VEC_ID
+#ifdef __MICROBLAZE__
+	XIntc_Enable(intcp, PLATFORM_TIMER_INTERRUPT_INTR);
+#endif
+	XIntc_Enable(intcp, XPAR_INTC_0_EMACLITE_0_VEC_ID);
+#endif
+
+#endif // __MICROBLAZE__ || __PPC__
 }
 
 void platform_enable_interrupts()
 {
+#if defined (__MICROBLAZE__)
+	microblaze_enable_interrupts();
+#endif // __MICROBLAZE__
+
+#if defined (__PPC__)
+	Xil_ExceptionEnable();
+#endif // __PPC__
+
 #if defined (PLATFORM_ZYNQ)
 	/*
 	 * Enable non-critical exceptions.
@@ -434,10 +642,16 @@ void init_platform(void)
 
     enable_caches();
     init_uart();
+
 #if defined (UDP_UPDATE) || defined (TCP_UPDATE)
-	platform_setup_timer();
-	platform_setup_interrupts();
-#endif
+
+	#if defined (PLATFORM_ZYNQ) || defined (PLATFORM_ZYNQMP)
+		platform_setup_timer();
+	#endif // PLATFORM_ZYNQ  || PLATFORM_ZYNQMP
+
+		platform_setup_interrupts();
+
+#endif // UDP_UPDATE || TCP_UPDATE
 }
 
 void cleanup_platform(void)

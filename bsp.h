@@ -11,6 +11,15 @@
 //#include <assert.h>
 //#include <ctype.h>
 
+/*
+ * PLATFORM_ZYNQ or PLATFORM_ZYNQMP defined in xparameters.h
+#if defined (__arm__) && !defined (ARMR5)
+#define PLATFORM_ZYNQ
+#endif
+#if defined (ARMR5) || (__aarch64__) || (ARMA53_32)
+#define PLATFORM_ZYNQMP
+#endif
+ */
 
 //引入xilinx定义的通用头文件
 #include "xparameters.h"
@@ -77,14 +86,18 @@
 
 //#if defined (ARMR5) || defined (__aarch64__) || defined (__arm__)
 //#include "xscugic.h"
+//#include "xil_exception.h"
 //#else
 //#include "xintc.h"
+//#include "xil_exception.h"
 //#endif
 
 #if defined (XPAR_XSCUGIC_NUM_INSTANCES)
 #include "xscugic.h"
+#include "xil_exception.h"
 #elif defined (XPAR_XINTC_NUM_INSTANCES)
 #include "xintc.h"
+#include "xil_exception.h"
 #endif
 
 
