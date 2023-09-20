@@ -33,6 +33,8 @@
 #include "xgpio.h"
 #include "sleep.h"
 
+extern XGpio XGpioInst;
+
 #if defined(XPAR_XGPIO_I2C_0_AXI_GPIO_0_DEVICE_ID)
 
 #define XIO_I2C_NUM 	(4U)	// 1~16

@@ -219,4 +219,55 @@ extern XQspiPs QspiInstance;
 
 #endif // XPAR_XQSPIPS_NUM_INSTANCES
 
+#if (XPAR_AXI_QUAD_SPI_0_SPI_MODE == 2U)
+#define __QSPI_FLASH_H__
+#include "xspi.h"		/* SPI device driver */
+#include "xspi_l.h"
+#define QSPI_DEVICE_ID 		XPAR_AXI_QUAD_SPI_0_DEVICE_ID
+
+//·¢ËÍµœFLASHÆ÷ŒþµÄÖžÁî
+#define WRITE_STATUS_CMD	0x01
+#define WRITE_CMD			0x02
+#define READ_CMD			0x03
+#define WRITE_DISABLE_CMD	0x04
+#define READ_STATUS_CMD		0x05
+#define WRITE_ENABLE_CMD	0x06
+#define FAST_READ_CMD		0x0B
+#define DUAL_READ_CMD		0x3B
+#define QUAD_READ_CMD		0x6B
+#define BULK_ERASE_CMD		0xC7
+#define	SEC_ERASE_CMD		0xD8
+#define READ_ID				0x9F
+
+//FLASH BUFFERÖÐž÷ÊýŸÝµÄÆ«ÒÆÁ¿
+#define COMMAND_OFFSET		0  // FLASH instruction */
+#define ADDRESS_1_OFFSET	1  // MSB byte of address to read or write */
+#define ADDRESS_2_OFFSET	2  // Middle byte of address to read or write */
+#define ADDRESS_3_OFFSET	3  // LSB byte of address to read or write */
+#define DATA_OFFSET			4  // Start of Data for Read/Write */
+#define DUMMY_OFFSET		4  // Dummy byte offset for fast, dual and quad reads
+#define DUMMY_SIZE			1  // Number of dummy bytes for fast, dual and quad reads
+#define RD_ID_SIZE			4  // Read ID command + 3 bytes ID response */
+#define READ_STATUS_SIZE	2
+#define WRITE_STATUS_SIZE	2
+#define BULK_ERASE_SIZE		1  // Bulk Erase command size */
+#define SEC_ERASE_SIZE		4  // Sector Erase command + Sector address */
+#define OVERHEAD_SIZE		4  // control information: command and address
+#define FLASH_SR_IS_READY_MASK		0x01 /* Ready mask */
+
+#define SECTOR_SIZE		0x10000
+#define NUM_SECTORS		0x100
+#define NUM_PAGES		0x10000
+#define PAGE_SIZE		256
+
+void FlashErase(XSpi *XSpiPtr, u32 Address, u32 ByteCount);
+void FlashWrite(XSpi *XSpiPtr, u32 Address, u32 ByteCount, u8 Command);
+void FlashRead(XSpi *XSpiPtr, u32 Address, u32 ByteCount, u8 Command);
+int FlashReadID(void);
+void FlashQuadEnable(XSpi *XSpiPtr);
+
+extern XSpi  XSpiInstance;
+
+#endif // XPAR_AXI_QUAD_SPI_0_SPI_MODE == 2U
+
 #endif // __QSPI_FLASH_H__

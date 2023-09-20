@@ -27,7 +27,7 @@ ps i2c dosen't support streching, use MIO/XGPIO or XIIC
 //#define	DES_CFG
 //#define	SERDES_3G
 
-#define SIL9136
+//#define SIL9136
 //#define IT6801
 //#define ADS7128
 
@@ -40,7 +40,7 @@ bsp config memp_n_tcp_pcb 32
 bsp config memp_n_tcp_seg 1024
 bsp config pbuf_pool_size 16384
 bsp config tcp_snd_buf 65536
-bsp config tcp_wnd 65536
+bsp config tcp_wnd 65535
 bsp config n_rx_descriptors 512
 bsp config n_tx_descriptors 512
  *

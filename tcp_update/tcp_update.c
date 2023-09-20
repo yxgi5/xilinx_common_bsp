@@ -1,13 +1,19 @@
 #include "../bsp.h"
 
-#if defined (XPAR_XEMACPS_NUM_INSTANCES) && defined (TCP_UPDATE)
+#if defined (XPAR_XEMACPS_NUM_INSTANCES) || defined (XPAR_XAXIETHERNET_NUM_INSTANCES)
+#if defined (TCP_UPDATE)
 
 static struct tcp_pcb *client_pcb = NULL;
 
 u8 rxbuffer[MAX_FLASH_LEN];
 u32 total_bytes = 0;
 
-extern XQspiPsu QspiInstance;
+//#if (XPAR_XQSPIPSU_NUM_INSTANCES == 1U)
+//extern XQspiPsu QspiInstance;
+//#endif // XPAR_XQSPIPSU_NUM_INSTANCES == 1U
+//#if (XPAR_XQSPIPS_NUM_INSTANCES==1)
+//extern XQspiPs QspiInstance;
+//#endif // XPAR_XQSPIPS_NUM_INSTANCES==1
 
 u8 start_update_flag = 0;
 
@@ -446,4 +452,6 @@ void tcp_transfer_data(void)
     start_update_flag = 0;
 }
 
-#endif // XPAR_XEMACPS_NUM_INSTANCES && TCP_UPDATE
+#endif // TCP_UPDATE
+
+#endif // XPAR_XEMACPS_NUM_INSTANCES || XPAR_XAXIETHERNET_NUM_INSTANCES

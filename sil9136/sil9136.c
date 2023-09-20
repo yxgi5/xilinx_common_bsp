@@ -1,6 +1,6 @@
 #include "../bsp.h"
 
-#if defined (__XGPIO_I2C_H__) && defined (SIL9136)
+#if defined (XPAR_XGPIO_I2C_0_AXI_GPIO_0_DEVICE_ID) && defined (SIL9136)
 
 void sil9136_config(void)
 {
@@ -40,5 +40,5 @@ void sil9136_config(void)
 	xgpio_i2c_reg8_write(I2C_NO_0, 0x72>>1, 0x1A, 0x00, STRETCH_OFF); //
 }
 
-#endif // __XGPIO_I2C_H__ && SIL9136
+#endif // XPAR_XGPIO_I2C_0_AXI_GPIO_0_DEVICE_ID && SIL9136
 

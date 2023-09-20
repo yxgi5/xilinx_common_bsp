@@ -78,6 +78,13 @@ int main()
 		Xil_Assert(__FILE__, __LINE__);
 		return XST_FAILURE ;
 	}
+#elif defined (XPAR_XGPIO_NUM_INSTANCES)
+    Status = xgpio_setup(&XGpioInst, XPAR_AXI_GPIO_0_DEVICE_ID, 0, 0);
+    if (Status != XST_SUCCESS)
+	{
+		Xil_Assert(__FILE__, __LINE__);
+		return XST_FAILURE ;
+	}
 #endif // XPAR_XGPIO_I2C_0_AXI_GPIO_0_DEVICE_ID
 
 

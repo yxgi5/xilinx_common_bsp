@@ -1,7 +1,9 @@
 #ifndef __UDP_UPDATE_H__
 
 //#include "xparameters.h"
-#if defined (XPAR_XEMACPS_NUM_INSTANCES) && defined (UDP_UPDATE)
+#if defined (XPAR_XEMACPS_NUM_INSTANCES) || defined (XPAR_XAXIETHERNET_NUM_INSTANCES)
+
+#if defined (UDP_UPDATE)
 #define __UDP_UPDATE_H__
 #include "lwipopts.h"
 #include "lwip/priv/tcp_priv.h"
@@ -30,7 +32,13 @@
 extern volatile int TcpFastTmrFlag;
 extern volatile int TcpSlowTmrFlag;
 
+#if defined (XPAR_XEMACPS_NUM_INSTANCES)
 #define PLATFORM_EMAC_BASEADDR XPAR_XEMACPS_0_BASEADDR
+#endif // XPAR_XEMACPS_NUM_INSTANCES
+#if defined (XPAR_XAXIETHERNET_NUM_INSTANCES)
+#define PLATFORM_EMAC_BASEADDR XPAR_AXI_ETHERNET_0_BASEADDR
+#endif // XPAR_XAXIETHERNET_NUM_INSTANCES
+
 #define MAX_FLASH_LEN   32*1024*1024
 
 #define UDP_SER_PORT            (6789)
@@ -40,6 +48,6 @@ extern struct netif server_netif;
 void udp_transfer_data(void);
 int udp_server_setup(void);
 
-#endif // XPAR_XEMACPS_NUM_INSTANCES && UDP_UPDATE
-
+#endif // UDP_UPDATE
+#endif // XPAR_XEMACPS_NUM_INSTANCES || XPAR_XAXIETHERNET_NUM_INSTANCES
 #endif // __UDP_UPDATE_H__

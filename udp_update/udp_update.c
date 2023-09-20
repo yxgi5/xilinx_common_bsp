@@ -1,6 +1,7 @@
 #include "../bsp.h"
 
-#if defined (XPAR_XEMACPS_NUM_INSTANCES) && defined (UDP_UPDATE)
+#if defined (XPAR_XEMACPS_NUM_INSTANCES) || defined (XPAR_XAXIETHERNET_NUM_INSTANCES)
+#if defined (UDP_UPDATE)
 
 static struct udp_pcb *client_pcb = NULL;
 //ip_addr_t target_addr;
@@ -12,7 +13,12 @@ u8 rxbuffer[MAX_FLASH_LEN];
 //unsigned int ReceivedCount = 0 ;
 u32 total_bytes = 0;
 
-extern XQspiPsu QspiInstance;
+//#if (XPAR_XQSPIPSU_NUM_INSTANCES == 1U)
+//extern XQspiPsu QspiInstance;
+//#endif // XPAR_XQSPIPSU_NUM_INSTANCES == 1U
+//#if (XPAR_XQSPIPS_NUM_INSTANCES==1)
+//extern XQspiPs QspiInstance;
+//#endif // XPAR_XQSPIPS_NUM_INSTANCES==1
 
 int start_update_flag = 0 ;
 
@@ -441,4 +447,7 @@ void udp_transfer_data(void)
     start_update_flag = 0;
 }
 
-#endif // XPAR_XEMACPS_NUM_INSTANCES && UDP_UPDATE
+
+#endif // UDP_UPDATE
+
+#endif // XPAR_XEMACPS_NUM_INSTANCES || XPAR_XAXIETHERNET_NUM_INSTANCES

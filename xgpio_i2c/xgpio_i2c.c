@@ -28,6 +28,8 @@
 
 #if defined(XPAR_XGPIO_NUM_INSTANCES)
 
+XGpio XGpioInst;
+
 #if defined(XPAR_XGPIO_I2C_0_AXI_GPIO_0_DEVICE_ID)
 //#include "xgpio_i2c.h"
 //#include "sleep.h"
@@ -35,8 +37,8 @@
 
 //#define  XGPIO_ID  XPAR_GPIO_0_DEVICE_ID
 #define  XGPIO_ID  XPAR_XGPIO_I2C_0_AXI_GPIO_0_DEVICE_ID
-XGpio XGpioInst;
-XGpio XGpioInst1;
+//XGpio XGpioInst;
+//XGpio XGpioInst1;
 
 XGpio_I2C_Cfg XGpio_I2C_CfgTable[I2C_NO_BUTT] =
 {

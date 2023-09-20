@@ -1,6 +1,6 @@
 #ifndef __SIL9136_H__
 
-#if defined (__XGPIO_I2C_H__) && defined (SIL9136)
+#if defined (XPAR_XGPIO_I2C_0_AXI_GPIO_0_DEVICE_ID) && defined (SIL9136)
 #define __SIL9136_H__
 
 #define SIL9136_1080P60
