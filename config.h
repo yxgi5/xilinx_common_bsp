@@ -1,6 +1,8 @@
 #ifndef __CONFIG_H__
 #define __CONFIG_H__
 
+//#define SW_VER_BY_COMPILE_TIME
+
 /*
  * for rs485 tcl settings(mb/zynq/znyqmp)
 bsp config stdin axi_uartlite_0

@@ -37,7 +37,11 @@
 #include "platform.h"
 #include "dbg_trace.h"
 #include "bitmanip.h"
+#if defined (SW_VER_BY_COMPILE_TIME)
+#include "version/version.h"
+#else
 #include "version.h"
+#endif // SW_VER_BY_COMPILE_TIME
 
 //直接引入的外设库头文件
 

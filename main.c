@@ -95,10 +95,15 @@ int main()
 	__HW_VER__ = AXI_LITE_REG_mReadReg(XPAR_AXI_LITE_REG_0_S00_AXI_BASEADDR, AXI_LITE_REG_S00_AXI_SLV_REG0_OFFSET);
 	bsp_printf("hardware ver = 0x%08x\n\r", __HW_VER__);
 #endif // XPAR_AXI_LITE_REG_NUM_INSTANCES
-#if defined (__SW_VER__)
+#ifdef SW_VER_BY_COMPILE_TIME
+    __SW_VER__ = GetSoftWareVersion();
+    bsp_printf("software ver = 0x%08x\n\r", __SW_VER__);
+    bsp_printf("***************************\n\r");
+#elif defined (__SW_VER__)
     bsp_printf("software ver = 0x%08x\n\r", __SW_VER__);
     bsp_printf("***************************\n\r");
 #endif // __SW_VER__
+
 
 #if defined(__SIL9136_H__)
     sil9136_config();
