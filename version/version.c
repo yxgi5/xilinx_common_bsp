@@ -33,7 +33,7 @@ RTC_TIME_DEF GetSoftWareBuildTargetTime(void)
     RTC_TIME_DEF stTime;
 
     sprintf(arrDate,"%s",__DATE__);//
-    sprintf(arrTime,"%s",__TIME__);//
+    sprintf(arrTime,"%s",__TIME__);// UCT for Xilinx compiler, +8 == CST (E8区)
 
     sprintf(pDest, "%s", str_n_cpy(pDest, arrDate, 3));
 
@@ -61,7 +61,7 @@ RTC_TIME_DEF GetSoftWareBuildTargetTime(void)
 
     //time
     sprintf(pDest, "%s", str_n_cpy(pDest, arrTime, 2));
-    stTime.nHour = atoi(pDest);
+    stTime.nHour = atoi(pDest) + 8; // +8 for E8 CST
     sprintf(pDest, "%s", str_n_cpy(pDest, arrTime+3, 2));
     stTime.nMinute = atoi(pDest);
     sprintf(pDest, "%s", str_n_cpy(pDest, arrTime + 3 + 3, 2));

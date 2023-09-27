@@ -84,7 +84,7 @@ struct netif server_netif;
 
 void print_app_header(void)
 {
-	xil_printf("\n\r\n\r-----LwIP TCP Remote Update------\n\r");
+	xil_printf("\n\r-----LwIP TCP Remote Update------\n\r");
 	xil_printf("TCP packets sent to port %d\n\r", TCP_SER_PORT);
 }
 

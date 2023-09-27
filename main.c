@@ -90,7 +90,7 @@ int main()
 
     bsp_printf("***************************\n\r");
     bsp_printf("Test common API.\n\r");
-    bsp_printf("\r\n%s,%s\r\n",__DATE__,__TIME__);
+    bsp_printf("\r\n%s, UTC %s\r\n",__DATE__,__TIME__);
 #if defined (XPAR_AXI_LITE_REG_NUM_INSTANCES) && (XPAR_AXI_LITE_REG_0_DEVICE_ID == 0)
 	__HW_VER__ = AXI_LITE_REG_mReadReg(XPAR_AXI_LITE_REG_0_S00_AXI_BASEADDR, AXI_LITE_REG_S00_AXI_SLV_REG0_OFFSET);
 	bsp_printf("hardware ver = 0x%08x\n\r", __HW_VER__);
