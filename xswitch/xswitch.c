@@ -65,7 +65,11 @@ int AxisSwitch(u16 DeviceId, XAxis_Switch * pAxisSwitch, u8 SiIndex, u8 MiIndex)
     /* Check for MI port enable */
     Status = XAxisScr_IsMiPortEnabled(pAxisSwitch, MiIndex, SiIndex);
     if (Status) {
-    	bsp_printf("Switch %d: MI[%d] is sourced from SI[%d].\r\n", num, MiIndex, SiIndex);
+    	//bsp_printf("Switch %d: MI[%d] is sourced from SI[%d].\r\n", num, MiIndex, SiIndex);
+    }
+    else
+    {
+    	return XST_FAILURE;
     }
 
     return XST_SUCCESS;

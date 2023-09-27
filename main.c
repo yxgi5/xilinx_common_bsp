@@ -209,6 +209,14 @@ int main()
 	}
 #endif // XPAR_XAXIVDMA_NUM_INSTANCES
 
+#if defined (XPAR_XVPROCSS_NUM_INSTANCES)
+	Status = vpss_config();
+	if (Status != XST_SUCCESS)
+	{
+		Xil_Assert(__FILE__, __LINE__);
+		return XST_FAILURE ;
+	}
+#endif // XPAR_XVPROCSS_NUM_INSTANCES
 
 #if defined (XPAR_XCSI2TX_NUM_INSTANCES)
 	Status = csi_tx_config();
