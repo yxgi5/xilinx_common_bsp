@@ -88,7 +88,7 @@ int main()
 #endif // XPAR_XGPIO_I2C_0_AXI_GPIO_0_DEVICE_ID
 
 
-    bsp_printf("***************************\n\r");
+    bsp_printf("\r\n\r\n***************************\n\r");
     bsp_printf("Test common API.\n\r");
     bsp_printf("\r\n%s, UTC %s\r\n",__DATE__,__TIME__);
 #if defined (XPAR_AXI_LITE_REG_NUM_INSTANCES) && (XPAR_AXI_LITE_REG_0_DEVICE_ID == 0)
@@ -102,7 +102,7 @@ int main()
 #elif defined (__SW_VER__)
     bsp_printf("software ver = 0x%08x\n\r", __SW_VER__);
     bsp_printf("***************************\n\r");
-#endif // __SW_VER__
+#endif // __SW_VER__ || SW_VER_BY_COMPILE_TIME
 
 
 #if defined(__SIL9136_H__)

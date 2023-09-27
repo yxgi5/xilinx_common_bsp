@@ -20,6 +20,7 @@ XVidC_VideoTiming const *TimingPtr;
 XVidC_FrameRate fpsIn = XVIDC_FR_30HZ;
 XVidC_FrameRate fpsOut = XVIDC_FR_30HZ;
 XVidC_ColorFormat colorFmtIn0 = XVIDC_CSF_RGB;
+//XVidC_ColorFormat colorFmtIn0 = XVIDC_CSF_YCRCB_422;
 XVidC_ColorFormat colorFmtOut0 = XVIDC_CSF_RGB;
 
 /* Assign Mode ID Enumeration. First entry Must be > XVIDC_VM_CUSTOM */

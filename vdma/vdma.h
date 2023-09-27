@@ -43,6 +43,7 @@
 // change these macros if needed
 
 #if (XPAR_XAXIVDMA_NUM_INSTANCES >= 1U)
+//#define VDMA_0_BPP					(2)	// byte per pixel
 #define VDMA_0_BPP					(3)	// byte per pixel
 //#if (XPAR_AXIVDMA_0_INCLUDE_S2MM == 1U)
 #define VDMA_0_W_OFFSET				(0) // (y*w+x)*Bpp
