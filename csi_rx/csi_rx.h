@@ -21,7 +21,7 @@ extern XCsiSs Csi2RxSsInst_3;
 
 int Csi2RxSs_Init(XCsiSs *InstancePtr, u32 DeviceId);
 int csi_rx_config(void);
-void print_csi_rx_reg_info(XCsi *InstancePtr, u8 verbose);
+void print_csi_rx_reg_info(XCsiSs *InstancePtr, u8 verbose);
 
 #endif // XPAR_XCSI_NUM_INSTANCES
 

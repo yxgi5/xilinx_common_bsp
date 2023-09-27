@@ -138,7 +138,7 @@ int csi_rx_config(void)
 	return XST_SUCCESS;
 }
 
-void print_csi_rx_reg_info(XCsi *InstancePtr, u8 verbose)
+void print_csi_rx_reg_info(XCsiSs *InstancePtr, u8 verbose)
 {
 	UINTPTR Addr;
 
