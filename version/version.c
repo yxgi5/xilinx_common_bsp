@@ -1,4 +1,4 @@
-#include "bsp.h"
+#include "../bsp.h"
 
 #if defined (SW_VER_BY_COMPILE_TIME)
 u32 __SW_VER__;

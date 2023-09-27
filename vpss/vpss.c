@@ -8,6 +8,8 @@
 #include "../bsp.h"
 #if defined (XPAR_XVPROCSS_NUM_INSTANCES)
 
+XVprocSs VprocInst0;
+
 XVidC_VideoMode resId;
 XVidC_VideoStream StreamIn, StreamOut;
 XVidC_VideoTiming const *TimingPtr;
@@ -17,6 +19,9 @@ XVidC_VideoStream StreamIn, StreamOut;
 XVidC_VideoTiming const *TimingPtr;
 XVidC_FrameRate fpsIn = XVIDC_FR_30HZ;
 XVidC_FrameRate fpsOut = XVIDC_FR_30HZ;
+XVidC_ColorFormat colorFmtIn0 = XVIDC_CSF_RGB;
+XVidC_ColorFormat colorFmtOut0 = XVIDC_CSF_RGB;
+
 /* Assign Mode ID Enumeration. First entry Must be > XVIDC_VM_CUSTOM */
 typedef enum {
 	XVIDC_VM_1280x3840_30_P = (XVIDC_VM_CUSTOM + 1),
@@ -47,6 +52,7 @@ const XVidC_VideoTimingMode XVidC_MyVideoTimingMode[(XVIDC_CM_NUM_SUPPORTED - (X
 int vpss_config(void)
 {
 	int Status;
+	XVprocSs_Config *VprocCfgPtr;
 
     /* User registers custom timing table */
 	//xil_printf("INFO> Registering Custom Timing Table with %d entries \r\n", (XVIDC_CM_NUM_SUPPORTED - (XVIDC_VM_CUSTOM + 1)));
@@ -57,8 +63,35 @@ int vpss_config(void)
 		Xil_Assert(__FILE__, __LINE__);
 		return(XST_FAILURE);
 	}
-    //Get the resolution details
 
+    /* VPSS Configuration*/
+	memset(&VprocInst0, 0, sizeof(XVprocSs));
+//	memset(VprocCfgPtr, 0, sizeof(XVprocSs_Config));
+    VprocCfgPtr = XVprocSs_LookupConfig(XPAR_XVPROCSS_0_DEVICE_ID);
+
+//    switch (VprocCfgPtr->Topology)
+//    {
+//        case XVPROCSS_TOPOLOGY_FULL_FLEDGED:
+//        case XVPROCSS_TOPOLOGY_DEINTERLACE_ONLY:
+//			XVprocSs_SetFrameBufBaseaddr(&VprocInst0, USR_FRAME_BUF_BASEADDR);
+//			break;
+//
+//        default:
+//            break;
+//    }
+
+    //XVprocSs_LogReset(&VprocInst0);
+
+    Status = XVprocSs_CfgInitialize(&VprocInst0, VprocCfgPtr, VprocCfgPtr->BaseAddress);
+    if(Status != XST_SUCCESS)
+	{
+//		while(1)
+//			NOP();
+    	Xil_Assert(__FILE__, __LINE__);
+		return(XST_FAILURE);
+	}
+
+    //Get the resolution details
 //    resId = XVidC_GetVideoModeId(1920, 2160, fpsIn, 0);
     resId = XVidC_GetVideoModeId(1920, 1080, fpsIn, 0);
 

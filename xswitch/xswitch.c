@@ -82,11 +82,11 @@ int axis_switch_cfg(void)
 		return XST_FAILURE ;
 	}
 
-    Status = AxisSwitch(XPAR_AXIS_SWITCH_1_DEVICE_ID, &AxisSwitch1, 1, 0);
-	{
-//		Xil_Assert(__FILE__, __LINE__);
-		return XST_FAILURE ;
-	}
+//    Status = AxisSwitch(XPAR_AXIS_SWITCH_1_DEVICE_ID, &AxisSwitch1, 1, 0);
+//	{
+////		Xil_Assert(__FILE__, __LINE__);
+//		return XST_FAILURE ;
+//	}
 }
 
 #endif // XPAR_XAXIS_SWITCH_NUM_INSTANCES

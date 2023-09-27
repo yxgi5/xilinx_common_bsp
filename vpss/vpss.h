@@ -6,7 +6,11 @@
 #include "xvprocss.h"
 #include "xvidc.h"
 
-void vpss_config(void);
+//#define USR_FRAME_BUF_BASEADDR     	(DDR_BASEADDR + (0x20000000))
+
+extern XVprocSs VprocInst0;
+
+int vpss_config(void);
 
 #endif // XPAR_XVPROCSS_NUM_INSTANCES
 
