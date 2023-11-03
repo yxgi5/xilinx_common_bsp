@@ -162,7 +162,7 @@ int main()
 #endif // SER_CFG || DES_CFG
 
 #if defined (XPAR_XAXIS_SWITCH_NUM_INSTANCES)
-    Status = axis_switch_cfg();
+    Status = axis_switch_cfg(0);
     if (Status != XST_SUCCESS)
 	{
 		Xil_Assert(__FILE__, __LINE__);

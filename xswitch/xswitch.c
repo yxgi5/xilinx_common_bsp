@@ -75,11 +75,11 @@ int AxisSwitch(u16 DeviceId, XAxis_Switch * pAxisSwitch, u8 SiIndex, u8 MiIndex)
     return XST_SUCCESS;
 }
 
-int axis_switch_cfg(void)
+int axis_switch_cfg(u8 s_num)
 {
     int Status;
 
-    Status = AxisSwitch(XPAR_AXIS_SWITCH_0_DEVICE_ID, &AxisSwitch0, 0, 0);
+    Status = AxisSwitch(XPAR_AXIS_SWITCH_0_DEVICE_ID, &AxisSwitch0, s_num, 0);
     if (Status != XST_SUCCESS)
 	{
 //		Xil_Assert(__FILE__, __LINE__);

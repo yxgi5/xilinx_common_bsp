@@ -31,7 +31,7 @@ extern XAxis_Switch AxisSwitch7;
 #endif
 
 int AxisSwitch(u16 DeviceId, XAxis_Switch * pAxisSwitch, u8 SiIndex, u8 MiIndex);
-int axis_switch_cfg(void);
+int axis_switch_cfg(u8 s_num);
 
 #endif // XPAR_XAXIS_SWITCH_NUM_INSTANCES
 

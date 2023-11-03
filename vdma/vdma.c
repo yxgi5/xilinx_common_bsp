@@ -2104,10 +2104,10 @@ void clear_display_0(void)
     memset((void *)FRAME_BUFFER_0_0,0xff,line*column*bytePerPixels);//background
 #endif // XPAR_AXI_VDMA_0_NUM_FSTORES == 1U
 #if (XPAR_AXI_VDMA_0_NUM_FSTORES >= 2U)
-    memset((void *)FRAME_BUFFER_0_0,0xff,line*column*bytePerPixels);//background
+    memset((void *)FRAME_BUFFER_0_1,0xff,line*column*bytePerPixels);//background
 #endif // XPAR_AXI_VDMA_0_NUM_FSTORES == 2U
 #if (XPAR_AXI_VDMA_0_NUM_FSTORES >= 3U)
-    memset((void *)FRAME_BUFFER_0_0,0xff,line*column*bytePerPixels);//background
+    memset((void *)FRAME_BUFFER_0_2,0xff,line*column*bytePerPixels);//background
 #endif // XPAR_AXI_VDMA_0_NUM_FSTORES == 3U
 	Xil_DCacheEnable();
 
