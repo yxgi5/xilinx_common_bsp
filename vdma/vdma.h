@@ -37,7 +37,7 @@
 #endif
 
 // reserve enough memory size for stack+heap+bss+data+text
-#define RESERVE_SIZE				(0x1000000)
+#define RESERVE_SIZE				(0x10000000)
 #define FRAME_BUFFER_BASE_ADDR  	(DDR_BASEADDR + RESERVE_SIZE)
 
 // change these macros if needed
