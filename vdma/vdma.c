@@ -2145,13 +2145,13 @@ void clear_display_1(void)
 
 	Xil_DCacheDisable();
 #if (XPAR_AXI_VDMA_1_NUM_FSTORES >= 1U)
-    memset((void *)FRAME_BUFFER_2_0,0xff,line*column*bytePerPixels);//background
+    memset((void *)FRAME_BUFFER_1_0,0xff,line*column*bytePerPixels);//background
 #endif // XPAR_AXI_VDMA_1_NUM_FSTORES == 1U
 #if (XPAR_AXI_VDMA_1_NUM_FSTORES >= 2U)
-    memset((void *)FRAME_BUFFER_2_1,0xff,line*column*bytePerPixels);//background
+    memset((void *)FRAME_BUFFER_1_1,0xff,line*column*bytePerPixels);//background
 #endif // XPAR_AXI_VDMA_1_NUM_FSTORES == 2U
 #if (XPAR_AXI_VDMA_1_NUM_FSTORES >= 3U)
-    memset((void *)FRAME_BUFFER_2_2,0xff,line*column*bytePerPixels);//background
+    memset((void *)FRAME_BUFFER_1_2,0xff,line*column*bytePerPixels);//background
 #endif // XPAR_AXI_VDMA_1_NUM_FSTORES == 3U
 	Xil_DCacheEnable();
 

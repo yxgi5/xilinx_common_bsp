@@ -18,6 +18,8 @@
 #define CH3_ERRB			(78+11)
 #define DES_PWR_EN			(78+12)
 
+extern XGpioPs Gpio;
+
 int PsGpioSetup(XGpioPs *InstancePtr, u16 DeviceId);
 
 #endif // XPAR_XGPIOPS_NUM_INSTANCES
