@@ -96,7 +96,7 @@ struct netif server_netif;
 
 void print_app_header(void)
 {
-	xil_printf("\n\r-----LwIP UDP Remote Update------\n\r");
+	xil_printf("\n\r\n\r-----LwIP UDP Remote Update------\n\r");
 	xil_printf("UDP packets sent to port %d\n\r", UDP_SER_PORT);
 }
 
