@@ -94,6 +94,7 @@ int main()
 		Xil_Assert(__FILE__, __LINE__);
 		return XST_FAILURE ;
 	}
+    UartLiteRs485_Output();
 #endif // XPAR_RS485_HEIR_AXI_GPIO_0_DEVICE_ID
 
 #if defined (XPAR_XIICPS_NUM_INSTANCES)
