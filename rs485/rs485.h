@@ -20,6 +20,8 @@ int rs485_heir_xgpio_setup();
 int rs485_heir_xuart_setup();
 #endif // STDOUT_BASEADDRESS != XPAR_RS485_HEIR_0_AXI_UARTLITE_0_BASEADDR
 
+#endif // __RS485_H__
+
 #endif // XPAR_RS485_HEIR_0_AXI_GPIO_0_DEVICE_ID && XPAR_RS485_HEIR_0_AXI_UARTLITE_0_DEVICE_ID
 
-#endif // __RS485_H__
+

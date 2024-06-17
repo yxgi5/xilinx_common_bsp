@@ -116,6 +116,8 @@
 #include "csi_tx/csi_tx.h"
 #include "vdma/vdma.h"
 #include "ps_i2c/ps_i2c.h"
+#include "x_i2c/x_i2c.h"
+#include "emio_i2c/emio_i2c.h"
 #include "eeprom/eeprom.h"
 #include "vpss/vpss.h"
 #include "demosaic/demosaic.h"
@@ -124,6 +126,7 @@
 #include "ads7128/ads7128.h"
 #include "it6801/it6801.h"
 #include "qspi_flash/qspi_flash.h"
+#include "rs485/rs485.h"
 
 // 自定义数据头文件
 #include "serdes/serdes.h"
