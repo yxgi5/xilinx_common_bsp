@@ -1,21 +1,40 @@
 #include "../bsp.h"
 #if defined (XPAR_XIICPS_NUM_INSTANCES) && defined (__PS_I2C_H__)
 
-#define EEPROM_ADDR		0x50
-#define I2C_MUX_ADDR    0x74  /**< I2C Mux Address */
-
-#define EEPROM_START_ADDRESS	0
-
-#define MAX_SIZE	32
-#define PAGE_SIZE_16	16
-
-u8 WriteBuffer[MAX_SIZE];
-u8 ReadBuffer[MAX_SIZE];
-u16 EepromSlvAddr=EEPROM_ADDR;
 typedef u16 AddressType;
-AddressType Address = EEPROM_START_ADDRESS;
+
+//for at24c01/24c02 might be 0x50~0x57
+//for at24c04 might be 0x50, 0x52, 0x54, 0x56, for cat24aa04 is 0x50 only
+//for at24c08 might be 0x50, 0x54, for cat24aa08 is 0x50 only
+//for at24c16 is 0x50 only
+#define EEPROM_ADDR		0x50	// 7bit 0x50 == 8bit 0xA0
+
+//#define I2C_MUX_ADDR    0x74  /**< I2C Mux Address */
+
+// at24c01 has 16 pages of 8 byte each, 128 bytes in total
+// at24c02 has 32 pages of 8 byte each, 256 bytes in total
+// at24c04/cat24aa04 has 32 pages of 16 byte each, 512 bytes in total
+// at24c08/cat24aa08 has 64 pages of 16 byte each, 1024 bytes in total
+// at24c16 has 128 pages of 16 byte each, 2048 bytes in total
+// at24c32 has 128 pages of 32 byte each, 4096 bytes in total
+// at24c64 has 256 pages of 32 byte each, 8192 bytes in total
+// cat24s64 has 128 pages of 64 byte each, 8192 bytes in total
+// at24c128 has 256 pages of 64 byte each, 16384 bytes in total
+// at24c256/m24256 has 512 pages of 64 byte each, 32768 bytes in total
+#define MAX_SIZE		64
+#define PAGE_SIZE_8		8
+#define PAGE_SIZE_16	16
+#define PAGE_SIZE_32	32
+#define PAGE_SIZE_64	64
+
+/*
+ * Write buffer for writing a page.
+ */
+static u8 WriteBuffer[sizeof(AddressType) + MAX_SIZE];
+static u8 ReadBuffer[MAX_SIZE];	/* Read buffer for reading a page. */
+
 u32 PageSize = PAGE_SIZE_16;
-//extern XIicPs ps_i2c_0;
+u32 TotalPage = 64;
 
 #if 0
 int I2cMux_Eeprom(void)
@@ -50,150 +69,232 @@ int I2cMux_Eeprom(void)
 }
 #endif
 
+
+#if 0
 /*****************************************************************************/
 /**
-* This function writes a buffer of data to the IIC serial EEPROM.
+* This function is used to figure out page size Eeprom slave device
+*
+* @param	Eeprom Address
+*
+* @param	Pagesize pointer
+*
+* @return	XST_SUCCESS if successful and also update the epprom slave
+* device pagesize else XST_FAILURE.
+*
+* @note		None.
+*
+******************************************************************************/
+static int FindEepromPageSize(XIicPs *IicInstance, u16 EepromAddr, u32 *PageSize_ptr)
+{
+	u32 Index, i;
+	int Status = XST_FAILURE;
+//	AddressType Address = EEPROM_START_ADDRESS;
+	AddressType Address = 0;
+	int WrBfrOffset = 0;
+	u32 ps[3] = {64, 32, 16, 8};
+	u32 PageSize_test, count;
+	u16 EepromSlvAddr;
+
+	EepromSlvAddr = EEPROM_ADDR | (((Address & 0x3ff) >> 8));
+
+	for (i = 0; i < 3; i++)
+	{
+		count = 0;
+		PageSize_test = ps[i];
+		*PageSize_ptr = PageSize_test;
+		/*
+		 * Initialize the data to write and the read buffer.
+		 */
+		if (PageSize_test == PAGE_SIZE_16) {
+			WriteBuffer[0] = (u8) (Address);
+			WrBfrOffset = 1;
+		} else {
+			WriteBuffer[0] = (u8) (Address >> 8);
+			WriteBuffer[1] = (u8) (Address);
+			WrBfrOffset = 2;
+		}
+
+		for (Index = 0; Index < PageSize_test; Index++) {
+			WriteBuffer[WrBfrOffset + Index] = Index + i;
+			ReadBuffer[Index] = 0;
+		}
+
+		/*
+		 * Write to the EEPROM.
+		 */
+		Status = XIicPs_MasterSendPolled(IicInstance, WriteBuffer, WrBfrOffset + PageSize_test, EepromSlvAddr);
+		if (Status != XST_SUCCESS) {
+			return XST_FAILURE;
+		}
+
+		/*
+		 * Read from the EEPROM.
+		 */
+		Status = EepromReadData(IicInstance, ReadBuffer, PageSize_test, 0);
+		if (Status != XST_SUCCESS) {
+			return XST_FAILURE;
+		}
+
+		/*
+		 * Verify the data read against the data written.
+		 */
+		for (Index = 0; Index < PageSize_test; Index++) {
+			if (ReadBuffer[Index] == Index + i) {
+				count++;
+			}
+		}
+		if (count == PageSize_test)
+		{
+			return XST_SUCCESS;
+		}
+	}
+	return Status;
+}
+
+#endif
+
+
+/*****************************************************************************/
+/**
+* This function writes a buffer of data continuously to the IIC serial EEPROM.
 *
 * @param	ByteCount contains the number of bytes in the buffer to be
 *		written.
 *
 * @return	XST_SUCCESS if successful else XST_FAILURE.
 *
-* @note		The Byte count should not exceed the page size of the EEPROM as
-*		noted by the constant PAGE_SIZE.
-*
 ******************************************************************************/
-s32 EepromWriteDataContinus(XIicPs *IicInstance, u8 * Buffer, u16 ByteCount, u16 start_addr)
+s32 EepromWriteData(XIicPs *IicInstance, u8 * BufferPtr, u16 ByteCount, u16 start_addr)
 {
 	s32 Status;
-	u8 inpage_offset,end_offset;
+	u8 start_page_offset,end_page_offset;
 //	u16 end_addr;
-	u8 start_page,end_page,page_cnt;
+	u16 start_page,end_page,page_cnt;
 	u16 byte_cnt;
+	u16 EepromSlvAddr;
+	u32 WrBfrOffset;
 
-	u8 WriteBuffer[PAGE_SIZE_16+1]; // m24c08起始地址1byte
-	u16 WrBfrOffset=1;// m24c08起始地址1byte
+	u8 WriteBuffer[PageSize+2]; // page 大小 加 最多2byte 片内地址
+//	if (PageSize == PAGE_SIZE_16 || PageSize == PAGE_SIZE_8) {
+//		WrBfrOffset = 1;
+//	} else {
+//		WrBfrOffset = 2;
+//	}
 
 	Xil_AssertVoid(IicInstance != NULL);
 	Xil_AssertVoid(IicInstance->IsReady == XIL_COMPONENT_IS_READY);
 
 	//EepromSlvAddr = EepromSlvAddr & ((start_addr & 0x3ff) >> 8);
 	//WriteBuffer[0] = (u8)(start_addr & 0xff);// m24c08起始地址1byte
-	//memcpy(WriteBuffer+1, Buffer, PAGE_SIZE_16);
+	//memcpy(WriteBuffer+1, BufferPtr, PAGE_SIZE_16);
 
 	/*
 	 * Send the Data.
 	 */
-
-	inpage_offset = start_addr%PAGE_SIZE_16; // 起始地址在一页内的偏移 0~15
-	byte_cnt = ByteCount+inpage_offset;
-//	end_addr = byte_cnt-1;// 结束字节位置就是byte_cnt-1
-	end_offset = byte_cnt % PAGE_SIZE_16;
-
-	// 计算结束的页，就是last page
-    if(byte_cnt%PAGE_SIZE_16)
-    {
-    	end_page=byte_cnt/PAGE_SIZE_16+1;
-    }
-    else
-    {
-    	end_page=byte_cnt/PAGE_SIZE_16;
-    }
-    start_page=start_addr/PAGE_SIZE_16+1; // 从1开始算
-
-
-	for(page_cnt=start_page; page_cnt<=end_page; )
+	if(ByteCount>1)
 	{
-		if(page_cnt==start_page) // 第一个page，可能不是从头开始的
+		start_page_offset = start_addr % PageSize; // 起始地址在一页内的偏移, 0~15 for 16 byte page
+		end_page_offset = (start_addr + ByteCount-1) % PageSize; // 0~15 for 16 byte page
+		start_page = start_addr / PageSize + 1; // 从1开始算  (0~15+16)/16 = 1, (16+16)/16 = 2, => (addr+pagesize)/pagesize=addr/pagesize+1, for 16 byte page devices
+		// 计算结束的页，就是last page.从1开始算
+		end_page = (start_addr + ByteCount-1) / PageSize + 1; // 从1开始算
+
+		for(page_cnt=start_page; page_cnt<=end_page; )
 		{
-			EepromSlvAddr = EEPROM_ADDR & (((start_addr & 0x3ff) >> 8)| 0xFC);
-			WriteBuffer[0] = (u8)(start_addr & 0xff);// m24c08起始地址1byte
-			// if(ByteCount+inpage_offset<=PAGE_SIZE_16)
-			if(byte_cnt<=PAGE_SIZE_16) // 起始地址 到 这一页尾 能放得下数据buffer
+			if(page_cnt==start_page) // 第一个page，可能不是从头开始的
 			{
-				memcpy(WriteBuffer+1, Buffer, ByteCount);
-				Status = XIicPs_MasterSendPolled(IicInstance, WriteBuffer, ByteCount+WrBfrOffset, EepromSlvAddr);
+				if (PageSize == PAGE_SIZE_16 || PageSize == PAGE_SIZE_8) {
+					EepromSlvAddr = EEPROM_ADDR | (((start_addr & 0x3ff) >> 8));
+					WriteBuffer[0] = (u8) (start_addr);
+					WrBfrOffset = 1;
+				} else {
+					EepromSlvAddr = EEPROM_ADDR;
+					WriteBuffer[0] = (u8) (start_addr >> 8);
+					WriteBuffer[1] = (u8) (start_addr);
+					WrBfrOffset = 2;
+				}
+				if(start_page_offset + ByteCount < PageSize) // 起始地址 到 这一页尾(0~15 for 16 byte page) 能放得下数据buffer
+				{
+					memcpy(WriteBuffer+WrBfrOffset, BufferPtr, ByteCount);
+					Status = XIicPs_MasterSendPolled(IicInstance, WriteBuffer, ByteCount+WrBfrOffset, EepromSlvAddr);
+				}
+				else
+				{
+					memcpy(WriteBuffer+WrBfrOffset, BufferPtr, PageSize-start_page_offset); // PageSize-start_page_offset 范围是 1~16
+					Status = XIicPs_MasterSendPolled(IicInstance, WriteBuffer, PageSize-start_page_offset+WrBfrOffset, EepromSlvAddr);
+				}
+			}
+			else if((page_cnt==end_page)&&(end_page!=start_page)&&(end_page_offset!=(PageSize-1))) // last page handle
+			{
+				if (PageSize == PAGE_SIZE_16 || PageSize == PAGE_SIZE_8) {
+					EepromSlvAddr = EEPROM_ADDR | (((((page_cnt-1)*PageSize) & 0x3ff) >> 8));
+					WriteBuffer[0] = (u8) (((page_cnt-start_page)*PageSize));
+					WrBfrOffset = 1;
+				} else {
+					EepromSlvAddr = EEPROM_ADDR;
+					WriteBuffer[0] = (u8) (((page_cnt-start_page)*PageSize) >> 8);
+					WriteBuffer[1] = (u8) (((page_cnt-start_page)*PageSize));
+					WrBfrOffset = 2;
+				}
+				// BufferPtr+(PageSize-start_page_offset) 是去掉写入到第一页的数据
+				// end_page_offset+1 范围是 1~16
+				memcpy(WriteBuffer+WrBfrOffset, BufferPtr+(PageSize-start_page_offset)+(page_cnt-start_page-1)*PageSize, end_page_offset+1);
+				Status = XIicPs_MasterSendPolled(IicInstance, WriteBuffer, end_page_offset+1+WrBfrOffset, EepromSlvAddr);
 			}
 			else
 			{
-				memcpy(WriteBuffer+1, Buffer, PAGE_SIZE_16-inpage_offset);
-				Status = XIicPs_MasterSendPolled(IicInstance, WriteBuffer, PAGE_SIZE_16-inpage_offset+WrBfrOffset, EepromSlvAddr);
+				if (PageSize == PAGE_SIZE_16 || PageSize == PAGE_SIZE_8) {
+					EepromSlvAddr = EEPROM_ADDR | (((((page_cnt-1)*PageSize) & 0x3ff) >> 8));
+					WriteBuffer[0] = (u8) (((page_cnt-start_page)*PageSize));
+					WrBfrOffset = 1;
+				} else {
+					EepromSlvAddr = EEPROM_ADDR;
+					WriteBuffer[0] = (u8) (((page_cnt-start_page)*PageSize) >> 8);
+					WriteBuffer[1] = (u8) (((page_cnt-start_page)*PageSize));
+					WrBfrOffset = 2;
+				}
+
+				memcpy(WriteBuffer+WrBfrOffset, BufferPtr+(PageSize-start_page_offset)+(page_cnt-start_page-1)*PageSize, PageSize);
+				Status = XIicPs_MasterSendPolled(IicInstance, WriteBuffer, PageSize+WrBfrOffset, EepromSlvAddr);
+			}
+
+			if (Status != XST_SUCCESS)
+			{
+				return XST_FAILURE;
 			}
 			while (XIicPs_BusIsBusy(IicInstance));
+			usleep(250000);
+			page_cnt++;
 		}
-		else if((page_cnt==end_page)&&(end_page!=start_page)&&(end_offset!=0))
-		{
-			EepromSlvAddr = EEPROM_ADDR & (((((page_cnt-start_page)*PAGE_SIZE_16) & 0x3ff) >> 8)| 0xFC);
-			WriteBuffer[0] = (u8)(((page_cnt-start_page)*PAGE_SIZE_16) & 0xff);
 
-			memcpy(WriteBuffer+1, Buffer+(PAGE_SIZE_16-inpage_offset)+(page_cnt-start_page-1)*PAGE_SIZE_16, end_offset);
-			Status = XIicPs_MasterSendPolled(IicInstance, WriteBuffer, end_offset+WrBfrOffset, EepromSlvAddr);
-			while (XIicPs_BusIsBusy(IicInstance));
+		usleep(250000);
+	}
+	else
+	{
+		if (PageSize == PAGE_SIZE_16 || PageSize == PAGE_SIZE_8) {
+			EepromSlvAddr = EEPROM_ADDR | (((start_addr & 0x3ff) >> 8));
+			WriteBuffer[0] = (u8) (start_addr);
+			WrBfrOffset = 1;
+		} else {
+			EepromSlvAddr = EEPROM_ADDR;
+			WriteBuffer[0] = (u8) (start_addr >> 8);
+			WriteBuffer[1] = (u8) (start_addr);
+			WrBfrOffset = 2;
 		}
-		else
-		{
-			EepromSlvAddr = EEPROM_ADDR & (((((page_cnt-start_page)*PAGE_SIZE_16) & 0x3ff) >> 8)| 0xFC);
-			WriteBuffer[0] = (u8)(((page_cnt-start_page)*PAGE_SIZE_16) & 0xff);
-			memcpy(WriteBuffer+1, Buffer+(PAGE_SIZE_16-inpage_offset)+(page_cnt-start_page-1)*PAGE_SIZE_16, PAGE_SIZE_16);
-			Status = XIicPs_MasterSendPolled(IicInstance, WriteBuffer, PAGE_SIZE_16+WrBfrOffset, EepromSlvAddr);
-			while (XIicPs_BusIsBusy(IicInstance));
-		}
+		Status = XIicPs_MasterSendPolled(IicInstance, WriteBuffer, WrBfrOffset, EepromSlvAddr);
 
 		if (Status != XST_SUCCESS)
 		{
 			return XST_FAILURE;
 		}
-		usleep(250000);
-		page_cnt++;
-	}
 
-	usleep(250000);
+		while (XIicPs_BusIsBusy(IicInstance));
+	}
 
 	return XST_SUCCESS;
 }
 
-/*****************************************************************************/
-/**
-* This function writes a buffer of data to the IIC serial EEPROM.
-*
-* @param	ByteCount contains the number of bytes in the buffer to be
-*		written.
-*
-* @return	XST_SUCCESS if successful else XST_FAILURE.
-*
-* @note		The Byte count should not exceed the page size of the EEPROM as
-*		noted by the constant PAGE_SIZE.
-*
-******************************************************************************/
-s32 EepromWriteData(XIicPs *IicInstance, u8 * WriteBuffer, u16 ByteCount)
-{
-	s32 Status;
-
-	Xil_AssertVoid(IicInstance != NULL);
-	Xil_AssertVoid(IicInstance->IsReady == XIL_COMPONENT_IS_READY);
-
-	/*
-	 * Send the Data.
-	 */
-
-	Status = XIicPs_MasterSendPolled(IicInstance, WriteBuffer,
-					  ByteCount, EepromSlvAddr);
-	if (Status != XST_SUCCESS) {
-		return XST_FAILURE;
-	}
-
-	/*
-	 * Wait until bus is idle to start another transfer.
-	 */
-	while (XIicPs_BusIsBusy(IicInstance));
-
-	/*
-	 * Wait for a bit of time to allow the programming to complete
-	 */
-	usleep(250000);
-
-	return XST_SUCCESS;
-}
 /*****************************************************************************/
 /**
 * This function reads data from the IIC serial EEPROM into a specified buffer.
@@ -206,11 +307,12 @@ s32 EepromWriteData(XIicPs *IicInstance, u8 * WriteBuffer, u16 ByteCount)
 * @note		None.
 *
 ******************************************************************************/
-s32 EepromReadData(XIicPs *IicInstance, u8 *BufferPtr, u16 ByteCount)
+s32 EepromReadData(XIicPs *IicInstance, u8 *BufferPtr, u16 ByteCount, u16 start_addr)
 {
 	s32 Status;
-	AddressType Address = EEPROM_START_ADDRESS;
+	AddressType Address = start_addr;
 	u32 WrBfrOffset;
+	u16 EepromSlvAddr;
 
 	Xil_AssertVoid(IicInstance != NULL);
 	Xil_AssertVoid(IicInstance->IsReady == XIL_COMPONENT_IS_READY);
@@ -218,19 +320,23 @@ s32 EepromReadData(XIicPs *IicInstance, u8 *BufferPtr, u16 ByteCount)
 	/*
 	 * Position the Pointer in EEPROM.
 	 */
-	if (PageSize == PAGE_SIZE_16) {
+	if (PageSize == PAGE_SIZE_16 || PageSize == PAGE_SIZE_8) {
+		EepromSlvAddr = EEPROM_ADDR | (((start_addr & 0x3ff) >> 8));
 		WriteBuffer[0] = (u8) (Address);
 		WrBfrOffset = 1;
 	} else {
+		EepromSlvAddr = EEPROM_ADDR;
 		WriteBuffer[0] = (u8) (Address >> 8);
 		WriteBuffer[1] = (u8) (Address);
 		WrBfrOffset = 2;
 	}
 
-	Status = EepromWriteData(IicInstance, WriteBuffer, WrBfrOffset);
-	if (Status != XST_SUCCESS) {
-		return XST_FAILURE;
-	}
+//	Status = XIicPs_MasterSendPolled(IicInstance, WriteBuffer, WrBfrOffset, EepromSlvAddr);
+//	if (Status != XST_SUCCESS) {
+//		return XST_FAILURE;
+//	}
+//	while (XIicPs_BusIsBusy(IicInstance));
+	Status = EepromWriteData(IicInstance, WriteBuffer, 0, start_addr);
 
 	/*
 	 * Receive the Data.
@@ -249,111 +355,5 @@ s32 EepromReadData(XIicPs *IicInstance, u8 *BufferPtr, u16 ByteCount)
 	return XST_SUCCESS;
 }
 
-#if 0
-/*****************************************************************************/
-/**
-* This function writes, reads, and verifies the data to the IIC EEPROM. It
-* does the write as a single page write, performs a buffered read.
-*
-* @param	None.
-*
-* @return	XST_SUCCESS if successful else XST_FAILURE.
-*
-* @note		None.
-*
-******************************************************************************/
-s32 IicPsEepromPolledExample()
-{
-	u32 Index;
-	s32 Status;
-	u32 WrBfrOffset;
-
-	/*
-	 * Initialize the data to write and the read buffer.
-	 */
-	if (PageSize == PAGE_SIZE_16) {
-		WriteBuffer[0] = (u8) (Address);
-		WrBfrOffset = 1;
-	} else {
-		WriteBuffer[0] = (u8) (Address >> 8);
-		WriteBuffer[1] = (u8) (Address);
-		WrBfrOffset = 2;
-	}
-
-	for (Index = 0; Index < PageSize; Index++) {
-		WriteBuffer[WrBfrOffset + Index] = 0xFF;
-		ReadBuffer[Index] = 0;
-	}
-
-	/*
-	 * Write to the EEPROM.
-	 */
-	Status = EepromWriteData(&ps_i2c_0, WriteBuffer, WrBfrOffset + PageSize);
-	if (Status != XST_SUCCESS) {
-		return XST_FAILURE;
-	}
-
-	/*
-	 * Read from the EEPROM.
-	 */
-	Status = EepromReadData(&ps_i2c_0, ReadBuffer, PageSize);
-	if (Status != XST_SUCCESS) {
-		return XST_FAILURE;
-	}
-
-	/*
-	 * Verify the data read against the data written.
-	 */
-	for (Index = 0; Index < PageSize; Index++) {
-		if (ReadBuffer[Index] != WriteBuffer[Index + WrBfrOffset]) {
-			return XST_FAILURE;
-		}
-	}
-
-	/*
-	 * Initialize the data to write and the read buffer.
-	 */
-	if (PageSize == PAGE_SIZE_16) {
-		WriteBuffer[0] = (u8) (Address);
-		WrBfrOffset = 1;
-	} else {
-		WriteBuffer[0] = (u8) (Address >> 8);
-		WriteBuffer[1] = (u8) (Address);
-		WrBfrOffset = 2;
-	}
-
-	for (Index = 0; Index < PageSize; Index++) {
-		WriteBuffer[WrBfrOffset + Index] = Index + 10;
-		ReadBuffer[Index] = 0;
-	}
-
-	/*
-	 * Write to the EEPROM.
-	 */
-	Status = EepromWriteData(&ps_i2c_0, WriteBuffer, WrBfrOffset + PageSize);
-	if (Status != XST_SUCCESS) {
-		return XST_FAILURE;
-	}
-
-	/*
-	 * Read from the EEPROM.
-	 */
-	Status = EepromReadData(&ps_i2c_0, ReadBuffer, PageSize);
-	if (Status != XST_SUCCESS) {
-		return XST_FAILURE;
-	}
-
-	/*
-	 * Verify the data read against the data written.
-	 */
-	for (Index = 0; Index < PageSize; Index++) {
-		if (ReadBuffer[Index] != WriteBuffer[Index + WrBfrOffset]) {
-			return XST_FAILURE;
-		}
-	}
-
-	return XST_SUCCESS;
-}
-#endif
-
 #endif // XPAR_XIICPS_NUM_INSTANCES && __PS_I2C_H__
+

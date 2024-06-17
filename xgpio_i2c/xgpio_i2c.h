@@ -33,9 +33,8 @@
 #include "xgpio.h"
 #include "sleep.h"
 
-extern XGpio XGpioInst;
-
 #if defined(XPAR_XGPIO_I2C_0_AXI_GPIO_0_DEVICE_ID)
+extern XGpio XGpioInstI2c;
 
 #define XIO_I2C_NUM 	(4U)	// 1~16
 
@@ -184,7 +183,7 @@ typedef struct {
 #endif
 
 
-int xgpio_init(void);
+int xgpio_i2c_init(void);
 //void i2c_scl_pos(i2c_no i2c);
 void i2c_start(i2c_no i2c);
 void i2c_stop(i2c_no i2c);
@@ -203,6 +202,9 @@ int xgpio_i2c_reg16_read(i2c_no i2c, char IIC_ADDR, unsigned short Addr, u8 * re
 
 
 #endif // XPAR_XGPIO_I2C_0_AXI_GPIO_0_DEVICE_ID
+
+
+extern XGpio XGpioInst;
 
 int xgpio_setup(XGpio *InstancePtr, u16 DeviceId, u32 DirectionMask1, u32 DirectionMask2);
 

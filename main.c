@@ -72,7 +72,7 @@ int main()
 
 
 #if defined(XPAR_XGPIO_I2C_0_AXI_GPIO_0_DEVICE_ID)
-    Status = xgpio_init();
+    Status = xgpio_i2c_init();
     if (Status != XST_SUCCESS)
 	{
 		Xil_Assert(__FILE__, __LINE__);
@@ -87,6 +87,22 @@ int main()
 	}
 #endif // XPAR_XGPIO_I2C_0_AXI_GPIO_0_DEVICE_ID
 
+#if defined (XPAR_RS485_HEIR_0_AXI_GPIO_0_DEVICE_ID)
+    Status = rs485_heir_xgpio_setup();
+    if (Status != XST_SUCCESS)
+	{
+		Xil_Assert(__FILE__, __LINE__);
+		return XST_FAILURE ;
+	}
+#endif // XPAR_RS485_HEIR_AXI_GPIO_0_DEVICE_ID
+
+#if defined (XPAR_XIICPS_NUM_INSTANCES)
+    ps_i2c_config();
+#endif // XPAR_XIICPS_NUM_INSTANCES
+
+#if defined(XPAR_AXI_IIC_0_DEVICE_ID)
+    XIic_WriteReg(XPAR_IIC_0_BASEADDR, XIIC_GPO_REG_OFFSET, 0);
+#endif // XPAR_AXI_IIC_0_DEVICE_ID
 
     bsp_printf("\r\n\r\n***************************\n\r");
     bsp_printf("Test common API.\n\r");
