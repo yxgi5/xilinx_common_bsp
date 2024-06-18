@@ -12,44 +12,44 @@
 #define EMIO_INPUT  0
 #define EMIO_OUTPUT 1
 
-typedef enum emio_i2c_no
+typedef enum
 {
 #if (EMIO_I2C_NUM >= 1U)
-    I2C_NO_0 = 0,
+	EMIO_I2C_NO_0 = 0,
 #endif
 #if (EMIO_I2C_NUM >= 2U)
-	I2C_NO_1,
+	EMIO_I2C_NO_1,
 #endif
 #if (EMIO_I2C_NUM >= 3U)
-	I2C_NO_2,
+	EMIO_I2C_NO_2,
 #endif
 #if (EMIO_I2C_NUM >= 4U)
-	I2C_NO_3,
+	EMIO_I2C_NO_3,
 #endif
 #if (EMIO_I2C_NUM >= 5U)
-	I2C_NO_4,
+	EMIO_I2C_NO_4,
 #endif
 #if (EMIO_I2C_NUM >= 6U)
-	I2C_NO_5,
+	EMIO_I2C_NO_5,
 #endif
 #if (EMIO_I2C_NUM >= 7U)
-	I2C_NO_6,
+	EMIO_I2C_NO_6,
 #endif
 #if (EMIO_I2C_NUM >= 8U)
-	I2C_NO_7,
+	EMIO_I2C_NO_7,
 #endif
 
-	I2C_NO_BUTT,
-} i2c_no;
+	EMIO_I2C_NO_BUTT,
+} emio_i2c_no;
 
 typedef enum
 {
-    STRETCH_OFF = 0,
-	STRETCH_ON,
-} stretch_mode;
+	EMIO_STRETCH_OFF = 0,
+	EMIO_STRETCH_ON,
+} emio_stretch_mode;
 
 typedef struct {
-	i2c_no I2C_ID;
+	emio_i2c_no I2C_ID;
 	u32 I2C_SCL;
 	u32 I2C_SDA;
 } XGpioPs_I2C_Cfg;
@@ -125,20 +125,20 @@ typedef struct {
 #endif // PLATFORM_ZYNQ
 
 int emio_init(void);
-void i2c_start(i2c_no i2c);
-void i2c_stop(i2c_no i2c);
-void i2c_ack(i2c_no i2c);
-void i2c_nack(i2c_no i2c);
-void i2c_send_byte(i2c_no i2c, u8 txd);
-u8  i2c_recv_byte(i2c_no i2c);
-u8  i2c_recv_ack(i2c_no i2c, stretch_mode st_mode);
-int emio_i2c_reg8_write(i2c_no i2c, char IIC_ADDR, char Addr, char Data, stretch_mode st_mode);
-int emio_i2c_reg8_read(i2c_no i2c, char IIC_ADDR, char Addr, u8 * ret, stretch_mode st_mode);
-int emio_i2c_reg16_write(i2c_no i2c, char IIC_ADDR, unsigned short Addr, char Data, stretch_mode st_mode);
-int emio_i2c_reg16_read(i2c_no i2c, char IIC_ADDR, unsigned short Addr, u8 * ret, stretch_mode st_mode);
+void emio_i2c_start(emio_i2c_no i2c);
+void emio_i2c_stop(emio_i2c_no i2c);
+void emio_i2c_ack(emio_i2c_no i2c);
+void emio_i2c_nack(emio_i2c_no i2c);
+void emio_i2c_send_byte(emio_i2c_no i2c, u8 txd);
+u8  emio_i2c_recv_byte(emio_i2c_no i2c);
+u8  emio_i2c_recv_ack(emio_i2c_no i2c, emio_stretch_mode st_mode);
+int emio_i2c_reg8_write(emio_i2c_no i2c, char IIC_ADDR, char Addr, char Data, emio_stretch_mode st_mode);
+int emio_i2c_reg8_read(emio_i2c_no i2c, char IIC_ADDR, char Addr, u8 * ret, emio_stretch_mode st_mode);
+int emio_i2c_reg16_write(emio_i2c_no i2c, char IIC_ADDR, unsigned short Addr, char Data, emio_stretch_mode st_mode);
+int emio_i2c_reg16_read(emio_i2c_no i2c, char IIC_ADDR, unsigned short Addr, u8 * ret, emio_stretch_mode st_mode);
 
-//int emio_i2c_32b32_write(i2c_no i2c, char IIC_ADDR, unsigned int Addr, unsigned int Data, stretch_mode st_mode);
-//int emio_i2c_32b32_read(i2c_no i2c, char IIC_ADDR, unsigned int Addr, unsigned int * ret, stretch_mode st_mode);
+//int emio_i2c_32b32_write(emio_i2c_no i2c, char IIC_ADDR, unsigned int Addr, unsigned int Data, stretch_mode st_mode);
+//int emio_i2c_32b32_read(emio_i2c_no i2c, char IIC_ADDR, unsigned int Addr, unsigned int * ret, stretch_mode st_mode);
 
 #endif // XPAR_XGPIOPS_0_DEVICE_ID
 

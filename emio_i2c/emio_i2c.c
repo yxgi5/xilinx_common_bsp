@@ -9,31 +9,31 @@
 #define  GPIOPS_ID  XPAR_XGPIOPS_0_DEVICE_ID  //PS 端 GPIO 器件 ID
 static  XGpioPs  gpiops_inst; //PS 端 GPIO 驱动实例
 
-XGpioPs_I2C_Cfg XGpioPs_I2C_CfgTable[I2C_NO_BUTT] =
+XGpioPs_I2C_Cfg XGpioPs_I2C_CfgTable[EMIO_I2C_NO_BUTT] =
 {
 #if (EMIO_I2C_NUM >= 1U)
-	{I2C_NO_0, EMIO_SCL0_NUM, EMIO_SDA0_NUM},
+	{EMIO_I2C_NO_0, EMIO_SCL0_NUM, EMIO_SDA0_NUM},
 #endif
 #if (EMIO_I2C_NUM >= 2U)
-	{I2C_NO_1, EMIO_SCL1_NUM, EMIO_SDA1_NUM},
+	{EMIO_I2C_NO_1, EMIO_SCL1_NUM, EMIO_SDA1_NUM},
 #endif
 #if (EMIO_I2C_NUM >= 3U)
-	{I2C_NO_2, EMIO_SCL2_NUM, EMIO_SDA2_NUM},
+	{EMIO_I2C_NO_2, EMIO_SCL2_NUM, EMIO_SDA2_NUM},
 #endif
 #if (EMIO_I2C_NUM >= 4U)
-	{I2C_NO_3, EMIO_SCL3_NUM, EMIO_SDA3_NUM},
+	{EMIO_I2C_NO_3, EMIO_SCL3_NUM, EMIO_SDA3_NUM},
 #endif
 #if (EMIO_I2C_NUM >= 5U)
-	{I2C_NO_4, EMIO_SCL4_NUM, EMIO_SDA4_NUM},
+	{EMIO_I2C_NO_4, EMIO_SCL4_NUM, EMIO_SDA4_NUM},
 #endif
 #if (EMIO_I2C_NUM >= 6U)
-	{I2C_NO_5, EMIO_SCL5_NUM, EMIO_SDA5_NUM},
+	{EMIO_I2C_NO_5, EMIO_SCL5_NUM, EMIO_SDA5_NUM},
 #endif
 #if (EMIO_I2C_NUM >= 7U)
-	{I2C_NO_6, EMIO_SCL6_NUM, EMIO_SDA6_NUM},
+	{EMIO_I2C_NO_6, EMIO_SCL6_NUM, EMIO_SDA6_NUM},
 #endif
 #if (EMIO_I2C_NUM >= 8U)
-	{I2C_NO_7, EMIO_SCL7_NUM, EMIO_SDA7_NUM}
+	{EMIO_I2C_NO_7, EMIO_SCL7_NUM, EMIO_SDA7_NUM}
 #endif
 };
 
@@ -52,7 +52,7 @@ int emio_init(void)
 		return(XST_FAILURE);
 	}
 
-	for(int i=0; i<I2C_NO_BUTT; i++)
+	for(int i=0; i<EMIO_I2C_NO_BUTT; i++)
 	{
 		//设置 gpio端口 为输入
 		XGpioPs_SetDirectionPin(&gpiops_inst, XGpioPs_I2C_CfgTable[i].I2C_SCL, EMIO_INPUT);
@@ -69,7 +69,7 @@ int emio_init(void)
 }
 
 //产生起始信号
-void i2c_start(i2c_no i2c)
+void emio_i2c_start(emio_i2c_no i2c)
 {
 	u32 sda;
 	u32 scl;
@@ -96,7 +96,7 @@ void i2c_start(i2c_no i2c)
 }
 
 //产生停止信号
-void i2c_stop(i2c_no i2c)
+void emio_i2c_stop(emio_i2c_no i2c)
 {
 	u32 sda;
 	u32 scl;
@@ -133,7 +133,7 @@ void i2c_stop(i2c_no i2c)
 }
 
 //产生ACK应答
-void i2c_ack(i2c_no i2c)
+void emio_i2c_ack(emio_i2c_no i2c)
 {
 	u32 sda;
 	u32 scl;
@@ -168,7 +168,7 @@ void i2c_ack(i2c_no i2c)
 }
 
 //产生NACK应答
-void i2c_nack(i2c_no i2c)
+void emio_i2c_nack(emio_i2c_no i2c)
 {
 	u32 sda;
 	u32 scl;
@@ -201,7 +201,7 @@ void i2c_nack(i2c_no i2c)
 }
 
 //发送一个字节
-void i2c_send_byte(i2c_no i2c, u8 txd)
+void emio_i2c_send_byte(emio_i2c_no i2c, u8 txd)
 {
     u8 t;
 	u32 sda;
@@ -240,7 +240,7 @@ void i2c_send_byte(i2c_no i2c, u8 txd)
 }
 
 //接收一个字节
-u8  i2c_recv_byte(i2c_no i2c)
+u8 emio_i2c_recv_byte(emio_i2c_no i2c)
 {
 	unsigned char i=0 , rxd=0;
 	u32 sda;
@@ -278,7 +278,7 @@ u8  i2c_recv_byte(i2c_no i2c)
     return rxd;
 }
 
-u8  i2c_recv_ack(i2c_no i2c, stretch_mode st_mode)
+u8 emio_i2c_recv_ack(emio_i2c_no i2c, emio_stretch_mode st_mode)
 {
 	u8 check;
 	u32 ucErrTime=0;
@@ -363,7 +363,7 @@ u8  i2c_recv_ack(i2c_no i2c, stretch_mode st_mode)
 	return check; 
 }
 
-int emio_i2c_reg8_write(i2c_no i2c, char IIC_ADDR, char Addr, char Data, stretch_mode st_mode)
+int emio_i2c_reg8_write(emio_i2c_no i2c, char IIC_ADDR, char Addr, char Data, emio_stretch_mode st_mode)
 {
 	u8 ack=0;
 
@@ -399,7 +399,7 @@ int emio_i2c_reg8_write(i2c_no i2c, char IIC_ADDR, char Addr, char Data, stretch
 }
 
 // 7-bit addr
-int emio_i2c_reg8_read(i2c_no i2c, char IIC_ADDR, char Addr, u8 * ret, stretch_mode st_mode)
+int emio_i2c_reg8_read(emio_i2c_no i2c, char IIC_ADDR, char Addr, u8 * ret, emio_stretch_mode st_mode)
 {
 	u8 rxd;
 	u8 ack=0;
@@ -444,7 +444,7 @@ int emio_i2c_reg8_read(i2c_no i2c, char IIC_ADDR, char Addr, u8 * ret, stretch_m
   	return XST_SUCCESS;
 }
 
-int emio_i2c_reg16_write(i2c_no i2c, char IIC_ADDR, unsigned short Addr, char Data, stretch_mode st_mode)
+int emio_i2c_reg16_write(emio_i2c_no i2c, char IIC_ADDR, unsigned short Addr, char Data, emio_stretch_mode st_mode)
 {
 	u8 ack=0;
 
@@ -487,7 +487,7 @@ int emio_i2c_reg16_write(i2c_no i2c, char IIC_ADDR, unsigned short Addr, char Da
 	return XST_SUCCESS;
 }
 
-int emio_i2c_reg16_read(i2c_no i2c, char IIC_ADDR, unsigned short Addr, u8 * ret, stretch_mode st_mode)
+int emio_i2c_reg16_read(emio_i2c_no i2c, char IIC_ADDR, unsigned short Addr, u8 * ret, emio_stretch_mode st_mode)
 {
 	u8 rxd;
 	u8 ack=0;
@@ -546,7 +546,7 @@ int emio_i2c_reg16_read(i2c_no i2c, char IIC_ADDR, unsigned short Addr, u8 * ret
 }
 
 #if 0
-int emio_i2c_32b32_write(i2c_no i2c, char IIC_ADDR, unsigned int Addr, unsigned int Data, stretch_mode st_mode)
+int emio_i2c_32b32_write(emio_i2c_no i2c, char IIC_ADDR, unsigned int Addr, unsigned int Data, stretch_mode st_mode)
 {
 	u8 ack=0;
 
@@ -627,7 +627,7 @@ int emio_i2c_32b32_write(i2c_no i2c, char IIC_ADDR, unsigned int Addr, unsigned 
 	return XST_SUCCESS;
 }
 
-int emio_i2c_32b32_read(i2c_no i2c, char IIC_ADDR, unsigned int Addr, unsigned int * ret, stretch_mode st_mode)
+int emio_i2c_32b32_read(emio_i2c_no i2c, char IIC_ADDR, unsigned int Addr, unsigned int * ret, stretch_mode st_mode)
 {
 	u32 rxd;
 	u8 ack=0;

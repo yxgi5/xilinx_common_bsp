@@ -70,5 +70,6 @@ bsp config n_tx_descriptors 512
 //#define UDP_UPDATE
 #define TCP_UPDATE
 
+#define USING_EEPROM
 
 #endif // __CONFIG_H__

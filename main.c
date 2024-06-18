@@ -104,6 +104,9 @@ int main()
 #if defined(XPAR_AXI_IIC_0_DEVICE_ID)
     XIic_WriteReg(XPAR_IIC_0_BASEADDR, XIIC_GPO_REG_OFFSET, 0);
 #endif // XPAR_AXI_IIC_0_DEVICE_ID
+#if defined (XPAR_XGPIOPS_NUM_INSTANCES)
+    emio_init();
+#endif // XPAR_XGPIOPS_NUM_INSTANCES
 
     bsp_printf("\r\n\r\n***************************\n\r");
     bsp_printf("Test common API.\n\r");
