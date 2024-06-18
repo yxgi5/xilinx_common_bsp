@@ -9,6 +9,9 @@
 
 #define EMIO_I2C_NUM 	(4U)	// 1~48(emio 78~173 for zynqmp), 1~32(emio 54~117 for zynq)
 
+#define EMIO_INPUT  0
+#define EMIO_OUTPUT 1
+
 typedef enum emio_i2c_no
 {
 #if (EMIO_I2C_NUM >= 1U)
@@ -137,6 +140,7 @@ int emio_i2c_reg16_read(i2c_no i2c, char IIC_ADDR, unsigned short Addr, u8 * ret
 //int emio_i2c_32b32_write(i2c_no i2c, char IIC_ADDR, unsigned int Addr, unsigned int Data, stretch_mode st_mode);
 //int emio_i2c_32b32_read(i2c_no i2c, char IIC_ADDR, unsigned int Addr, unsigned int * ret, stretch_mode st_mode);
 
+#endif // XPAR_XGPIOPS_0_DEVICE_ID
 
 #endif // __EMIO_I2C_H__
 
