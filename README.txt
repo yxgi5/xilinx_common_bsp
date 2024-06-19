@@ -3,6 +3,10 @@ Xilinx Common Bare-Metal API
 1. 要啥模块在 bsp.h 打开啥模块，打开了如果不用也不影响编译结果，基本的配置集中到 config.h
 2. 根据 bsp 信息，使能相应的模块或功能，尽可能兼容 microblaze/zynq/zynqmp/r5/ppc
 3. 各模块尽量解耦，可调用函数接口和全局变量放在头文件(extern)，模块内尽量用static函数
+4. rs485是一个 vivado heir对应的代码
+5. emio_i2c、xgpio_i2c是vivado heir对应的代码
+6. eeprom支持4种接口模式(psiic、xiic、xgpio、emio)
+7. qspi flash 的 zynqmp 部分支持自动检测，zynq和mb部分还不支持
 
 * clk_wiz 不做自动计算
 * csi_rx 不初始化也可以正常用，只是没有初始化后的句柄
