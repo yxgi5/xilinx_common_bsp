@@ -288,49 +288,29 @@ extern XQspiPsu QspiInstance;
 #define	DIE_ERASE_CMD		0xC4
 #define READ_FLAG_STATUS_CMD	0x70
 
-#define QFLASH_BT_16MB // bigger than 16MB
-
-#if !defined (QFLASH_BT_16MB)
-#define COMMAND_OFFSET		0  // FLASH instruction */
-#define ADDRESS_1_OFFSET	1  // MSB byte of address to read or write */
-#define ADDRESS_2_OFFSET	2  // Middle byte of address to read or write */
-#define ADDRESS_3_OFFSET	3  // LSB byte of address to read or write */
-#define DATA_OFFSET			4  // Start of Data for Read/Write */
-#define DUMMY_OFFSET		4  // Dummy byte offset for fast, dual and quad reads
-#define DUMMY_SIZE			1  // Number of dummy bytes for fast, dual and quad reads
-#define RD_ID_SIZE			4  // Read ID command + 3 bytes ID response */
-#define BULK_ERASE_SIZE		1  // Bulk Erase command size */
-#define SEC_ERASE_SIZE		4  // Sector Erase command + Sector address */
-#define OVERHEAD_SIZE		4  // control information: command and address
-
-#define SECTOR_SIZE		0x10000
-#define NUM_SECTORS		0x100
-#define NUM_PAGES		0x10000
-#define PAGE_SIZE		256
-#else
 //FLASH BUFFER
 #define COMMAND_OFFSET		0  // FLASH instruction */
 #define ADDRESS_1_OFFSET	1  // MSB byte of address to read or write */
 #define ADDRESS_2_OFFSET	2  // Middle byte of address to read or write */
 #define ADDRESS_3_OFFSET	3  // LSB byte of address to read or write */
 #define ADDRESS_4_OFFSET	4 /* LSB byte of address to read or write when 4 byte address */
-#define DATA_OFFSET			5  // Start of Data for Read/Write */
+#define DATA_OFFSET			4  // Start of Data for Read/Write */
 #define DUMMY_OFFSET		4  // Dummy byte offset for fast, dual and quad reads
 #define DUMMY_SIZE			1  // Number of dummy bytes for fast, dual and quad reads
 #define RD_ID_SIZE			4  // Read ID command + 3 bytes ID response */
 #define READ_STATUS_SIZE	2
 #define WRITE_STATUS_SIZE	2
 #define BULK_ERASE_SIZE		1  // Bulk Erase command size */
-#define SEC_ERASE_SIZE		5  // Sector Erase command + Sector address */
-#define OVERHEAD_SIZE		5  // control information: command and address
+#define SEC_ERASE_SIZE		4  // Sector Erase command + Sector address */
+#define OVERHEAD_SIZE		4  // control information: command and address
 #define FLASH_SR_IS_READY_MASK		0x01 /* Ready mask */
 
+#define PAGE_SIZE		256			// modify if needed！！！！
 
-#define SECTOR_SIZE		0x10000
-#define NUM_SECTORS		0x200
-#define NUM_PAGES		0x20000
-#define PAGE_SIZE		256
-#endif // QFLASH_BT_16MB
+/*
+ * Sixteen MB
+ */
+#define SIXTEENMB 0x1000000
 
 /*
  * Identification of Flash
@@ -450,14 +430,12 @@ extern XQspiPs QspiInstance;
 #define	DIE_ERASE_CMD		0xC4
 #define READ_FLAG_STATUS_CMD	0x70
 
-#define QFLASH_BT_16MB // bigger than 16MB
-
-#if !defined (QFLASH_BT_16MB)
 //FLASH BUFFER
 #define COMMAND_OFFSET		0  // FLASH instruction */
 #define ADDRESS_1_OFFSET	1  // MSB byte of address to read or write */
 #define ADDRESS_2_OFFSET	2  // Middle byte of address to read or write */
 #define ADDRESS_3_OFFSET	3  // LSB byte of address to read or write */
+#define ADDRESS_4_OFFSET	4 /* LSB byte of address to read or write when 4 byte address */
 #define DATA_OFFSET			4  // Start of Data for Read/Write */
 #define DUMMY_OFFSET		4  // Dummy byte offset for fast, dual and quad reads
 #define DUMMY_SIZE			1  // Number of dummy bytes for fast, dual and quad reads
@@ -469,34 +447,12 @@ extern XQspiPs QspiInstance;
 #define OVERHEAD_SIZE		4  // control information: command and address
 #define FLASH_SR_IS_READY_MASK		0x01 /* Ready mask */
 
-#define SECTOR_SIZE		0x10000
-#define NUM_SECTORS		0x100
-#define NUM_PAGES		0x10000
-#define PAGE_SIZE		256
-#else
-//FLASH BUFFER
-#define COMMAND_OFFSET		0  // FLASH instruction */
-#define ADDRESS_1_OFFSET	1  // MSB byte of address to read or write */
-#define ADDRESS_2_OFFSET	2  // Middle byte of address to read or write */
-#define ADDRESS_3_OFFSET	3  // LSB byte of address to read or write */
-#define ADDRESS_4_OFFSET	4 /* LSB byte of address to read or write when 4 byte address */
-#define DATA_OFFSET			5  // Start of Data for Read/Write */
-#define DUMMY_OFFSET		4  // Dummy byte offset for fast, dual and quad reads
-#define DUMMY_SIZE			1  // Number of dummy bytes for fast, dual and quad reads
-#define RD_ID_SIZE			4  // Read ID command + 3 bytes ID response */
-#define READ_STATUS_SIZE	2
-#define WRITE_STATUS_SIZE	2
-#define BULK_ERASE_SIZE		1  // Bulk Erase command size */
-#define SEC_ERASE_SIZE		5  // Sector Erase command + Sector address */
-#define OVERHEAD_SIZE		5  // control information: command and address
-#define FLASH_SR_IS_READY_MASK		0x01 /* Ready mask */
+#define PAGE_SIZE		256			// modify if needed！！！！
 
-
-#define SECTOR_SIZE		0x10000
-#define NUM_SECTORS		0x200
-#define NUM_PAGES		0x20000
-#define PAGE_SIZE		256
-#endif // QFLASH_BT_16MB
+/*
+ * Sixteen MB
+ */
+#define SIXTEENMB 0x1000000
 
 /*
  * Identification of Flash

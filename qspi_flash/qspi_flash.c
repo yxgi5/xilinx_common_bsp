@@ -1678,8 +1678,8 @@ void print_percent(int percent)
 XQspiPs QspiInstance;
 #endif // XPAR_XQSPIPS_NUM_INSTANCES
 
-u8 ReadBuffer[PAGE_SIZE + DATA_OFFSET + DUMMY_SIZE];
-u8 WriteBuffer[PAGE_SIZE + DATA_OFFSET];
+u8 ReadBuffer[PAGE_SIZE + DATA_OFFSET + DUMMY_SIZE + DUMMY_SIZE];
+u8 WriteBuffer[PAGE_SIZE + DATA_OFFSET + DUMMY_SIZE];
 
 FlashInfo Flash_Config_Table[28] = {
 	/* Spansion 0-8 */
@@ -1703,7 +1703,7 @@ u32 FlashMake;
 u32 FCTIndex;	/* Flash configuration table index */
 u8 FSRFlag;
 
-#if defined (QFLASH_BT_16MB)
+
 void FlashEnterExit4BAddMode(XQspiPs *QspiPtr)
 {
 	u8 WriteDisableCmd = { WRITE_DISABLE_CMD };
@@ -1713,7 +1713,7 @@ void FlashEnterExit4BAddMode(XQspiPs *QspiPtr)
     XQspiPs_PolledTransfer(QspiPtr, &Cmd, NULL, sizeof(Cmd));
     XQspiPs_PolledTransfer(QspiPtr, &WriteDisableCmd, NULL, sizeof(WriteDisableCmd));
 }
-#endif // QFLASH_BT_16MB
+
 
 void show_flash_info(int idx)
 {
@@ -1768,9 +1768,10 @@ int qspi_init()
 		FSRFlag = 0;
 	}
 
-#if defined (QFLASH_BT_16MB)
-    FlashEnterExit4BAddMode(&QspiInstance);
-#endif // QFLASH_BT_16MB
+	if (Flash_Config_Table[FCTIndex].FlashDeviceSize > SIXTEENMB)
+	{
+		FlashEnterExit4BAddMode(&QspiInstance);
+	}
 
     return XST_SUCCESS;
 }
@@ -1871,7 +1872,14 @@ int qspi_update(u32 total_bytes, const u8 *flash_data)
             process_print(process_percent);
         pre_precent = process_percent;
 
-        memcpy(&WriteBuffer[DATA_OFFSET], &flash_data[writed_len], PAGE_SIZE);
+        if (Flash_Config_Table[FCTIndex].FlashDeviceSize > SIXTEENMB)
+        {
+        	memcpy(&WriteBuffer[DATA_OFFSET + DUMMY_SIZE], &flash_data[writed_len], PAGE_SIZE);
+        }
+        else
+        {
+        	memcpy(&WriteBuffer[DATA_OFFSET], &flash_data[writed_len], PAGE_SIZE);
+        }
         FlashWrite(&QspiInstance, write_addr, PAGE_SIZE, WRITE_CMD);
         writed_len += PAGE_SIZE;
         write_addr += PAGE_SIZE;
@@ -1884,7 +1892,13 @@ int qspi_update(u32 total_bytes, const u8 *flash_data)
     sprintf(msg, "INFO:Elapsed time = %2.3f sec.\r\n",elapsed_time);
     sent_msg(msg);
     //Ê¹ÓÃQUADÄ£ÊœŽÓFLASHÖÐ¶Á³öÊýŸÝ²¢œøÐÐÐ£Ñé
-    BufferPtr = &ReadBuffer[DATA_OFFSET + DUMMY_SIZE];
+    if (Flash_Config_Table[FCTIndex].FlashDeviceSize > SIXTEENMB)
+    {
+    	BufferPtr = &ReadBuffer[DATA_OFFSET + 4 + DUMMY_SIZE];
+    }
+    {
+    	BufferPtr = &ReadBuffer[DATA_OFFSET + 4];
+    }
     printf("Performing Verify Operation...\r\n");
     sent_msg("Performing Verify Operation...\r\n");
     memset(ReadBuffer, 0x00, sizeof(ReadBuffer));
@@ -1894,11 +1908,14 @@ int qspi_update(u32 total_bytes, const u8 *flash_data)
         if (process_percent != pre_precent)
             process_print(process_percent);
         pre_precent = process_percent;
-#if !defined (QFLASH_BT_16MB)
-        FlashRead(&QspiInstance, read_addr, PAGE_SIZE, QUAD_READ_CMD);
-#else
-        FlashRead(&QspiInstance, read_addr, PAGE_SIZE, QUAD_READ_CMD_4B);
-#endif // #if !defined (QFLASH_BT_16MB)
+        if (Flash_Config_Table[FCTIndex].FlashDeviceSize > SIXTEENMB)
+        {
+        	FlashRead(&QspiInstance, read_addr, PAGE_SIZE, QUAD_READ_CMD_4B);
+        }
+        else
+        {
+        	FlashRead(&QspiInstance, read_addr, PAGE_SIZE, QUAD_READ_CMD);
+        }
         if ((readed_len + PAGE_SIZE) <= total_bytes) {
             //¶Ô±ÈÐŽÈëFLASHÓëŽÓFLASHÖÐ¶Á³öµÄÊýŸÝ
             for (i = 0; i < PAGE_SIZE; i++)
@@ -1976,16 +1993,20 @@ void FlashWrite(XQspiPs *QspiPtr, u32 Address, u32 ByteCount, u8 Command)
      * FLASH
      */
     WriteBuffer[COMMAND_OFFSET] = Command;
-#if !defined (QFLASH_BT_16MB)
-    WriteBuffer[ADDRESS_1_OFFSET] = (u8) ((Address & 0xFF0000) >> 16);
-    WriteBuffer[ADDRESS_2_OFFSET] = (u8) ((Address & 0xFF00) >> 8);
-    WriteBuffer[ADDRESS_3_OFFSET] = (u8) (Address & 0xFF);
-#else
-    WriteBuffer[ADDRESS_1_OFFSET] = (u8) ((Address & 0xFF000000) >> 24);
-    WriteBuffer[ADDRESS_2_OFFSET] = (u8) ((Address & 0xFF0000) >> 16);
-    WriteBuffer[ADDRESS_3_OFFSET] = (u8) ((Address & 0xFF00) >> 8);
-    WriteBuffer[ADDRESS_4_OFFSET] = (u8) (Address & 0xFF);
-#endif // #if !defined (QFLASH_BT_16MB)
+	if (Flash_Config_Table[FCTIndex].FlashDeviceSize > SIXTEENMB)
+    {
+        WriteBuffer[ADDRESS_1_OFFSET] = (u8) ((Address & 0xFF000000) >> 24);
+        WriteBuffer[ADDRESS_2_OFFSET] = (u8) ((Address & 0xFF0000) >> 16);
+        WriteBuffer[ADDRESS_3_OFFSET] = (u8) ((Address & 0xFF00) >> 8);
+        WriteBuffer[ADDRESS_4_OFFSET] = (u8) (Address & 0xFF);
+        ByteCount += DUMMY_SIZE;
+    }
+    else
+    {
+        WriteBuffer[ADDRESS_1_OFFSET] = (u8) ((Address & 0xFF0000) >> 16);
+        WriteBuffer[ADDRESS_2_OFFSET] = (u8) ((Address & 0xFF00) >> 8);
+        WriteBuffer[ADDRESS_3_OFFSET] = (u8) (Address & 0xFF);
+    }
 
     /*
      * Send the write command, address, and data to the FLASH to be
@@ -2054,16 +2075,20 @@ void FlashRead(XQspiPs *QspiPtr, u32 Address, u32 ByteCount, u8 Command)
      * FLASH
      */
     WriteBuffer[COMMAND_OFFSET] = Command;
-#if !defined (QFLASH_BT_16MB)
-    WriteBuffer[ADDRESS_1_OFFSET] = (u8) ((Address & 0xFF0000) >> 16);
-    WriteBuffer[ADDRESS_2_OFFSET] = (u8) ((Address & 0xFF00) >> 8);
-    WriteBuffer[ADDRESS_3_OFFSET] = (u8) (Address & 0xFF);
-#else
-    WriteBuffer[ADDRESS_1_OFFSET] = (u8) ((Address & 0xFF000000) >> 24);
-    WriteBuffer[ADDRESS_2_OFFSET] = (u8) ((Address & 0xFF0000) >> 16);
-    WriteBuffer[ADDRESS_3_OFFSET] = (u8) ((Address & 0xFF00) >> 8);
-    WriteBuffer[ADDRESS_4_OFFSET] = (u8) (Address & 0xFF);
-#endif // #if !defined (QFLASH_BT_16MB)
+    if (Flash_Config_Table[FCTIndex].FlashDeviceSize > SIXTEENMB)
+    {
+        WriteBuffer[ADDRESS_1_OFFSET] = (u8) ((Address & 0xFF000000) >> 24);
+        WriteBuffer[ADDRESS_2_OFFSET] = (u8) ((Address & 0xFF0000) >> 16);
+        WriteBuffer[ADDRESS_3_OFFSET] = (u8) ((Address & 0xFF00) >> 8);
+        WriteBuffer[ADDRESS_4_OFFSET] = (u8) (Address & 0xFF);
+        ByteCount += DUMMY_SIZE;
+    }
+    else
+    {
+        WriteBuffer[ADDRESS_1_OFFSET] = (u8) ((Address & 0xFF0000) >> 16);
+        WriteBuffer[ADDRESS_2_OFFSET] = (u8) ((Address & 0xFF00) >> 8);
+        WriteBuffer[ADDRESS_3_OFFSET] = (u8) (Address & 0xFF);
+    }
 
     if ((Command == FAST_READ_CMD) || (Command == FAST_READ_CMD_4B)) {
         ByteCount += DUMMY_SIZE;
@@ -2078,8 +2103,7 @@ void FlashRead(XQspiPs *QspiPtr, u32 Address, u32 ByteCount, u8 Command)
      * of bytes from the FLASH, send the read command and address and
      * receive the specified number of bytes of data in the data buffer
      */
-    XQspiPs_PolledTransfer(QspiPtr, WriteBuffer, ReadBuffer,
-            ByteCount + OVERHEAD_SIZE);
+    XQspiPs_PolledTransfer(QspiPtr, WriteBuffer, ReadBuffer, ByteCount + OVERHEAD_SIZE);
 }
 
 
@@ -2268,7 +2292,7 @@ void FlashErase(XQspiPs *QspiPtr, u32 Address, u32 ByteCount)
      * If the erase size is less than the total size of the flash, use
      * sector erase command
      */
-    total_sector = (ByteCount / SECTOR_SIZE) + 1;
+    total_sector = (ByteCount / Flash_Config_Table[FCTIndex].SectSize) + 1;
     for (Sector = 0; Sector < total_sector; Sector++) {
         process_percent = Sector / (float) total_sector * 10 + (float)1/2;;
         if (process_percent != pre_precent)
@@ -2288,23 +2312,29 @@ void FlashErase(XQspiPs *QspiPtr, u32 Address, u32 ByteCount)
          * for the FLASH
          */
         WriteBuffer[COMMAND_OFFSET] = SEC_ERASE_CMD;
-#if !defined (QFLASH_BT_16MB)
-        WriteBuffer[ADDRESS_1_OFFSET] = (u8) (Address >> 16);
-        WriteBuffer[ADDRESS_2_OFFSET] = (u8) (Address >> 8);
-        WriteBuffer[ADDRESS_3_OFFSET] = (u8) (Address & 0xFF);
-#else
-        WriteBuffer[ADDRESS_1_OFFSET] = (u8) ((Address & 0xFF000000) >> 24);
-        WriteBuffer[ADDRESS_2_OFFSET] = (u8) ((Address & 0xFF0000) >> 16);
-        WriteBuffer[ADDRESS_3_OFFSET] = (u8) ((Address & 0xFF00) >> 8);
-        WriteBuffer[ADDRESS_4_OFFSET] = (u8) (Address & 0xFF);
-#endif // #if !defined (QFLASH_BT_16MB)
-
-        /*
-         * Send the sector erase command and address; no receive buffer
-         * is specified since there is nothing to receive
-         */
-        XQspiPs_PolledTransfer(QspiPtr, WriteBuffer, NULL,
-        SEC_ERASE_SIZE);
+        if (Flash_Config_Table[FCTIndex].FlashDeviceSize > SIXTEENMB)
+        {
+			WriteBuffer[ADDRESS_1_OFFSET] = (u8) ((Address & 0xFF000000) >> 24);
+			WriteBuffer[ADDRESS_2_OFFSET] = (u8) ((Address & 0xFF0000) >> 16);
+			WriteBuffer[ADDRESS_3_OFFSET] = (u8) ((Address & 0xFF00) >> 8);
+			WriteBuffer[ADDRESS_4_OFFSET] = (u8) (Address & 0xFF);
+	        /*
+	         * Send the sector erase command and address; no receive buffer
+	         * is specified since there is nothing to receive
+	         */
+	        XSpi_Transfer(QspiPtr, WriteBuffer, NULL, SEC_ERASE_SIZE + DUMMY_SIZE);
+        }
+        else
+        {
+        	WriteBuffer[ADDRESS_1_OFFSET] = (u8) (Address >> 16);
+			WriteBuffer[ADDRESS_2_OFFSET] = (u8) (Address >> 8);
+			WriteBuffer[ADDRESS_3_OFFSET] = (u8) (Address & 0xFF);
+			/*
+			 * Send the sector erase command and address; no receive buffer
+			 * is specified since there is nothing to receive
+			 */
+			XSpi_Transfer(QspiPtr, WriteBuffer, NULL, SEC_ERASE_SIZE);
+        }
 
         /*
          * Wait for the sector erse command to the
@@ -2337,7 +2367,7 @@ void FlashErase(XQspiPs *QspiPtr, u32 Address, u32 ByteCount)
             }
         }
 
-        Address += SECTOR_SIZE;
+        Address += Flash_Config_Table[FCTIndex].SectSize;
     }
 }
 
@@ -2484,8 +2514,8 @@ void FlashQuadEnable(XQspiPs *QspiPtr)
 #if defined (UDP_UPDATE) || defined (TCP_UPDATE)
 XSpi  XSpiInstance;
 
-u8 ReadBuffer[PAGE_SIZE + DATA_OFFSET + DUMMY_SIZE];
-u8 WriteBuffer[PAGE_SIZE + DATA_OFFSET];
+u8 ReadBuffer[PAGE_SIZE + DATA_OFFSET + DUMMY_SIZE + DUMMY_SIZE];
+u8 WriteBuffer[PAGE_SIZE + DATA_OFFSET + DUMMY_SIZE];
 
 FlashInfo Flash_Config_Table[28] = {
 	/* Spansion 0-8 */
@@ -2509,7 +2539,7 @@ u32 FlashMake;
 u32 FCTIndex;	/* Flash configuration table index */
 u8 FSRFlag;
 
-#if defined (QFLASH_BT_16MB)
+
 void FlashEnterExit4BAddMode(XSpi *QspiPtr)
 {
 	u8 WriteDisableCmd = { WRITE_DISABLE_CMD };
@@ -2520,7 +2550,7 @@ void FlashEnterExit4BAddMode(XSpi *QspiPtr)
 
 	XSpi_Transfer(QspiPtr, &WriteDisableCmd, NULL, sizeof(WriteDisableCmd));
 }
-#endif // QFLASH_BT_16MB
+
 
 void show_flash_info(int idx)
 {
@@ -2595,9 +2625,10 @@ int qspi_init()
 		FSRFlag = 0;
 	}
 
-#if defined (QFLASH_BT_16MB)
-    FlashEnterExit4BAddMode(&XSpiInstance);
-#endif // QFLASH_BT_16MB
+	if (Flash_Config_Table[FCTIndex].FlashDeviceSize > SIXTEENMB)
+	{
+		FlashEnterExit4BAddMode(&XSpiInstance);
+	}
 
     return XST_SUCCESS;
 }
@@ -2698,8 +2729,14 @@ int qspi_update(u32 total_bytes, const u8 *flash_data)
         if (process_percent != pre_precent)
             process_print(process_percent);
         pre_precent = process_percent;
-
-        memcpy(&WriteBuffer[DATA_OFFSET], &flash_data[writed_len], PAGE_SIZE);
+        if (Flash_Config_Table[FCTIndex].FlashDeviceSize > SIXTEENMB)
+        {
+        	memcpy(&WriteBuffer[DATA_OFFSET + DUMMY_SIZE], &flash_data[writed_len], PAGE_SIZE);
+        }
+        else
+        {
+        	memcpy(&WriteBuffer[DATA_OFFSET], &flash_data[writed_len], PAGE_SIZE);
+        }
         FlashWrite(&XSpiInstance, write_addr, PAGE_SIZE, WRITE_CMD);
         writed_len += PAGE_SIZE;
         write_addr += PAGE_SIZE;
@@ -2713,7 +2750,13 @@ int qspi_update(u32 total_bytes, const u8 *flash_data)
 //    sent_msg(msg);
 #endif
     //Ê¹ÓÃQUADÄ£ÊœŽÓFLASHÖÐ¶Á³öÊýŸÝ²¢œøÐÐÐ£Ñé
-    BufferPtr = &ReadBuffer[DATA_OFFSET + 4];
+    if (Flash_Config_Table[FCTIndex].FlashDeviceSize > SIXTEENMB)
+    {
+    	BufferPtr = &ReadBuffer[DATA_OFFSET + 4 + DUMMY_SIZE];
+    }
+    {
+    	BufferPtr = &ReadBuffer[DATA_OFFSET + 4];
+    }
     printf("Performing Verify Operation...\r\n");
     sent_msg("Performing Verify Operation...\r\n");
     memset(ReadBuffer, 0x00, sizeof(ReadBuffer));
@@ -2723,11 +2766,14 @@ int qspi_update(u32 total_bytes, const u8 *flash_data)
         if (process_percent != pre_precent)
             process_print(process_percent);
         pre_precent = process_percent;
-#if !defined (QFLASH_BT_16MB)
-        FlashRead(&XSpiInstance, read_addr, PAGE_SIZE, QUAD_READ_CMD);
-#else
-        FlashRead(&XSpiInstance, read_addr, PAGE_SIZE, QUAD_READ_CMD_4B);
-#endif // #if !defined (QFLASH_BT_16MB)
+        if (Flash_Config_Table[FCTIndex].FlashDeviceSize > SIXTEENMB)
+        {
+        	FlashRead(&XSpiInstance, read_addr, PAGE_SIZE, QUAD_READ_CMD_4B);
+        }
+        else
+        {
+        	FlashRead(&XSpiInstance, read_addr, PAGE_SIZE, QUAD_READ_CMD);
+        }
         if ((readed_len + PAGE_SIZE) <= total_bytes) {
             //¶Ô±ÈÐŽÈëFLASHÓëŽÓFLASHÖÐ¶Á³öµÄÊýŸÝ
             for (i = 0; i < PAGE_SIZE; i++)
@@ -2784,16 +2830,21 @@ void FlashWrite(XSpi *QspiPtr, u32 Address, u32 ByteCount, u8 Command)
      * FLASH
      */
     WriteBuffer[COMMAND_OFFSET] = Command;
-#if !defined (QFLASH_BT_16MB)
-    WriteBuffer[ADDRESS_1_OFFSET] = (u8) ((Address & 0xFF0000) >> 16);
-    WriteBuffer[ADDRESS_2_OFFSET] = (u8) ((Address & 0xFF00) >> 8);
-    WriteBuffer[ADDRESS_3_OFFSET] = (u8) (Address & 0xFF);
-#else
-    WriteBuffer[ADDRESS_1_OFFSET] = (u8) ((Address & 0xFF000000) >> 24);
-    WriteBuffer[ADDRESS_2_OFFSET] = (u8) ((Address & 0xFF0000) >> 16);
-    WriteBuffer[ADDRESS_3_OFFSET] = (u8) ((Address & 0xFF00) >> 8);
-    WriteBuffer[ADDRESS_4_OFFSET] = (u8) (Address & 0xFF);
-#endif // #if !defined (QFLASH_BT_16MB)
+
+	if (Flash_Config_Table[FCTIndex].FlashDeviceSize > SIXTEENMB)
+    {
+        WriteBuffer[ADDRESS_1_OFFSET] = (u8) ((Address & 0xFF000000) >> 24);
+        WriteBuffer[ADDRESS_2_OFFSET] = (u8) ((Address & 0xFF0000) >> 16);
+        WriteBuffer[ADDRESS_3_OFFSET] = (u8) ((Address & 0xFF00) >> 8);
+        WriteBuffer[ADDRESS_4_OFFSET] = (u8) (Address & 0xFF);
+        ByteCount += DUMMY_SIZE;
+    }
+    else
+    {
+        WriteBuffer[ADDRESS_1_OFFSET] = (u8) ((Address & 0xFF0000) >> 16);
+        WriteBuffer[ADDRESS_2_OFFSET] = (u8) ((Address & 0xFF00) >> 8);
+        WriteBuffer[ADDRESS_3_OFFSET] = (u8) (Address & 0xFF);
+    }
 
     /*
      * Send the write command, address, and data to the FLASH to be
@@ -2846,16 +2897,20 @@ void FlashRead(XSpi *QspiPtr, u32 Address, u32 ByteCount, u8 Command)
      * FLASH
      */
     WriteBuffer[COMMAND_OFFSET] = Command;
-#if !defined (QFLASH_BT_16MB)
-    WriteBuffer[ADDRESS_1_OFFSET] = (u8) ((Address & 0xFF0000) >> 16);
-    WriteBuffer[ADDRESS_2_OFFSET] = (u8) ((Address & 0xFF00) >> 8);
-    WriteBuffer[ADDRESS_3_OFFSET] = (u8) (Address & 0xFF);
-#else
-    WriteBuffer[ADDRESS_1_OFFSET] = (u8) ((Address & 0xFF000000) >> 24);
-    WriteBuffer[ADDRESS_2_OFFSET] = (u8) ((Address & 0xFF0000) >> 16);
-    WriteBuffer[ADDRESS_3_OFFSET] = (u8) ((Address & 0xFF00) >> 8);
-    WriteBuffer[ADDRESS_4_OFFSET] = (u8) (Address & 0xFF);
-#endif // #if !defined (QFLASH_BT_16MB)
+    if (Flash_Config_Table[FCTIndex].FlashDeviceSize > SIXTEENMB)
+    {
+        WriteBuffer[ADDRESS_1_OFFSET] = (u8) ((Address & 0xFF000000) >> 24);
+        WriteBuffer[ADDRESS_2_OFFSET] = (u8) ((Address & 0xFF0000) >> 16);
+        WriteBuffer[ADDRESS_3_OFFSET] = (u8) ((Address & 0xFF00) >> 8);
+        WriteBuffer[ADDRESS_4_OFFSET] = (u8) (Address & 0xFF);
+        ByteCount += DUMMY_SIZE;
+    }
+    else
+    {
+        WriteBuffer[ADDRESS_1_OFFSET] = (u8) ((Address & 0xFF0000) >> 16);
+        WriteBuffer[ADDRESS_2_OFFSET] = (u8) ((Address & 0xFF00) >> 8);
+        WriteBuffer[ADDRESS_3_OFFSET] = (u8) (Address & 0xFF);
+    }
 
     if ((Command == FAST_READ_CMD) || (Command == FAST_READ_CMD_4B)) {
         ByteCount += DUMMY_SIZE;
@@ -2870,8 +2925,7 @@ void FlashRead(XSpi *QspiPtr, u32 Address, u32 ByteCount, u8 Command)
      * of bytes from the FLASH, send the read command and address and
      * receive the specified number of bytes of data in the data buffer
      */
-    XSpi_Transfer(QspiPtr, WriteBuffer, ReadBuffer,
-            ByteCount + OVERHEAD_SIZE);
+    XSpi_Transfer(QspiPtr, WriteBuffer, ReadBuffer, ByteCount + OVERHEAD_SIZE);
 }
 
 int DieErase(XSpi *QspiPtr)
@@ -3043,7 +3097,7 @@ void FlashErase(XSpi *QspiPtr, u32 Address, u32 ByteCount)
      * If the erase size is less than the total size of the flash, use
      * sector erase command
      */
-    total_sector = (ByteCount / SECTOR_SIZE) + 1;
+    total_sector = (ByteCount / Flash_Config_Table[FCTIndex].SectSize) + 1;
     for (Sector = 0; Sector < total_sector; Sector++) {
         process_percent = Sector / (float) total_sector * 10 + (float)1/2;;
         if (process_percent != pre_precent)
@@ -3062,22 +3116,30 @@ void FlashErase(XSpi *QspiPtr, u32 Address, u32 ByteCount)
          * for the FLASH
          */
         WriteBuffer[COMMAND_OFFSET] = SEC_ERASE_CMD;
-#if !defined (QFLASH_BT_16MB)
-        WriteBuffer[ADDRESS_1_OFFSET] = (u8) (Address >> 16);
-        WriteBuffer[ADDRESS_2_OFFSET] = (u8) (Address >> 8);
-        WriteBuffer[ADDRESS_3_OFFSET] = (u8) (Address & 0xFF);
-#else
-        WriteBuffer[ADDRESS_1_OFFSET] = (u8) ((Address & 0xFF000000) >> 24);
-        WriteBuffer[ADDRESS_2_OFFSET] = (u8) ((Address & 0xFF0000) >> 16);
-        WriteBuffer[ADDRESS_3_OFFSET] = (u8) ((Address & 0xFF00) >> 8);
-        WriteBuffer[ADDRESS_4_OFFSET] = (u8) (Address & 0xFF);
-#endif // #if !defined (QFLASH_BT_16MB)
 
-        /*
-         * Send the sector erase command and address; no receive buffer
-         * is specified since there is nothing to receive
-         */
-        XSpi_Transfer(QspiPtr, WriteBuffer, NULL, SEC_ERASE_SIZE);
+        if (Flash_Config_Table[FCTIndex].FlashDeviceSize > SIXTEENMB)
+        {
+			WriteBuffer[ADDRESS_1_OFFSET] = (u8) ((Address & 0xFF000000) >> 24);
+			WriteBuffer[ADDRESS_2_OFFSET] = (u8) ((Address & 0xFF0000) >> 16);
+			WriteBuffer[ADDRESS_3_OFFSET] = (u8) ((Address & 0xFF00) >> 8);
+			WriteBuffer[ADDRESS_4_OFFSET] = (u8) (Address & 0xFF);
+	        /*
+	         * Send the sector erase command and address; no receive buffer
+	         * is specified since there is nothing to receive
+	         */
+	        XSpi_Transfer(QspiPtr, WriteBuffer, NULL, SEC_ERASE_SIZE + DUMMY_SIZE);
+        }
+        else
+        {
+        	WriteBuffer[ADDRESS_1_OFFSET] = (u8) (Address >> 16);
+			WriteBuffer[ADDRESS_2_OFFSET] = (u8) (Address >> 8);
+			WriteBuffer[ADDRESS_3_OFFSET] = (u8) (Address & 0xFF);
+			/*
+			 * Send the sector erase command and address; no receive buffer
+			 * is specified since there is nothing to receive
+			 */
+			XSpi_Transfer(QspiPtr, WriteBuffer, NULL, SEC_ERASE_SIZE);
+        }
 
         /*
          * Wait for the sector erse command to the
@@ -3109,7 +3171,7 @@ void FlashErase(XSpi *QspiPtr, u32 Address, u32 ByteCount)
             }
         }
 
-        Address += SECTOR_SIZE;
+        Address += Flash_Config_Table[FCTIndex].SectSize;
     }
 
     XSpi_Transfer(QspiPtr, &WriteDisableCmd, NULL, sizeof(WriteDisableCmd));
