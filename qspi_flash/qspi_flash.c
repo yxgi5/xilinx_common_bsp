@@ -64,7 +64,9 @@ FlashInfo Flash_Config_Table[28] = {
 	{0x10000, 0x1000, 256, 0x100000, 0x8000000, MACRONIX_ID_BYTE0, MACRONIX_ID_BYTE2_1G, 0xFFFF0000, 4},// 25
 	{0x20000, 0x800,  512, 0x80000,  0x8000000, MACRONIX_ID_BYTE0, MACRONIX_ID_BYTE2_1G, 0xFFFE0000, 4},// 26
 	/* ISSI */
-	{0x10000, 0x200, 256, 0x20000, 0x2000000, ISSI_ID_BYTE0, ISSI_ID_BYTE2_256, 0xFFFF0000, 1}	//27
+	{0x10000, 0x200, 256, 0x20000, 0x2000000, ISSI_ID_BYTE0, ISSI_ID_BYTE2_256, 0xFFFF0000, 1},	//27
+	{0x10000, 0x400, 256, 0x40000, 0x2000000, ISSI_ID_BYTE0, ISSI_ID_BYTE2_256, 0xFFFF0000, 1},	//28
+	{0x20000, 0x200, 512, 0x20000, 0x2000000, ISSI_ID_BYTE0, ISSI_ID_BYTE2_256, 0xFFFF0000, 1}	//29
 };
 u32 FlashMake;
 u32 FCTIndex;	/* Flash configuration table index */
@@ -1679,6 +1681,28 @@ XQspiPs QspiInstance;
 u8 ReadBuffer[PAGE_SIZE + DATA_OFFSET + DUMMY_SIZE];
 u8 WriteBuffer[PAGE_SIZE + DATA_OFFSET];
 
+FlashInfo Flash_Config_Table[28] = {
+	/* Spansion 0-8 */
+	{0x10000, 0x100, 256,  0x10000, 0x1000000, SPANSION_ID_BYTE0, SPANSION_ID_BYTE2_128, 0xFFFF0000, 1},	// 0
+	{0x10000, 0x200, 256,  0x20000, 0x2000000, SPANSION_ID_BYTE0, SPANSION_ID_BYTE2_256, 0xFFFF0000, 1},	// 1
+	{0x40000, 0x100, 512,  0x20000, 0x4000000, SPANSION_ID_BYTE0, SPANSION_ID_BYTE2_512, 0xFFFC0000, 1},	// 2
+	/* Spansion 1Gbit is handled as 512Mbit stacked */
+	/* Micron */
+	{0x10000, 0x100,  256, 0x10000,  0x1000000, MICRON_ID_BYTE0, MICRON_ID_BYTE2_128, 0xFFFF0000, 1},	// 3
+	{0x10000, 0x200,  256, 0x20000,  0x2000000, MICRON_ID_BYTE0, MICRON_ID_BYTE2_256, 0xFFFF0000, 1},	// 4
+	{0x10000, 0x400,  256, 0x40000,  0x4000000, MICRON_ID_BYTE0, MICRON_ID_BYTE2_512, 0xFFFF0000, 2},	// 5
+	{0x10000, 0x800,  256, 0x80000,  0x8000000, MICRON_ID_BYTE0, MICRON_ID_BYTE2_1G,  0xFFFF0000, 4},	// 6
+	/* Winbond */
+	{0x10000, 0x100, 256, 0x10000, 0x1000000, WINBOND_ID_BYTE0, WINBOND_ID_BYTE2_128, 0xFFFF0000, 1},	// 7
+	/* Macronix */
+	{0x10000, 0x800,  256, 0x80000,  0x8000000, MACRONIX_ID_BYTE0, MACRONIX_ID_BYTE2_1G, 0xFFFF0000, 4},// 8
+	/* ISSI */
+	{0x10000, 0x200, 256, 0x20000, 0x2000000, ISSI_ID_BYTE0, ISSI_ID_BYTE2_256, 0xFFFF0000, 1} //9
+};
+u32 FlashMake;
+u32 FCTIndex;	/* Flash configuration table index */
+u8 FSRFlag;
+
 #if defined (QFLASH_BT_16MB)
 void FlashEnterExit4BAddMode(XQspiPs *QspiPtr)
 {
@@ -1690,6 +1714,20 @@ void FlashEnterExit4BAddMode(XQspiPs *QspiPtr)
     XQspiPs_PolledTransfer(QspiPtr, &WriteDisableCmd, NULL, sizeof(WriteDisableCmd));
 }
 #endif // QFLASH_BT_16MB
+
+void show_flash_info(int idx)
+{
+	FlashInfo*flash_ptr=&Flash_Config_Table[idx];
+	xil_printf("SectSize:%d\r\n",flash_ptr->SectSize);
+	xil_printf("NumSect:%d\r\n",flash_ptr->NumSect);
+	xil_printf("SectMask:%d\r\n",flash_ptr->SectMask);
+	xil_printf("NumPage:%d\r\n",flash_ptr->NumPage);
+	xil_printf("PageSize:%d\r\n",flash_ptr->PageSize);
+	xil_printf("DeviceIDMemSize:%d\r\n",flash_ptr->DeviceIDMemSize);
+	xil_printf("FlashDeviceSize:%d\r\n",flash_ptr->FlashDeviceSize);
+	xil_printf("ManufacturerID:%d\r\n",flash_ptr->ManufacturerID);
+	xil_printf("NumDie:%d\r\n",flash_ptr->NumDie);
+}
 
 int qspi_init()
 {
@@ -1718,8 +1756,18 @@ int qspi_init()
     XQspiPs_SetSlaveSelect(&QspiInstance);
     //¶ÁFLASH ID
     FlashReadID();
+    xil_printf("FCTIndex: %d \n\r", FCTIndex);
+    show_flash_info(FCTIndex);
     //Ê¹ÄÜFLASH QuadÄ£Êœ
     FlashQuadEnable(&QspiInstance);
+
+	/* Status cmd - SR or FSR selection */
+	if((Flash_Config_Table[FCTIndex].NumDie > 1) && (FlashMake == MICRON_ID_BYTE0)) {
+		FSRFlag = 1;
+	} else {
+		FSRFlag = 0;
+	}
+
 #if defined (QFLASH_BT_16MB)
     FlashEnterExit4BAddMode(&QspiInstance);
 #endif // QFLASH_BT_16MB
@@ -1907,6 +1955,14 @@ void FlashWrite(XQspiPs *QspiPtr, u32 Address, u32 ByteCount, u8 Command)
     u8 ReadStatusCmd[] = { READ_STATUS_CMD, 0 }; /* must send 2 bytes */
     u8 FlashStatus[2];
 
+	/* Status cmd - SR or FSR selection */
+	if((Flash_Config_Table[FCTIndex].NumDie > 1) &&
+			(FlashMake == MICRON_ID_BYTE0)) {
+		ReadStatusCmd[0] = READ_FLAG_STATUS_CMD;
+	} else {
+		ReadStatusCmd[0] = READ_STATUS_CMD;
+	}
+
     /*
      * Send the write enable command to the FLASH so that it can be
      * written to, this needs to be sent as a seperate transfer before
@@ -1957,9 +2013,15 @@ void FlashWrite(XQspiPs *QspiPtr, u32 Address, u32 ByteCount, u8 Command)
          * possibly incorrect such that the device status is not being
          * read
          */
-        if ((FlashStatus[1] & 0x01) == 0) {
-            break;
-        }
+		if(FSRFlag) {
+			if ((FlashStatus[1] & 0x80) != 0) {
+				break;
+			}
+		} else {
+			if ((FlashStatus[1] & 0x01) == 0) {
+				break;
+			}
+		}
     }
 }
 
@@ -2020,6 +2082,128 @@ void FlashRead(XQspiPs *QspiPtr, u32 Address, u32 ByteCount, u8 Command)
             ByteCount + OVERHEAD_SIZE);
 }
 
+
+int DieErase(XQspiPs *QspiPtr)
+{
+	u8 WriteEnableCmd = { WRITE_ENABLE_CMD };
+	u8 ReadStatusCmd[] = { READ_STATUS_CMD, 0 }; /* must send 2 bytes */
+	u8 FlashStatus[2];
+	u8 DieCnt;
+	int Status;
+
+	/* Status cmd - SR or FSR selection */
+	if((Flash_Config_Table[FCTIndex].NumDie > 1) && (FlashMake == MICRON_ID_BYTE0)) {
+		ReadStatusCmd[0] = READ_FLAG_STATUS_CMD;
+	} else {
+		ReadStatusCmd[0] = READ_STATUS_CMD;
+	}
+
+	for(DieCnt = 0; DieCnt < Flash_Config_Table[FCTIndex].NumDie; DieCnt++) {
+		Status = XQspiPs_PolledTransfer(QspiPtr, &WriteEnableCmd, NULL, sizeof(WriteEnableCmd));
+		if (Status != XST_SUCCESS) {
+			return XST_FAILURE;
+		}
+
+		WriteBuffer[COMMAND_OFFSET] = DIE_ERASE_CMD;
+	    Status = XQspiPs_PolledTransfer(QspiPtr, WriteBuffer, NULL, BULK_ERASE_SIZE);
+		if (Status != XST_SUCCESS) {
+			return XST_FAILURE;
+		}
+
+	    /* Wait for the erase command to the FLASH to be completed*/
+	    while (1) {
+	        /*
+	         * Poll the status register of the device to determine
+	         * when it completes, by sending a read status command
+	         * and receiving the status byte
+	         */
+	    	Status = XQspiPs_PolledTransfer(QspiPtr, ReadStatusCmd, FlashStatus, sizeof(ReadStatusCmd));
+	    	if (Status != XST_SUCCESS) {
+	    		return XST_FAILURE;
+	    	}
+	        /*
+	         * If the status indicates the write is done, then stop
+	         * waiting; if a value of 0xFF in the status byte is
+	         * read from the device and this loop never exits, the
+	         * device slave select is possibly incorrect such that
+	         * the device status is not being read
+	         */
+	        if(FSRFlag) {
+	        	if ((FlashStatus[1] & 0x80) != 0) {
+	        		break;
+	        	}
+	        } else {
+	        	if ((FlashStatus[1] & 0x01) == 0) {
+	        		break;
+	        	}
+	        }
+	    }
+	}
+}
+
+int BulkErase(XQspiPs *QspiPtr)
+{
+	u8 WriteEnableCmd = { WRITE_ENABLE_CMD };
+	u8 ReadStatusCmd[] = { READ_STATUS_CMD, 0 }; /* must send 2 bytes */
+	u8 FlashStatus[2];
+	int Status;
+
+	/* Status cmd - SR or FSR selection */
+	if((Flash_Config_Table[FCTIndex].NumDie > 1) && (FlashMake == MICRON_ID_BYTE0)) {
+		ReadStatusCmd[0] = READ_FLAG_STATUS_CMD;
+	} else {
+		ReadStatusCmd[0] = READ_STATUS_CMD;
+	}
+
+	Status = XQspiPs_PolledTransfer(QspiPtr, &WriteEnableCmd, NULL, sizeof(WriteEnableCmd));
+	if (Status != XST_SUCCESS) {
+		return XST_FAILURE;
+	}
+
+    /* Setup the bulk erase command*/
+    WriteBuffer[COMMAND_OFFSET] = BULK_ERASE_CMD;
+
+    /*
+     * Send the bulk erase command; no receive buffer is specified
+     * since there is nothing to receive
+     */
+    Status = XQspiPs_PolledTransfer(QspiPtr, WriteBuffer, NULL, BULK_ERASE_SIZE);
+	if (Status != XST_SUCCESS) {
+		return XST_FAILURE;
+	}
+
+    /* Wait for the erase command to the FLASH to be completed*/
+    while (1) {
+        /*
+         * Poll the status register of the device to determine
+         * when it completes, by sending a read status command
+         * and receiving the status byte
+         */
+    	Status = XQspiPs_PolledTransfer(QspiPtr, ReadStatusCmd, FlashStatus, sizeof(ReadStatusCmd));
+    	if (Status != XST_SUCCESS) {
+    		return XST_FAILURE;
+    	}
+        /*
+         * If the status indicates the write is done, then stop
+         * waiting; if a value of 0xFF in the status byte is
+         * read from the device and this loop never exits, the
+         * device slave select is possibly incorrect such that
+         * the device status is not being read
+         */
+        if(FSRFlag) {
+        	if ((FlashStatus[1] & 0x80) != 0) {
+        		break;
+        	}
+        } else {
+        	if ((FlashStatus[1] & 0x01) == 0) {
+        		break;
+        	}
+        }
+    }
+
+	return XST_SUCCESS;
+}
+
 /*****************************************************************************/
 /**
  *
@@ -2045,51 +2229,38 @@ void FlashErase(XQspiPs *QspiPtr, u32 Address, u32 ByteCount)
     int total_sector;
     u8 pre_precent = -1;
     u8 process_percent = 0;
+
+	/* Status cmd - SR or FSR selection */
+	if((Flash_Config_Table[FCTIndex].NumDie > 1) &&
+			(FlashMake == MICRON_ID_BYTE0)) {
+		ReadStatusCmd[0] = READ_FLAG_STATUS_CMD;
+	} else {
+		ReadStatusCmd[0] = READ_STATUS_CMD;
+	}
+
     /*
      * If erase size is same as the total size of the flash, use bulk erase
      * command
      */
-    if (ByteCount == (NUM_SECTORS * SECTOR_SIZE)) {
+    if (ByteCount == ((Flash_Config_Table[FCTIndex]).NumSect * (Flash_Config_Table[FCTIndex]).SectSize)) {
         /*
          * Send the write enable command to the FLASH so that it can be
          * written to, this needs to be sent as a seperate transfer
          * before the erase
          */
-        XQspiPs_PolledTransfer(QspiPtr, &WriteEnableCmd, NULL,
-                sizeof(WriteEnableCmd));
+		if(Flash_Config_Table[FCTIndex].NumDie == 1) {
+			/*
+			 * Call Bulk erase
+			 */
+			BulkErase(QspiPtr);
+		}
 
-        /* Setup the bulk erase command*/
-        WriteBuffer[COMMAND_OFFSET] = BULK_ERASE_CMD;
-
-        /*
-         * Send the bulk erase command; no receive buffer is specified
-         * since there is nothing to receive
-         */
-        XQspiPs_PolledTransfer(QspiPtr, WriteBuffer, NULL,
-        BULK_ERASE_SIZE);
-
-        /* Wait for the erase command to the FLASH to be completed*/
-        while (1) {
-            /*
-             * Poll the status register of the device to determine
-             * when it completes, by sending a read status command
-             * and receiving the status byte
-             */
-            XQspiPs_PolledTransfer(QspiPtr, ReadStatusCmd, FlashStatus,
-                    sizeof(ReadStatusCmd));
-
-            /*
-             * If the status indicates the write is done, then stop
-             * waiting; if a value of 0xFF in the status byte is
-             * read from the device and this loop never exits, the
-             * device slave select is possibly incorrect such that
-             * the device status is not being read
-             */
-            if ((FlashStatus[1] & 0x01) == 0) {
-                break;
-            }
-        }
-
+		if(Flash_Config_Table[FCTIndex].NumDie > 1) {
+			/*
+			 * Call Die erase
+			 */
+			DieErase(QspiPtr);
+		}
         return;
     }
 
@@ -2155,8 +2326,14 @@ void FlashErase(XQspiPs *QspiPtr, u32 Address, u32 ByteCount)
              * device slave select is possibly incorrect such that
              * the device status is not being read
              */
-            if ((FlashStatus[1] & 0x01) == 0) {
-                break;
+            if(FSRFlag) {
+            	if ((FlashStatus[1] & 0x80) != 0) {
+            		break;
+            	}
+            } else {
+            	if ((FlashStatus[1] & 0x01) == 0) {
+            		break;
+            	}
             }
         }
 
@@ -2199,6 +2376,65 @@ int FlashReadID(void)
 
     printf("FlashID=0x%x 0x%x 0x%x\n\r", ReadBuffer[1], ReadBuffer[2],
             ReadBuffer[3]);
+	/*
+	 * Deduce flash make
+	 */
+	if(ReadBuffer[1] == MICRON_ID_BYTE0) {
+		FlashMake = MICRON_ID_BYTE0;
+		StartIndex = MICRON_INDEX_START;
+	}else if(ReadBuffer[1] == SPANSION_ID_BYTE0) {
+		FlashMake = SPANSION_ID_BYTE0;
+		StartIndex = SPANSION_INDEX_START;
+	}else if(ReadBuffer[1] == WINBOND_ID_BYTE0) {
+		FlashMake = WINBOND_ID_BYTE0;
+		StartIndex = WINBOND_INDEX_START;
+	} else if(ReadBuffer[1] == MACRONIX_ID_BYTE0) {
+		FlashMake = MACRONIX_ID_BYTE0;
+		StartIndex = MACRONIX_INDEX_START;
+	} else if(ReadBuffer[1] == ISSI_ID_BYTE0) {
+		FlashMake = ISSI_ID_BYTE0;
+		StartIndex = ISSI_INDEX_START;
+	}
+
+	/*
+	 * If valid flash ID, then check connection mode & size and
+	 * assign corresponding index in the Flash configuration table
+	 */
+	if(((FlashMake == MICRON_ID_BYTE0) || (FlashMake == SPANSION_ID_BYTE0)||
+			(FlashMake == WINBOND_ID_BYTE0)) &&
+			(ReadBuffer[3] == MICRON_ID_BYTE2_128)) {
+		FCTIndex = FLASH_CFG_TBL_SINGLE_128_SP + StartIndex;
+	}
+
+	/* 256 and 512Mbit supported only for Micron and Spansion, not Winbond */
+	if(((FlashMake == MICRON_ID_BYTE0) || (FlashMake == SPANSION_ID_BYTE0)) &&
+			(ReadBuffer[3] == MICRON_ID_BYTE2_256)) {
+		FCTIndex = FLASH_CFG_TBL_SINGLE_256_SP + StartIndex;
+	}
+	if((FlashMake == ISSI_ID_BYTE0) &&
+			(ReadBuffer[3] == MICRON_ID_BYTE2_256)) {
+		FCTIndex = FLASH_CFG_TBL_SINGLE_256_ISSI;
+	}
+	if(((FlashMake == MICRON_ID_BYTE0) || (FlashMake == SPANSION_ID_BYTE0)) &&
+			(ReadBuffer[3] == MICRON_ID_BYTE2_512)) {
+		FCTIndex = FLASH_CFG_TBL_SINGLE_512_SP + StartIndex;
+	}
+	/*
+	 * 1Gbit Single connection supported for Spansion.
+	 * The ConnectionMode will indicate stacked as this part has 2 SS
+	 * The device ID will indicate 512Mbit.
+	 * This configuration is handled as the above 512Mbit stacked configuration
+	 */
+	/* 1Gbit single supported for Micron */
+	if((FlashMake == MICRON_ID_BYTE0) &&
+			(ReadBuffer[3] == MICRON_ID_BYTE2_1G)) {
+		FCTIndex = FLASH_CFG_TBL_SINGLE_1GB_MC;
+	}
+	/* 1Gbit single supported for Macronix */
+	if(((FlashMake == MACRONIX_ID_BYTE0) &&
+			(ReadBuffer[3] == MACRONIX_ID_BYTE2_1G))) {
+		FCTIndex = FLASH_CFG_TBL_SINGLE_1G_MX;
+	}
 
     return XST_SUCCESS;
 }
@@ -2224,7 +2460,7 @@ void FlashQuadEnable(XQspiPs *QspiPtr)
     u8 QuadEnableCmd[] = { WRITE_STATUS_CMD, 0 };
     u8 FlashStatus[2];
 
-    if (ReadBuffer[1] == 0x9D) {
+    if (FlashMake == ISSI_ID_BYTE0) {
 
         XQspiPs_PolledTransfer(QspiPtr, ReadStatusCmd, FlashStatus,
                 sizeof(ReadStatusCmd));
@@ -2250,6 +2486,28 @@ XSpi  XSpiInstance;
 u8 ReadBuffer[PAGE_SIZE + DATA_OFFSET + DUMMY_SIZE];
 u8 WriteBuffer[PAGE_SIZE + DATA_OFFSET];
 
+FlashInfo Flash_Config_Table[28] = {
+	/* Spansion 0-8 */
+	{0x10000, 0x100, 256,  0x10000, 0x1000000, SPANSION_ID_BYTE0, SPANSION_ID_BYTE2_128, 0xFFFF0000, 1},	// 0
+	{0x10000, 0x200, 256,  0x20000, 0x2000000, SPANSION_ID_BYTE0, SPANSION_ID_BYTE2_256, 0xFFFF0000, 1},	// 1
+	{0x40000, 0x100, 512,  0x20000, 0x4000000, SPANSION_ID_BYTE0, SPANSION_ID_BYTE2_512, 0xFFFC0000, 1},	// 2
+	/* Spansion 1Gbit is handled as 512Mbit stacked */
+	/* Micron */
+	{0x10000, 0x100,  256, 0x10000,  0x1000000, MICRON_ID_BYTE0, MICRON_ID_BYTE2_128, 0xFFFF0000, 1},	// 3
+	{0x10000, 0x200,  256, 0x20000,  0x2000000, MICRON_ID_BYTE0, MICRON_ID_BYTE2_256, 0xFFFF0000, 1},	// 4
+	{0x10000, 0x400,  256, 0x40000,  0x4000000, MICRON_ID_BYTE0, MICRON_ID_BYTE2_512, 0xFFFF0000, 2},	// 5
+	{0x10000, 0x800,  256, 0x80000,  0x8000000, MICRON_ID_BYTE0, MICRON_ID_BYTE2_1G,  0xFFFF0000, 4},	// 6
+	/* Winbond */
+	{0x10000, 0x100, 256, 0x10000, 0x1000000, WINBOND_ID_BYTE0, WINBOND_ID_BYTE2_128, 0xFFFF0000, 1},	// 7
+	/* Macronix */
+	{0x10000, 0x800,  256, 0x80000,  0x8000000, MACRONIX_ID_BYTE0, MACRONIX_ID_BYTE2_1G, 0xFFFF0000, 4},// 8
+	/* ISSI */
+	{0x10000, 0x200, 256, 0x20000, 0x2000000, ISSI_ID_BYTE0, ISSI_ID_BYTE2_256, 0xFFFF0000, 1} //9
+};
+u32 FlashMake;
+u32 FCTIndex;	/* Flash configuration table index */
+u8 FSRFlag;
+
 #if defined (QFLASH_BT_16MB)
 void FlashEnterExit4BAddMode(XSpi *QspiPtr)
 {
@@ -2262,6 +2520,20 @@ void FlashEnterExit4BAddMode(XSpi *QspiPtr)
 	XSpi_Transfer(QspiPtr, &WriteDisableCmd, NULL, sizeof(WriteDisableCmd));
 }
 #endif // QFLASH_BT_16MB
+
+void show_flash_info(int idx)
+{
+	FlashInfo*flash_ptr=&Flash_Config_Table[idx];
+	xil_printf("SectSize:%d\r\n",flash_ptr->SectSize);
+	xil_printf("NumSect:%d\r\n",flash_ptr->NumSect);
+	xil_printf("SectMask:%d\r\n",flash_ptr->SectMask);
+	xil_printf("NumPage:%d\r\n",flash_ptr->NumPage);
+	xil_printf("PageSize:%d\r\n",flash_ptr->PageSize);
+	xil_printf("DeviceIDMemSize:%d\r\n",flash_ptr->DeviceIDMemSize);
+	xil_printf("FlashDeviceSize:%d\r\n",flash_ptr->FlashDeviceSize);
+	xil_printf("ManufacturerID:%d\r\n",flash_ptr->ManufacturerID);
+	xil_printf("NumDie:%d\r\n",flash_ptr->NumDie);
+}
 
 int qspi_init()
 {
@@ -2311,8 +2583,17 @@ int qspi_init()
 
 
     FlashReadID();
-
+    xil_printf("FCTIndex: %d \n\r", FCTIndex);
+    show_flash_info(FCTIndex);
     FlashQuadEnable(&XSpiInstance);
+
+	/* Status cmd - SR or FSR selection */
+	if((Flash_Config_Table[FCTIndex].NumDie > 1) && (FlashMake == MICRON_ID_BYTE0)) {
+		FSRFlag = 1;
+	} else {
+		FSRFlag = 0;
+	}
+
 #if defined (QFLASH_BT_16MB)
     FlashEnterExit4BAddMode(&XSpiInstance);
 #endif // QFLASH_BT_16MB
@@ -2483,7 +2764,13 @@ void FlashWrite(XSpi *QspiPtr, u32 Address, u32 ByteCount, u8 Command)
     u8 ReadStatusCmd[] = { READ_STATUS_CMD, 0 }; /* must send 2 bytes */
     u8 FlashStatus[2];
 	u8 WriteDisableCmd = { WRITE_DISABLE_CMD };
-
+	/* Status cmd - SR or FSR selection */
+	if((Flash_Config_Table[FCTIndex].NumDie > 1) &&
+			(FlashMake == MICRON_ID_BYTE0)) {
+		ReadStatusCmd[0] = READ_FLAG_STATUS_CMD;
+	} else {
+		ReadStatusCmd[0] = READ_STATUS_CMD;
+	}
     /*
      * Send the write enable command to the FLASH so that it can be
      * written to, this needs to be sent as a seperate transfer before
@@ -2533,8 +2820,14 @@ void FlashWrite(XSpi *QspiPtr, u32 Address, u32 ByteCount, u8 Command)
          * possibly incorrect such that the device status is not being
          * read
          */
-        if ((FlashStatus[1] & 0x01) == 0) {
-            break;
+        if(FSRFlag) {
+        	if ((FlashStatus[1] & 0x80) != 0) {
+        		break;
+        	}
+        } else {
+        	if ((FlashStatus[1] & 0x01) == 0) {
+        		break;
+        	}
         }
     }
 
@@ -2580,6 +2873,127 @@ void FlashRead(XSpi *QspiPtr, u32 Address, u32 ByteCount, u8 Command)
             ByteCount + OVERHEAD_SIZE);
 }
 
+int DieErase(XSpi *QspiPtr)
+{
+	u8 WriteEnableCmd = { WRITE_ENABLE_CMD };
+	u8 ReadStatusCmd[] = { READ_STATUS_CMD, 0 }; /* must send 2 bytes */
+	u8 FlashStatus[2];
+	u8 DieCnt;
+	int Status;
+
+	/* Status cmd - SR or FSR selection */
+	if((Flash_Config_Table[FCTIndex].NumDie > 1) && (FlashMake == MICRON_ID_BYTE0)) {
+		ReadStatusCmd[0] = READ_FLAG_STATUS_CMD;
+	} else {
+		ReadStatusCmd[0] = READ_STATUS_CMD;
+	}
+
+	for(DieCnt = 0; DieCnt < Flash_Config_Table[FCTIndex].NumDie; DieCnt++) {
+		Status = XSpi_Transfer(QspiPtr, &WriteEnableCmd, NULL, sizeof(WriteEnableCmd));
+		if (Status != XST_SUCCESS) {
+			return XST_FAILURE;
+		}
+
+		WriteBuffer[COMMAND_OFFSET] = DIE_ERASE_CMD;
+	    Status = XSpi_Transfer(QspiPtr, WriteBuffer, NULL, BULK_ERASE_SIZE);
+		if (Status != XST_SUCCESS) {
+			return XST_FAILURE;
+		}
+
+	    /* Wait for the erase command to the FLASH to be completed*/
+	    while (1) {
+	        /*
+	         * Poll the status register of the device to determine
+	         * when it completes, by sending a read status command
+	         * and receiving the status byte
+	         */
+	    	Status = XSpi_Transfer(QspiPtr, ReadStatusCmd, FlashStatus, sizeof(ReadStatusCmd));
+	    	if (Status != XST_SUCCESS) {
+	    		return XST_FAILURE;
+	    	}
+	        /*
+	         * If the status indicates the write is done, then stop
+	         * waiting; if a value of 0xFF in the status byte is
+	         * read from the device and this loop never exits, the
+	         * device slave select is possibly incorrect such that
+	         * the device status is not being read
+	         */
+	        if(FSRFlag) {
+	        	if ((FlashStatus[1] & 0x80) != 0) {
+	        		break;
+	        	}
+	        } else {
+	        	if ((FlashStatus[1] & 0x01) == 0) {
+	        		break;
+	        	}
+	        }
+	    }
+	}
+}
+
+int BulkErase(XSpi *QspiPtr)
+{
+	u8 WriteEnableCmd = { WRITE_ENABLE_CMD };
+	u8 ReadStatusCmd[] = { READ_STATUS_CMD, 0 }; /* must send 2 bytes */
+	u8 FlashStatus[2];
+	int Status;
+
+	/* Status cmd - SR or FSR selection */
+	if((Flash_Config_Table[FCTIndex].NumDie > 1) && (FlashMake == MICRON_ID_BYTE0)) {
+		ReadStatusCmd[0] = READ_FLAG_STATUS_CMD;
+	} else {
+		ReadStatusCmd[0] = READ_STATUS_CMD;
+	}
+
+	Status = XSpi_Transfer(QspiPtr, &WriteEnableCmd, NULL, sizeof(WriteEnableCmd));
+	if (Status != XST_SUCCESS) {
+		return XST_FAILURE;
+	}
+
+    /* Setup the bulk erase command*/
+    WriteBuffer[COMMAND_OFFSET] = BULK_ERASE_CMD;
+
+    /*
+     * Send the bulk erase command; no receive buffer is specified
+     * since there is nothing to receive
+     */
+    Status = XSpi_Transfer(QspiPtr, WriteBuffer, NULL, BULK_ERASE_SIZE);
+	if (Status != XST_SUCCESS) {
+		return XST_FAILURE;
+	}
+
+    /* Wait for the erase command to the FLASH to be completed*/
+    while (1) {
+        /*
+         * Poll the status register of the device to determine
+         * when it completes, by sending a read status command
+         * and receiving the status byte
+         */
+    	Status = XSpi_Transfer(QspiPtr, ReadStatusCmd, FlashStatus, sizeof(ReadStatusCmd));
+    	if (Status != XST_SUCCESS) {
+    		return XST_FAILURE;
+    	}
+        /*
+         * If the status indicates the write is done, then stop
+         * waiting; if a value of 0xFF in the status byte is
+         * read from the device and this loop never exits, the
+         * device slave select is possibly incorrect such that
+         * the device status is not being read
+         */
+        if(FSRFlag) {
+        	if ((FlashStatus[1] & 0x80) != 0) {
+        		break;
+        	}
+        } else {
+        	if ((FlashStatus[1] & 0x01) == 0) {
+        		break;
+        	}
+        }
+    }
+
+	return XST_SUCCESS;
+}
+
 void FlashErase(XSpi *QspiPtr, u32 Address, u32 ByteCount)
 {
     u8 WriteEnableCmd = { WRITE_ENABLE_CMD };
@@ -2590,48 +3004,37 @@ void FlashErase(XSpi *QspiPtr, u32 Address, u32 ByteCount)
     int total_sector;
     u8 pre_precent = -1;
     u8 process_percent = 0;
+
+	/* Status cmd - SR or FSR selection */
+	if((Flash_Config_Table[FCTIndex].NumDie > 1) &&
+			(FlashMake == MICRON_ID_BYTE0)) {
+		ReadStatusCmd[0] = READ_FLAG_STATUS_CMD;
+	} else {
+		ReadStatusCmd[0] = READ_STATUS_CMD;
+	}
     /*
      * If erase size is same as the total size of the flash, use bulk erase
      * command
      */
-    if (ByteCount == (NUM_SECTORS * SECTOR_SIZE)) {
+    if (ByteCount == ((Flash_Config_Table[FCTIndex]).NumSect * (Flash_Config_Table[FCTIndex]).SectSize)) {
         /*
          * Send the write enable command to the FLASH so that it can be
          * written to, this needs to be sent as a seperate transfer
          * before the erase
          */
-    	XSpi_Transfer(QspiPtr, &WriteEnableCmd, NULL, sizeof(WriteEnableCmd));
+		if(Flash_Config_Table[FCTIndex].NumDie == 1) {
+			/*
+			 * Call Bulk erase
+			 */
+			BulkErase(QspiPtr);
+		}
 
-        /* Setup the bulk erase command*/
-        WriteBuffer[COMMAND_OFFSET] = BULK_ERASE_CMD;
-
-        /*
-         * Send the bulk erase command; no receive buffer is specified
-         * since there is nothing to receive
-         */
-        XSpi_Transfer(QspiPtr, WriteBuffer, NULL, BULK_ERASE_SIZE);
-
-        /* Wait for the erase command to the FLASH to be completed*/
-        while (1) {
-            /*
-             * Poll the status register of the device to determine
-             * when it completes, by sending a read status command
-             * and receiving the status byte
-             */
-        	XSpi_Transfer(QspiPtr, ReadStatusCmd, FlashStatus, sizeof(ReadStatusCmd));
-
-            /*
-             * If the status indicates the write is done, then stop
-             * waiting; if a value of 0xFF in the status byte is
-             * read from the device and this loop never exits, the
-             * device slave select is possibly incorrect such that
-             * the device status is not being read
-             */
-            if ((FlashStatus[1] & 0x01) == 0) {
-                break;
-            }
-        }
-
+		if(Flash_Config_Table[FCTIndex].NumDie > 1) {
+			/*
+			 * Call Die erase
+			 */
+			DieErase(QspiPtr);
+		}
         return;
     }
 
@@ -2694,8 +3097,14 @@ void FlashErase(XSpi *QspiPtr, u32 Address, u32 ByteCount)
              * device slave select is possibly incorrect such that
              * the device status is not being read
              */
-            if ((FlashStatus[1] & 0x01) == 0) {
-                break;
+            if(FSRFlag) {
+            	if ((FlashStatus[1] & 0x80) != 0) {
+            		break;
+            	}
+            } else {
+            	if ((FlashStatus[1] & 0x01) == 0) {
+            		break;
+            	}
             }
         }
 
@@ -2727,6 +3136,66 @@ int FlashReadID(void)
 
     printf("FlashID=0x%x 0x%x 0x%x\n\r", ReadBuffer[1], ReadBuffer[2], ReadBuffer[3]);
 
+	/*
+	 * Deduce flash make
+	 */
+	if(ReadBuffer[1] == MICRON_ID_BYTE0) {
+		FlashMake = MICRON_ID_BYTE0;
+		StartIndex = MICRON_INDEX_START;
+	}else if(ReadBuffer[1] == SPANSION_ID_BYTE0) {
+		FlashMake = SPANSION_ID_BYTE0;
+		StartIndex = SPANSION_INDEX_START;
+	}else if(ReadBuffer[1] == WINBOND_ID_BYTE0) {
+		FlashMake = WINBOND_ID_BYTE0;
+		StartIndex = WINBOND_INDEX_START;
+	} else if(ReadBuffer[1] == MACRONIX_ID_BYTE0) {
+		FlashMake = MACRONIX_ID_BYTE0;
+		StartIndex = MACRONIX_INDEX_START;
+	} else if(ReadBuffer[1] == ISSI_ID_BYTE0) {
+		FlashMake = ISSI_ID_BYTE0;
+		StartIndex = ISSI_INDEX_START;
+	}
+
+	/*
+	 * If valid flash ID, then check connection mode & size and
+	 * assign corresponding index in the Flash configuration table
+	 */
+	if(((FlashMake == MICRON_ID_BYTE0) || (FlashMake == SPANSION_ID_BYTE0)||
+			(FlashMake == WINBOND_ID_BYTE0)) &&
+			(ReadBuffer[3] == MICRON_ID_BYTE2_128)) {
+		FCTIndex = FLASH_CFG_TBL_SINGLE_128_SP + StartIndex;
+	}
+
+	/* 256 and 512Mbit supported only for Micron and Spansion, not Winbond */
+	if(((FlashMake == MICRON_ID_BYTE0) || (FlashMake == SPANSION_ID_BYTE0)) &&
+			(ReadBuffer[3] == MICRON_ID_BYTE2_256)) {
+		FCTIndex = FLASH_CFG_TBL_SINGLE_256_SP + StartIndex;
+	}
+	if((FlashMake == ISSI_ID_BYTE0) &&
+			(ReadBuffer[3] == MICRON_ID_BYTE2_256)) {
+		FCTIndex = FLASH_CFG_TBL_SINGLE_256_ISSI;
+	}
+	if(((FlashMake == MICRON_ID_BYTE0) || (FlashMake == SPANSION_ID_BYTE0)) &&
+			(ReadBuffer[3] == MICRON_ID_BYTE2_512)) {
+		FCTIndex = FLASH_CFG_TBL_SINGLE_512_SP + StartIndex;
+	}
+	/*
+	 * 1Gbit Single connection supported for Spansion.
+	 * The ConnectionMode will indicate stacked as this part has 2 SS
+	 * The device ID will indicate 512Mbit.
+	 * This configuration is handled as the above 512Mbit stacked configuration
+	 */
+	/* 1Gbit single supported for Micron */
+	if((FlashMake == MICRON_ID_BYTE0) &&
+			(ReadBuffer[3] == MICRON_ID_BYTE2_1G)) {
+		FCTIndex = FLASH_CFG_TBL_SINGLE_1GB_MC;
+	}
+	/* 1Gbit single supported for Macronix */
+	if(((FlashMake == MACRONIX_ID_BYTE0) &&
+			(ReadBuffer[3] == MACRONIX_ID_BYTE2_1G))) {
+		FCTIndex = FLASH_CFG_TBL_SINGLE_1G_MX;
+	}
+
     return XST_SUCCESS;
 }
 
@@ -2737,7 +3206,7 @@ void FlashQuadEnable(XSpi *QspiPtr)
     u8 QuadEnableCmd[] = { WRITE_STATUS_CMD, 0 };
     u8 FlashStatus[2];
 
-    if (ReadBuffer[1] == 0x9D)  // ISSI_ID_BYTE0
+    if (FlashMake == ISSI_ID_BYTE0)
     {
 
     	XSpi_Transfer(QspiPtr, ReadStatusCmd, FlashStatus, sizeof(ReadStatusCmd));

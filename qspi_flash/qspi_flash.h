@@ -321,6 +321,77 @@ extern XQspiPsu QspiInstance;
 #define PAGE_SIZE		256
 #endif // QFLASH_BT_16MB
 
+/*
+ * Identification of Flash
+ * Micron:
+ * Byte 0 is Manufacturer ID;
+ * Byte 1 is first byte of Device ID - 0xBB or 0xBA
+ * Byte 2 is second byte of Device ID describes flash size:
+ * 128Mbit : 0x18; 256Mbit : 0x19; 512Mbit : 0x20
+ */
+#define MICRON_ID_BYTE0			0x20
+#define MICRON_ID_BYTE2_128		0x18
+#define MICRON_ID_BYTE2_256		0x19
+#define MICRON_ID_BYTE2_512		0x20
+#define MICRON_ID_BYTE2_1G		0x21
+//#define MICRON_ID_BYTE2_2G		0x22	// TODO:
+
+#define SPANSION_ID_BYTE0		0x01
+#define SPANSION_ID_BYTE2_128	0x18
+#define SPANSION_ID_BYTE2_256	0x19
+#define SPANSION_ID_BYTE2_512	0x20
+
+#define WINBOND_ID_BYTE0		0xEF
+#define WINBOND_ID_BYTE2_128	0x18
+
+#define MACRONIX_ID_BYTE0		0xC2
+#define MACRONIX_ID_BYTE2_1G	0x1B
+
+#define ISSI_ID_BYTE0			0x9D
+#define ISSI_ID_BYTE2_256		0x19
+
+/*
+ * The index for Flash config table
+ */
+/* Spansion*/
+#define SPANSION_INDEX_START			0
+#define FLASH_CFG_TBL_SINGLE_128_SP		SPANSION_INDEX_START
+#define FLASH_CFG_TBL_SINGLE_256_SP		(SPANSION_INDEX_START + 1)
+#define FLASH_CFG_TBL_SINGLE_512_SP		(SPANSION_INDEX_START + 2)
+/* Micron */
+#define MICRON_INDEX_START			(FLASH_CFG_TBL_SINGLE_512_SP + 1)
+#define FLASH_CFG_TBL_SINGLE_128_MC		MICRON_INDEX_START
+#define FLASH_CFG_TBL_SINGLE_256_MC		(MICRON_INDEX_START + 1)
+#define FLASH_CFG_TBL_SINGLE_512_MC		(MICRON_INDEX_START + 2)
+#define FLASH_CFG_TBL_SINGLE_1GB_MC		(MICRON_INDEX_START + 3)
+
+/* Winbond */
+#define WINBOND_INDEX_START			(FLASH_CFG_TBL_SINGLE_1GB_MC + 1)
+#define FLASH_CFG_TBL_SINGLE_128_WB		WINBOND_INDEX_START
+
+/* Macronix */
+#define MACRONIX_INDEX_START			(FLASH_CFG_TBL_SINGLE_128_WB + 1)
+#define FLASH_CFG_TBL_SINGLE_1G_MX		MACRONIX_INDEX_START
+
+/* ISSI */
+#define ISSI_INDEX_START			(FLASH_CFG_TBL_SINGLE_1G_MX + 1)
+#define FLASH_CFG_TBL_SINGLE_256_ISSI		ISSI_INDEX_START
+
+#define ENTER_4B	1
+#define EXIT_4B		0
+
+typedef struct{
+	u32 SectSize;			/* Individual sector size or combined sector size in case of parallel config */
+	u32 NumSect;			/* Total no. of sectors in one/two flash devices */
+	u32 PageSize;			/* Individual page size or combined page size in case of parallel config */
+	u32 NumPage;			/* Total no. of pages in one/two flash devices */
+	u32 FlashDeviceSize;	/* This is the size of one flash device NOT the combination of both devices, if present */
+	u8 ManufacturerID;		/* Manufacturer ID - used to identify make */
+	u8 DeviceIDMemSize;		/* Byte of device ID indicating the memory size */
+	u32 SectMask;			/* Mask to get sector start address */
+	u8 NumDie;				/* No. of die forming a single flash */
+} FlashInfo;
+
 void FlashErase(XQspiPs *QspiPtr, u32 Address, u32 ByteCount);
 void FlashWrite(XQspiPs *QspiPtr, u32 Address, u32 ByteCount, u8 Command);
 void FlashRead(XQspiPs *QspiPtr, u32 Address, u32 ByteCount, u8 Command);
@@ -408,6 +479,77 @@ extern XQspiPs QspiInstance;
 #define NUM_PAGES		0x20000
 #define PAGE_SIZE		256
 #endif // QFLASH_BT_16MB
+
+/*
+ * Identification of Flash
+ * Micron:
+ * Byte 0 is Manufacturer ID;
+ * Byte 1 is first byte of Device ID - 0xBB or 0xBA
+ * Byte 2 is second byte of Device ID describes flash size:
+ * 128Mbit : 0x18; 256Mbit : 0x19; 512Mbit : 0x20
+ */
+#define MICRON_ID_BYTE0			0x20
+#define MICRON_ID_BYTE2_128		0x18
+#define MICRON_ID_BYTE2_256		0x19
+#define MICRON_ID_BYTE2_512		0x20
+#define MICRON_ID_BYTE2_1G		0x21
+//#define MICRON_ID_BYTE2_2G		0x22	// TODO:
+
+#define SPANSION_ID_BYTE0		0x01
+#define SPANSION_ID_BYTE2_128	0x18
+#define SPANSION_ID_BYTE2_256	0x19
+#define SPANSION_ID_BYTE2_512	0x20
+
+#define WINBOND_ID_BYTE0		0xEF
+#define WINBOND_ID_BYTE2_128	0x18
+
+#define MACRONIX_ID_BYTE0		0xC2
+#define MACRONIX_ID_BYTE2_1G	0x1B
+
+#define ISSI_ID_BYTE0			0x9D
+#define ISSI_ID_BYTE2_256		0x19
+
+/*
+ * The index for Flash config table
+ */
+/* Spansion*/
+#define SPANSION_INDEX_START			0
+#define FLASH_CFG_TBL_SINGLE_128_SP		SPANSION_INDEX_START
+#define FLASH_CFG_TBL_SINGLE_256_SP		(SPANSION_INDEX_START + 1)
+#define FLASH_CFG_TBL_SINGLE_512_SP		(SPANSION_INDEX_START + 2)
+/* Micron */
+#define MICRON_INDEX_START			(FLASH_CFG_TBL_SINGLE_512_SP + 1)
+#define FLASH_CFG_TBL_SINGLE_128_MC		MICRON_INDEX_START
+#define FLASH_CFG_TBL_SINGLE_256_MC		(MICRON_INDEX_START + 1)
+#define FLASH_CFG_TBL_SINGLE_512_MC		(MICRON_INDEX_START + 2)
+#define FLASH_CFG_TBL_SINGLE_1GB_MC		(MICRON_INDEX_START + 3)
+
+/* Winbond */
+#define WINBOND_INDEX_START			(FLASH_CFG_TBL_SINGLE_1GB_MC + 1)
+#define FLASH_CFG_TBL_SINGLE_128_WB		WINBOND_INDEX_START
+
+/* Macronix */
+#define MACRONIX_INDEX_START			(FLASH_CFG_TBL_SINGLE_128_WB + 1)
+#define FLASH_CFG_TBL_SINGLE_1G_MX		MACRONIX_INDEX_START
+
+/* ISSI */
+#define ISSI_INDEX_START			(FLASH_CFG_TBL_SINGLE_1G_MX + 1)
+#define FLASH_CFG_TBL_SINGLE_256_ISSI		ISSI_INDEX_START
+
+#define ENTER_4B	1
+#define EXIT_4B		0
+
+typedef struct{
+	u32 SectSize;			/* Individual sector size or combined sector size in case of parallel config */
+	u32 NumSect;			/* Total no. of sectors in one/two flash devices */
+	u32 PageSize;			/* Individual page size or combined page size in case of parallel config */
+	u32 NumPage;			/* Total no. of pages in one/two flash devices */
+	u32 FlashDeviceSize;	/* This is the size of one flash device NOT the combination of both devices, if present */
+	u8 ManufacturerID;		/* Manufacturer ID - used to identify make */
+	u8 DeviceIDMemSize;		/* Byte of device ID indicating the memory size */
+	u32 SectMask;			/* Mask to get sector start address */
+	u8 NumDie;				/* No. of die forming a single flash */
+} FlashInfo;
 
 void FlashErase(XSpi *XSpiPtr, u32 Address, u32 ByteCount);
 void FlashWrite(XSpi *XSpiPtr, u32 Address, u32 ByteCount, u8 Command);
