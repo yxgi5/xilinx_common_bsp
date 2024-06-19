@@ -1,5 +1,9 @@
 #ifndef __QSPI_FLASH_H__
 
+//#define XPAR_XQSPIPSU_NUM_INSTANCES (1U)
+//#define XPAR_XQSPIPS_NUM_INSTANCES (1U)
+//#undef XPAR_PROCESSOR_SUBSYSTEM_AXI_QUAD_SPI_0_SPI_MODE
+
 //#include "xparameters.h"
 #if defined (XPAR_XQSPIPSU_NUM_INSTANCES) // XPAR_XQSPIPS_NUM_INSTANCES XPAR_XSPI_NUM_INSTANCES (XPAR_AXI_QUAD_SPI_0_SPI_MODE == 2U)
 #define __QSPI_FLASH_H__
@@ -276,6 +280,13 @@ extern XQspiPsu QspiInstance;
 #define DUAL_READ_CMD_4B	0x3C
 #define QUAD_READ_CMD_4B	0x6C
 #define ENTER_4B_ADDR_MODE	0xB7
+#define BANK_REG_RD			0x16
+#define BANK_REG_WR			0x17
+/* Bank register is called Extended Address Register in Micron */
+#define EXTADD_REG_RD		0xC8
+#define EXTADD_REG_WR		0xC5
+#define	DIE_ERASE_CMD		0xC4
+#define READ_FLAG_STATUS_CMD	0x70
 
 #define QFLASH_BT_16MB // bigger than 16MB
 
@@ -431,6 +442,13 @@ extern XQspiPs QspiInstance;
 #define DUAL_READ_CMD_4B	0x3C
 #define QUAD_READ_CMD_4B	0x6C
 #define ENTER_4B_ADDR_MODE	0xB7
+#define BANK_REG_RD			0x16
+#define BANK_REG_WR			0x17
+/* Bank register is called Extended Address Register in Micron */
+#define EXTADD_REG_RD		0xC8
+#define EXTADD_REG_WR		0xC5
+#define	DIE_ERASE_CMD		0xC4
+#define READ_FLAG_STATUS_CMD	0x70
 
 #define QFLASH_BT_16MB // bigger than 16MB
 

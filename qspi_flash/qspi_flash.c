@@ -2356,6 +2356,7 @@ void FlashErase(XQspiPs *QspiPtr, u32 Address, u32 ByteCount)
 int FlashReadID(void)
 {
     int Status;
+    int StartIndex;
 
     Status = FlashWaitForFlashReady();
 	if(Status != XST_SUCCESS) {
@@ -3117,6 +3118,7 @@ void FlashErase(XSpi *QspiPtr, u32 Address, u32 ByteCount)
 int FlashReadID(void)
 {
     int Status;
+    int StartIndex;
 
 	Status = FlashWaitForFlashReady();
 	if(Status != XST_SUCCESS) {
