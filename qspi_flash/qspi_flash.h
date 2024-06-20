@@ -280,6 +280,8 @@ extern XQspiPsu QspiInstance;
 #define DUAL_READ_CMD_4B	0x3C
 #define QUAD_READ_CMD_4B	0x6C
 #define ENTER_4B_ADDR_MODE	0xB7
+#define EXIT_4B_ADDR_MODE	0xE9
+#define EXIT_4B_ADDR_MODE_ISSI	0x29
 #define BANK_REG_RD			0x16
 #define BANK_REG_WR			0x17
 /* Bank register is called Extended Address Register in Micron */
@@ -334,6 +336,7 @@ extern XQspiPsu QspiInstance;
 
 #define WINBOND_ID_BYTE0		0xEF
 #define WINBOND_ID_BYTE2_128	0x18
+#define WINBOND_ID_BYTE2_256	0x19
 
 #define MACRONIX_ID_BYTE0		0xC2
 #define MACRONIX_ID_BYTE2_1G	0x1B
@@ -359,9 +362,10 @@ extern XQspiPsu QspiInstance;
 /* Winbond */
 #define WINBOND_INDEX_START			(FLASH_CFG_TBL_SINGLE_1GB_MC + 1)
 #define FLASH_CFG_TBL_SINGLE_128_WB		WINBOND_INDEX_START
+#define FLASH_CFG_TBL_SINGLE_256_WB		(WINBOND_INDEX_START+1)
 
 /* Macronix */
-#define MACRONIX_INDEX_START			(FLASH_CFG_TBL_SINGLE_128_WB + 1)
+#define MACRONIX_INDEX_START			(FLASH_CFG_TBL_SINGLE_256_WB + 1)
 #define FLASH_CFG_TBL_SINGLE_1G_MX		MACRONIX_INDEX_START
 
 /* ISSI */
@@ -422,6 +426,8 @@ extern XQspiPs QspiInstance;
 #define DUAL_READ_CMD_4B	0x3C
 #define QUAD_READ_CMD_4B	0x6C
 #define ENTER_4B_ADDR_MODE	0xB7
+#define EXIT_4B_ADDR_MODE	0xE9
+#define EXIT_4B_ADDR_MODE_ISSI	0x29
 #define BANK_REG_RD			0x16
 #define BANK_REG_WR			0x17
 /* Bank register is called Extended Address Register in Micron */
@@ -476,6 +482,7 @@ extern XQspiPs QspiInstance;
 
 #define WINBOND_ID_BYTE0		0xEF
 #define WINBOND_ID_BYTE2_128	0x18
+#define WINBOND_ID_BYTE2_256	0x19
 
 #define MACRONIX_ID_BYTE0		0xC2
 #define MACRONIX_ID_BYTE2_1G	0x1B
@@ -501,9 +508,10 @@ extern XQspiPs QspiInstance;
 /* Winbond */
 #define WINBOND_INDEX_START			(FLASH_CFG_TBL_SINGLE_1GB_MC + 1)
 #define FLASH_CFG_TBL_SINGLE_128_WB		WINBOND_INDEX_START
+#define FLASH_CFG_TBL_SINGLE_256_WB		(WINBOND_INDEX_START+1)
 
 /* Macronix */
-#define MACRONIX_INDEX_START			(FLASH_CFG_TBL_SINGLE_128_WB + 1)
+#define MACRONIX_INDEX_START			(FLASH_CFG_TBL_SINGLE_256_WB + 1)
 #define FLASH_CFG_TBL_SINGLE_1G_MX		MACRONIX_INDEX_START
 
 /* ISSI */
