@@ -1,4 +1,4 @@
-#include "../include.h"
+#include "../bsp.h"
 
 #if defined (XPAR_XQSPIPSU_NUM_INSTANCES)
 
