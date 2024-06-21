@@ -400,11 +400,11 @@ extern XQspiPs QspiInstance;
 #endif // XPAR_XQSPIPS_NUM_INSTANCES
 
 
-#if (XPAR_PROCESSOR_SUBSYSTEM_AXI_QUAD_SPI_0_SPI_MODE == 2U)
+#if (XPAR_AXI_QUAD_SPI_0_SPI_MODE == 2U)
 #define __QSPI_FLASH_H__
 #include "xspi.h"		/* SPI device driver */
 #include "xspi_l.h"
-#define QSPI_DEVICE_ID 		XPAR_PROCESSOR_SUBSYSTEM_AXI_QUAD_SPI_0_DEVICE_ID
+#define QSPI_DEVICE_ID 		XPAR_AXI_QUAD_SPI_0_DEVICE_ID
 
 //·¢ËÍµœFLASHÆ÷ŒþµÄÖžÁî
 #define WRITE_STATUS_CMD	0x01

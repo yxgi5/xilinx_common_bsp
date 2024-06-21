@@ -2633,7 +2633,7 @@ void FlashQuadEnable(XQspiPs *QspiPtr)
 
 
 
-#if (XPAR_PROCESSOR_SUBSYSTEM_AXI_QUAD_SPI_0_SPI_MODE == 2U)
+#if (XPAR_AXI_QUAD_SPI_0_SPI_MODE == 2U)
 
 #if defined (UDP_UPDATE) || defined (TCP_UPDATE)
 XSpi  XSpiInstance;
