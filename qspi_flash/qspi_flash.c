@@ -2620,11 +2620,11 @@ void FlashQuadEnable(XQspiPs *QspiPtr)
 		WriteBuffer[COMMAND_OFFSET] = 0x01;
 		WriteBuffer[ADDRESS_1_OFFSET] = 0x00;
 		WriteBuffer[ADDRESS_2_OFFSET] = 0x02;
-		XSpi_Transfer(QspiPtr, WriteBuffer, NULL, 3);
+		XQspiPs_PolledTransfer(QspiPtr, WriteBuffer, NULL, 3);
 
 		FlashWaitForFlashReady();
 		WriteBuffer[COMMAND_OFFSET] = 0x35;
-		XSpi_Transfer(QspiPtr, WriteBuffer, ReadBuffer, 2);
+		XQspiPs_PolledTransfer(QspiPtr, WriteBuffer, ReadBuffer, 2);
     }
 }
 
