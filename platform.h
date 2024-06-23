@@ -37,7 +37,9 @@ void init_platform(void);
 void cleanup_platform(void);
 
 #if defined (UDP_UPDATE) || defined (TCP_UPDATE)
+#if defined (__MICROBLAZE__) || defined (__PPC__)
 void timer_callback();
+#endif // #if defined (__MICROBLAZE__) || defined (__PPC__)
 void platform_setup_timer();
 void platform_enable_interrupts();
 #endif // UDP_UPDATE

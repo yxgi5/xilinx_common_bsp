@@ -1673,6 +1673,7 @@ void print_percent(int percent)
 
 
 #if defined (XPAR_XQSPIPS_NUM_INSTANCES)
+#if defined (UDP_UPDATE) || defined (TCP_UPDATE)
 
 #if (XPAR_XQSPIPS_NUM_INSTANCES == 1U)
 XQspiPs QspiInstance;
@@ -2628,7 +2629,7 @@ void FlashQuadEnable(XQspiPs *QspiPtr)
     }
 }
 
-
+#endif // #if defined (UDP_UPDATE) || defined (TCP_UPDATE)
 #endif // XPAR_XQSPIPS_NUM_INSTANCES
 
 
