@@ -36,15 +36,25 @@
 void init_platform(void);
 void cleanup_platform(void);
 
-#if defined (UDP_UPDATE) || defined (TCP_UPDATE)
-#if defined (__MICROBLAZE__) || defined (__PPC__)
-void timer_callback();
-#endif // #if defined (__MICROBLAZE__) || defined (__PPC__)
-void platform_setup_timer();
-void platform_enable_interrupts();
-#endif // UDP_UPDATE
+#if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (ETH_COMMAND_SRV)
+
+#if defined (__MICROBLAZE__)
+//void timer00_callback();
+void Timer0Handler(void *CallBackRef, u8 TmrCtrNumber);
+#endif // #if defined (__MICROBLAZE__)
+
+#endif // #if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (ETH_COMMAND_SRV)
+
+
 #if defined (ARMR5) || (__aarch64__) || (__arm__)
 uint64_t get_time_ms(void);
 float get_time_s(void);
+#endif // #if defined (ARMR5) || (__aarch64__) || (__arm__)
+
+
+#if defined (INTC_DEVICE_ID) || defined (INTC)
+int platform_setup_interrupts(void);
+void platform_enable_interrupts(void);
 #endif
+
 #endif // __PLATFORM_H_

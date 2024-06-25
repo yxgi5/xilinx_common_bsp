@@ -353,7 +353,7 @@ int tcp_server_setup(void)
 	netif_set_default(netif);
 
 	/* now enable interrupts */
-	platform_enable_interrupts();
+//	platform_enable_interrupts();
 
 	/* specify that the network if is up */
 	netif_set_up(netif);

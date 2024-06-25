@@ -34,7 +34,6 @@
 
 //自定义通用头文件
 #include "config.h"
-#include "platform.h"
 #include "dbg_trace.h"
 #include "bitmanip.h"
 #if defined (SW_VER_BY_COMPILE_TIME)
@@ -99,11 +98,31 @@
 #if defined (XPAR_XSCUGIC_NUM_INSTANCES)
 #include "xscugic.h"
 #include "xil_exception.h"
+#define INTC				XScuGic
+#define INTC_DEVICE_ID		XPAR_SCUGIC_SINGLE_DEVICE_ID
+#define INTC_HANDLER		XScuGic_InterruptHandler
+#define INTC_CONNECT		XScuGic_Connect
+#define INTC_CONNECT_ENABLE	XScuGic_Enable
+#define INTC_BASE_ADDR		XPAR_SCUGIC_0_CPU_BASEADDR
+#define INTC_DIST_BASE_ADDR	XPAR_SCUGIC_0_DIST_BASEADDR
+extern INTC InterruptController;	/* Instance of the Interrupt Controller */
 #elif defined (XPAR_XINTC_NUM_INSTANCES)
 #include "xintc.h"
 #include "xil_exception.h"
+#define INTC				XIntc
+#define INTC_DEVICE_ID		XPAR_INTC_0_DEVICE_ID
+#define INTC_HANDLER		XIntc_InterruptHandler
+#define INTC_CONNECT		XIntc_Connect
+#define INTC_CONNECT_ENABLE	XIntc_Enable
+#define INTC_BASE_ADDR		XPAR_INTC_0_BASEADDR
+extern INTC InterruptController;	/* Instance of the Interrupt Controller */
 #endif
 
+#include "platform.h"
+
+#if defined (ARMR5) || (__aarch64__) || (__arm__) || (__PPC__)
+	#include "xtime_l.h"
+#endif
 
 // 自定义外设库头文件
 #include "xgpio_i2c/xgpio_i2c.h"
@@ -127,6 +146,15 @@
 #include "it6801/it6801.h"
 #include "qspi_flash/qspi_flash.h"
 #include "rs485/rs485.h"
+#include "axi_timer/axi_timer.h"
+#include "uartlite_fifo/uartlite_fifo.h"
+
+#if defined (MODBUS_RTU_SLAVE)
+#if !defined (__RS485_H__)
+#error "No rs485 heir in design"
+#endif
+#include "modbus_slave/modbus_slave.h"
+#endif // MODBUS_RTU_SLAVE
 
 // 自定义数据头文件
 #include "serdes/serdes.h"

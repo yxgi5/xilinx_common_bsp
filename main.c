@@ -87,15 +87,15 @@ int main()
 	}
 #endif // XPAR_XGPIO_I2C_0_AXI_GPIO_0_DEVICE_ID
 
-#if defined (XPAR_RS485_HEIR_0_AXI_GPIO_0_DEVICE_ID)
-    Status = rs485_heir_xgpio_setup();
-    if (Status != XST_SUCCESS)
-	{
-		Xil_Assert(__FILE__, __LINE__);
-		return XST_FAILURE ;
-	}
-    UartLiteRs485_Output();
-#endif // XPAR_RS485_HEIR_AXI_GPIO_0_DEVICE_ID
+//#if defined (XPAR_RS485_HEIR_0_AXI_GPIO_0_DEVICE_ID)
+//    Status = rs485_heir_xgpio_setup();
+//    if (Status != XST_SUCCESS)
+//	{
+//		Xil_Assert(__FILE__, __LINE__);
+//		return XST_FAILURE ;
+//	}
+//    UartLiteRs485_Output();
+//#endif // XPAR_RS485_HEIR_AXI_GPIO_0_DEVICE_ID
 
 #if defined (XPAR_XIICPS_NUM_INSTANCES)
     ps_i2c_config();
@@ -123,6 +123,14 @@ int main()
     bsp_printf("software ver = 0x%08x\n\r", __SW_VER__);
     bsp_printf("***************************\n\r");
 #endif // __SW_VER__ || SW_VER_BY_COMPILE_TIME
+
+#if defined (__UARTLITE_FIFO_H__)
+    Uart0VarInit();
+    Uart0_Init();
+#if defined (MODBUS_RTU_SLAVE)
+    MODS_VarInit();
+#endif // MODBUS_RTU_SLAVE
+#endif // __UARTLITE_FIFO_H__
 
 
 #if defined(__SIL9136_H__)
@@ -262,6 +270,9 @@ int main()
 	tcp_server_setup();
 #endif
 
+#if defined (INTC_DEVICE_ID) || defined (INTC)
+	platform_enable_interrupts();
+#endif //#if defined (INTC_DEVICE_ID) || defined (INTC)
     while(1)
     {
 #if defined (UDP_UPDATE)
@@ -269,6 +280,11 @@ int main()
 #elif defined (TCP_UPDATE)
     	tcp_transfer_data();
 #endif
+
+#if	defined (MODBUS_RTU_SLAVE)
+    	MODS_Poll();
+#endif
+
 //    	bsp_printf("pi=%f\n\r",3.1415);
 //    	ret32 = xgpio_i2c_reg16_read(I2C_NO_0, 0x80>>1, 0x0000, &ret8, STRETCH_ON);
     }
