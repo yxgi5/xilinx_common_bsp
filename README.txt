@@ -1,8 +1,10 @@
 Xilinx Common Bare-Metal API
 
+. 这里的 linker 文件仅供参考
+
 . 基本的配置选择集中到 config.h, 按需要修改 bsp.h (一般不需要动)，按需要复制需要的模块。
 
-. 根据 bsp 信息，使能相应的模块或功能，尽可能兼容 microblaze/zynq/zynqmp/r5/ppc
+. 根据 bsp 信息，使能相应的模块或功能，并修改为具体项目使用，尽可能兼容 microblaze/zynq/zynqmp/r5/ppc
 
 . main.c 仅作为示例，实际上不需要的就去掉，这里的宏开关只为耦合需要的模块(展示需要具体模块的调用方法，及方便搜索)
 
