@@ -54,16 +54,20 @@ void XTmrCtr_SetCallBack(XTmrCtr * InstancePtr, void * _pCallBack);
 //#define RESET_VALUE_0	 0xFD050F7F
 //#define RESET_VALUE_0	 0xFA0A1EFF
 
+#if defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID)
 // 250ms for tcp
 //#define TIMER_TLR (25000000*((float)MHZ/100))
-#define TIMER_TLR 25000000*(((float)XPAR_TMRCTR_0_CLOCK_FREQ_HZ/1000000)/100)
-
-#if defined (XPAR_TMRCTR_0_DEVICE_ID)
+#define TIMER_TLR 25000000*(((float)XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_CLOCK_FREQ_HZ/1000000)/100)
 int timer0_init();
+#endif //#if defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID)
+
 #if defined (INTC_DEVICE_ID) || defined (INTC_CONNECT)
-void StartHardTimer01(uint32_t _uiTimeOut);
-#endif //#if defined (INTC_DEVICE_ID) || defined (INTC_CONNECT)
-#endif //#if defined (XPAR_TMRCTR_0_DEVICE_ID)
+#if defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID)
+int timer1_init();
+void StartHardTimer1(uint32_t _uiTimeOut);
+#endif // #if defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID)
+#endif // #if defined (INTC_DEVICE_ID) || defined (INTC_CONNECT)
+
 
 
 #endif // XPAR_XTMRCTR_NUM_INSTANCES

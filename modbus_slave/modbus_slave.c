@@ -1143,7 +1143,7 @@ void MODS_ReciveNew(uint8_t _byte)
 	timeout = 88500*(((float)XPAR_TMRCTR_0_CLOCK_FREQ_HZ/1000000)/100); // in unit of 10ns
 #endif
 
-	StartHardTimer01(timeout);
+	StartHardTimer1(timeout);
 #endif // #if defined (XPAR_TMRCTR_0_DEVICE_ID)
 
 	if (g_tModS.RxCount < S_RX_BUF_SIZE)

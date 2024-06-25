@@ -41,6 +41,7 @@ void cleanup_platform(void);
 #if defined (__MICROBLAZE__)
 //void timer00_callback();
 void Timer0Handler(void *CallBackRef, u8 TmrCtrNumber);
+void Timer1Handler(void *CallBackRef, u8 TmrCtrNumber);
 #endif // #if defined (__MICROBLAZE__)
 
 #endif // #if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (ETH_COMMAND_SRV)

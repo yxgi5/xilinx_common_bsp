@@ -277,22 +277,35 @@ int Uart0_Init(void)
 	/*
 	 * Initialize the UartLite driver so that it's ready to use.
 	 */
-//	Status = XUartLite_Initialize(Uart, DeviceId);
-//	if (Status != XST_SUCCESS) {
-//		return XST_FAILURE;
-//	}
-	rs485_heir_xuart_setup();
-	//XScuGic_SetPriorityTriggerType(IntcInstancePtr, XPAR_FABRIC_UARTLITE_0_VEC_ID, 0xA0, 0x3);
+#if defined (MODBUS_RTU_SLAVE)
+	Status = rs485_heir_xuart_setup();
+#else
+	Status = XUartLite_Initialize(UartPtr, DeviceId);
+#endif //#if defined (MODBUS_RTU_SLAVE)
+	if (Status != XST_SUCCESS) {
+		return XST_FAILURE;
+	}
+
+#if defined (XPAR_XSCUGIC_NUM_INSTANCES)
+	XScuGic_SetPriorityTriggerType(&InterruptController, XPAR_FABRIC_UARTLITE_0_VEC_ID, 0xA0, 0x3);
+#endif // #if defined (XPAR_XSCUGIC_NUM_INSTANCES)
 
 	/*
 	 * Connect a device driver handler that will be called when an interrupt
 	 * for the device occurs, the device driver handler performs the
 	 * specific interrupt processing for the device.
 	 */
+#if defined (XPAR_XSCUGIC_NUM_INSTANCES)
+	Status = INTC_CONNECT(&InterruptController, XPAR_FABRIC_UARTLITE_0_VEC_ID,
+			   //(XInterruptHandler)XUartLite_InterruptHandler,
+			   (XInterruptHandler)Uart0IntrHandler,
+			   (void *)&UartLiteRs485);
+#else
 	Status = INTC_CONNECT(&InterruptController, XPAR_INTC_0_UARTLITE_0_VEC_ID,
 			   //(XInterruptHandler)XUartLite_InterruptHandler,
 			   (XInterruptHandler)Uart0IntrHandler,
 			   (void *)&UartLiteRs485);
+#endif
 	if (Status != XST_SUCCESS) {
 		return XST_FAILURE;
 	}
@@ -311,8 +324,12 @@ int Uart0_Init(void)
 	StatusRegister &= XUL_CR_ENABLE_INTR;
 	XUartLite_WriteReg(UartLiteRs485.RegBaseAddress,
 				XUL_CONTROL_REG_OFFSET, StatusRegister);
-
+#if defined (XPAR_XSCUGIC_NUM_INSTANCES)
+	XScuGic_Enable(&InterruptController,XPAR_FABRIC_UARTLITE_0_VEC_ID);
+#else
 	XIntc_Enable(&InterruptController,XPAR_INTC_0_UARTLITE_0_VEC_ID);
+#endif
+
 
 #if defined (MODBUS_RTU_SLAVE)
 #if !defined (__RS485_H__)

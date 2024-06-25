@@ -42,9 +42,9 @@ volatile int TcpSlowTmrFlag = 0;
 //#include "xtmrctr.h"
 //#include "xtmrctr_l.h"
 #define PLATFORM_EMAC_BASEADDR XPAR_AXIETHERNET_0_BASEADDR
-#define PLATFORM_TIMER_BASEADDR XPAR_PROCESSOR_SUBSYSTEM_AXI_TIMER_0_BASEADDR
-#define PLATFORM_TIMER_INTERRUPT_INTR XPAR_PROCESSOR_SUBSYSTEM_MICROBLAZE_0_AXI_INTC_PROCESSOR_SUBSYSTEM_AXI_TIMER_0_INTERRUPT_INTR
-#define PLATFORM_TIMER_INTERRUPT_MASK (1 << XPAR_PROCESSOR_SUBSYSTEM_MICROBLAZE_0_AXI_INTC_PROCESSOR_SUBSYSTEM_AXI_TIMER_0_INTERRUPT_INTR)
+#define PLATFORM_TIMER_BASEADDR XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_BASEADDR
+#define PLATFORM_TIMER_INTERRUPT_INTR XPAR_PROCESSOR_SUBSYSTEM_MICROBLAZE_0_AXI_INTC_ETHERNET_SUBSYSTEM_AXI_TIMER_0_INTERRUPT_INTR
+#define PLATFORM_TIMER_INTERRUPT_MASK (1 << XPAR_PROCESSOR_SUBSYSTEM_MICROBLAZE_0_AXI_INTC_ETHERNET_SUBSYSTEM_AXI_TIMER_0_INTERRUPT_INTR)
 
 #endif // #if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (ETH_COMMAND_SRV)
 
@@ -136,13 +136,34 @@ void Timer0Handler(void *CallBackRef, u8 TmrCtrNumber)
 		if (TmrCtrNumber == 0) {
 			timer00_callback();
 		}
-		if (TmrCtrNumber == 1) {
+//		if (TmrCtrNumber == 1) {
+//
+//		}
+	}
+}
+
+void Timer1Handler(void *CallBackRef, u8 TmrCtrNumber)
+{
+	XTmrCtr *InstancePtr = (XTmrCtr *)CallBackRef;
+//	static int counter = 0;
+	/*
+	 * Check if the timer counter has expired, checking is not necessary
+	 * since that's the reason this function is executed, this just shows
+	 * how the callback reference can be used as a pointer to the instance
+	 * of the timer counter that expired, increment a shared variable so
+	 * the main thread of execution can see the timer expired
+	 */
+	if (XTmrCtr_IsExpired(InstancePtr, TmrCtrNumber)) {
+		if (TmrCtrNumber == 0) {
 #if defined (MODBUS_RTU_SLAVE)
 			g_mods_timeout = 1;
 //			XTmrCtr_SetOptions(InstancePtr, TmrCtrNumber, 0);
 			XTmrCtr_Stop(InstancePtr, TmrCtrNumber);
 #endif // #if defined (MODBUS_RTU_SLAVE)
 		}
+//		if (TmrCtrNumber == 1) {
+//
+//		}
 	}
 }
 
@@ -167,10 +188,14 @@ int platform_setup_interrupts(void)
 	Xil_ExceptionRegisterHandler(XIL_EXCEPTION_ID_INT, (XExceptionHandler)INTC_HANDLER, &InterruptController);
 
 #if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (ETH_COMMAND_SRV)
-#if defined (__AXI_TIMER_H_) && defined (XPAR_TMRCTR_0_DEVICE_ID)
+#if defined (__AXI_TIMER_H_) && defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID)
 	timer0_init();
-#endif // #if defined (__AXI_TIMER_H_) && defined (XPAR_TMRCTR_0_DEVICE_ID)
+#endif // #if defined (__AXI_TIMER_H_) && defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID)
 #endif // #if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (ETH_COMMAND_SRV)
+
+#if defined (__AXI_TIMER_H_) && defined (MODBUS_RTU_SLAVE)
+	timer1_init();
+#endif // #if defined (__AXI_TIMER_H_) && defined (MODBUS_RTU_SLAVE)
 
 #ifdef XPAR_ETHERNET_MAC_IP2INTC_IRPT_MASK
 	/* Enable timer and EMAC interrupts in the interrupt controller */

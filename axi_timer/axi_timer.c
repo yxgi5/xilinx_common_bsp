@@ -102,7 +102,7 @@ void XTmrCtr_SetCallBack(XTmrCtr * InstancePtr, void * _pCallBack)
 	InstancePtr->CallBackRef=_pCallBack;
 }
 
-#if defined (XPAR_TMRCTR_0_DEVICE_ID)
+#if defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID)
 int timer0_init()
 {
 	int Status = XST_SUCCESS;
@@ -121,7 +121,7 @@ int timer0_init()
 //	XTmrCtr_SetOptions(&axi_timer0, TIMER_CNTR_0, XTC_INT_MODE_OPTION | XTC_AUTO_RELOAD_OPTION | XTC_DOWN_COUNT_OPTION);
 //	XTmrCtr_SetResetValue(&axi_timer0, TIMER_CNTR_0, TIMER_TLR);
 
-	XTmrCtr_SetOptions(&axi_timer0, TIMER_CNTR_1, XTC_INT_MODE_OPTION);
+//	XTmrCtr_SetOptions(&axi_timer0, TIMER_CNTR_1, XTC_INT_MODE_OPTION);
 
 #if defined (INTC_DEVICE_ID) || defined (INTC_CONNECT)
 	/*
@@ -131,7 +131,7 @@ int timer0_init()
 	 */
 	XTmrCtr_SetHandler(&axi_timer0, Timer0Handler, &axi_timer0);
 
-	Status = INTC_CONNECT(&InterruptController, XPAR_INTC_0_TMRCTR_0_VEC_ID,
+	Status = INTC_CONNECT(&InterruptController, XPAR_PROCESSOR_SUBSYSTEM_MICROBLAZE_0_AXI_INTC_ETHERNET_SUBSYSTEM_AXI_TIMER_0_INTERRUPT_INTR,
 				(XInterruptHandler)XTmrCtr_InterruptHandler,
 				(void *)&axi_timer0);
 
@@ -140,7 +140,7 @@ int timer0_init()
 	}
 
 	// Don't forget Enable the interrupt for the specific interrupt source in proper place
-	XIntc_Enable(&InterruptController, XPAR_INTC_0_TMRCTR_0_VEC_ID);
+	XIntc_Enable(&InterruptController, XPAR_PROCESSOR_SUBSYSTEM_MICROBLAZE_0_AXI_INTC_ETHERNET_SUBSYSTEM_AXI_TIMER_0_INTERRUPT_INTR);
 #endif // #if defined (INTC_DEVICE_ID) || defined (INTC_CONNECT)
 
 	// Don't forget start timer in proper place
@@ -149,7 +149,7 @@ int timer0_init()
 
 	return Status;
 }
-
+#endif //#if defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID)
 
 /*****************************************************************************/
 /**
@@ -164,7 +164,48 @@ int timer0_init()
 *
 ******************************************************************************/
 #if defined (INTC_DEVICE_ID) || defined (INTC_CONNECT)
-void StartHardTimer01(uint32_t _uiTimeOut)
+#if defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID)
+int timer1_init()
+{
+	int Status = XST_SUCCESS;
+
+	/*
+	 * Initialize the timer counter so that it's ready to use,
+	 * specify the device ID that is generated in xparameters.h
+	 */
+	Status = XTmrCtr_Initialize(&axi_timer1, XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID);
+	if (Status != XST_SUCCESS) {
+		return XST_FAILURE;
+	}
+
+	XTmrCtr_SetOptions(&axi_timer1, TIMER_CNTR_0, XTC_INT_MODE_OPTION);
+	XTmrCtr_SetResetValue(&axi_timer1, TIMER_CNTR_0, 0xffffffff - TIMER_TLR);
+
+	/*
+	 * Connect a device driver handler that will be called when an interrupt
+	 * for the device occurs, the device driver handler performs the
+	 * specific interrupt processing for the device
+	 */
+	XTmrCtr_SetHandler(&axi_timer1, Timer1Handler, &axi_timer1);
+
+	Status = INTC_CONNECT(&InterruptController, XPAR_PROCESSOR_SUBSYSTEM_MICROBLAZE_0_AXI_INTC_MODBUS_RTU_0_AXI_TIMER_0_INTERRUPT_INTR,
+				(XInterruptHandler)XTmrCtr_InterruptHandler,
+				(void *)&axi_timer1);
+
+	if (Status != XST_SUCCESS) {
+		return XST_FAILURE;
+	}
+
+	// Don't forget Enable the interrupt for the specific interrupt source in proper place
+	XIntc_Enable(&InterruptController, XPAR_PROCESSOR_SUBSYSTEM_MICROBLAZE_0_AXI_INTC_MODBUS_RTU_0_AXI_TIMER_0_INTERRUPT_INTR);
+
+	// Don't forget start timer in proper place
+//	XTmrCtr_Start(&axi_timer0, TIMER_CNTR_0);
+
+
+	return Status;
+}
+void StartHardTimer1(uint32_t _uiTimeOut)
 {
 
 //	Xil_AssertVoid(_pCallBack != NULL);
@@ -173,13 +214,13 @@ void StartHardTimer01(uint32_t _uiTimeOut)
 
 //	XTmrCtr_Stop(&TimerCounterInst, TIMER_CNTR_1);
 
-	XTmrCtr_SetResetValue(&axi_timer0, TIMER_CNTR_1, 0xffffffff-_uiTimeOut);
+	XTmrCtr_SetResetValue(&axi_timer1, TIMER_CNTR_0, 0xffffffff-_uiTimeOut);
 
-	XTmrCtr_Start(&axi_timer0, TIMER_CNTR_1);
+	XTmrCtr_Start(&axi_timer1, TIMER_CNTR_0);
 }
 #endif // #if defined (INTC_DEVICE_ID) || defined (INTC_CONNECT)
+#endif // #if defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID)
 
-#endif //#if defined (XPAR_TMRCTR_0_DEVICE_ID)
 
 #endif //#if defined (XPAR_XTMRCTR_NUM_INSTANCES)
 
