@@ -78,3 +78,18 @@ int csi_tx_config(void)
 }
 
 #endif // XPAR_XCSI2TX_NUM_INSTANCES
+
+
+/*
+usage:
+
+call follows before main_loop, especially after axis prepared(tpg,vdma,vpss)
+
+	//after axis prepared
+	Status = csi_rx_config();
+	if (Status != XST_SUCCESS)
+	{
+		Xil_Assert(__FILE__, __LINE__);
+		return XST_FAILURE ;
+	}
+*/

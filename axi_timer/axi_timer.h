@@ -63,8 +63,13 @@ int timer0_init();
 
 #if defined (INTC_DEVICE_ID) || defined (INTC_CONNECT)
 #if defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID)
+#if defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID)
 int timer1_init();
 void StartHardTimer1(uint32_t _uiTimeOut);
+#else
+int timer0_init();
+void StartHardTimer0(uint32_t _uiTimeOut);
+#endif // #if define (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID)
 #endif // #if defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID)
 #endif // #if defined (INTC_DEVICE_ID) || defined (INTC_CONNECT)
 

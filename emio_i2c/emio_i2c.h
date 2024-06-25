@@ -7,7 +7,7 @@
 
 #if defined(XPAR_XGPIOPS_0_DEVICE_ID)
 
-#define EMIO_I2C_NUM 	(4U)	// 1~48(emio 78~173 for zynqmp), 1~32(emio 54~117 for zynq)
+#define EMIO_I2C_NUM 	(0U)	// 1~48(emio 78~173 for zynqmp), 1~32(emio 54~117 for zynq)
 
 #define EMIO_INPUT  0
 #define EMIO_OUTPUT 1

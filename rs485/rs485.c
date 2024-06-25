@@ -43,3 +43,35 @@ int rs485_heir_xuart_setup()
 #endif // STDOUT_BASEADDRESS != XPAR_RS485_HEIR_0_AXI_UARTLITE_0_BASEADDR
 
 #endif // XPAR_MODBUS_RTU_0_AXI_GPIO_0_DEVICE_ID && XPAR_MODBUS_RTU_0_AXI_UARTLITE_0_DEVICE_ID
+
+
+/*
+usage:
+
+assume you have a RS485_heir, and using it as std print
+call follows before main_loop
+
+```
+#if defined (XPAR_RS485_HEIR_0_AXI_GPIO_0_DEVICE_ID)
+    Status = rs485_heir_xgpio_setup();
+    if (Status != XST_SUCCESS)
+	{
+		Xil_Assert(__FILE__, __LINE__);
+		return XST_FAILURE ;
+	}
+    UartLiteRs485_Output();
+#endif // XPAR_RS485_HEIR_AXI_GPIO_0_DEVICE_ID
+
+```
+then you can control input/output when you need, by call UartLiteRs485_Output()/UartLiteRs485_Input()
+
+
+
+
+assume you have a modbus_rtu_0 heir,
+don't need call these code as uartlite_fifo will call them, and set input in initial
+
+
+*/
+
+

@@ -42,3 +42,14 @@ void sil9136_config(void)
 
 #endif // XPAR_XGPIO_I2C_0_AXI_GPIO_0_DEVICE_ID && SIL9136
 
+
+/*
+usage:
+assume you have a SIL9136, and pclk have been set in some clk_wiz
+call follows before main_loop
+```
+#if defined(__SIL9136_H__)
+    sil9136_config();
+#endif
+```
+*/

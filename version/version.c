@@ -129,3 +129,14 @@ u32 GetSoftWareVersion(void)
     return Version;
 }
 #endif // SW_VER_BY_COMPILE_TIME
+
+
+/*
+usage: version as compiled time, especially useful during debug, but no need after release
+call follows before main_loop
+```
+    __SW_VER__ = GetSoftWareVersion();
+    bsp_printf("software ver = 0x%08x\n\r", __SW_VER__);
+    bsp_printf("***************************\n\r");
+```
+*/

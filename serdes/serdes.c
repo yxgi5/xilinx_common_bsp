@@ -138,3 +138,50 @@ void max929x_write_array(i2c_no i2c, struct reginfo *regarray)
 }
 
 #endif // SER_CFG || DES_CFG
+
+
+/*
+usage:
+assume you have a xgpio_i2c heir, or you can modify to use xiic or emio_i2c
+
+ref to follows
+```
+#if defined (SER_CFG) || defined (DES_CFG)
+    // MAX9296 config
+    u8 ret8=0;
+#if defined (DES_CFG)
+    Status = xgpio_i2c_reg16_read(I2C_NO_3, 0x90>>1, 0x0000, &ret8, STRETCH_ON);
+    Status = xgpio_i2c_reg16_read(I2C_NO_3, 0x90>>1, 0x0001, &ret8, STRETCH_ON);
+#if defined (SERDES_3G)
+    Status = xgpio_i2c_reg16_write(I2C_NO_3, 0x90>>1, 0x0001, 0x01, STRETCH_ON); // 3Gbps
+    Status = xgpio_i2c_reg16_write(I2C_NO_3, 0x90>>1, 0x0010, 0x21, STRETCH_ON); // reset link
+#else
+    Status = xgpio_i2c_reg16_write(I2C_NO_3, 0x90>>1, 0x0001, 0x02, STRETCH_ON); // 6Gbps
+	Status = xgpio_i2c_reg16_write(I2C_NO_3, 0x90>>1, 0x0010, 0x21, STRETCH_ON); // reset link
+#endif // SERDES_3G
+    max929x_write_array(I2C_NO_3, max9296_rgb888_gmsl2);
+#endif // DES_CFG
+#if defined (SER_CFG)
+    Status = xgpio_i2c_reg16_read(I2C_NO_3, 0x80>>1, 0x0000, &ret8, STRETCH_ON);
+    Status = xgpio_i2c_reg16_read(I2C_NO_3, 0x80>>1, 0x0001, &ret8, STRETCH_ON);
+#if defined (SERDES_3G)
+    Status = xgpio_i2c_reg16_write(I2C_NO_3, 0x80>>1, 0x0001, 0x04, STRETCH_ON); // 3Gbps
+    Status = xgpio_i2c_reg16_write(I2C_NO_3, 0x80>>1, 0x0010, 0x21, STRETCH_ON); // reset link
+#else
+    Status = xgpio_i2c_reg16_write(I2C_NO_3, 0x80>>1, 0x0001, 0x08, STRETCH_ON); // 6Gbps
+    Status = xgpio_i2c_reg16_write(I2C_NO_3, 0x80>>1, 0x0010, 0x21, STRETCH_ON); // reset link
+#endif // SERDES_3G
+//    max929x_write_array(I2C_NO_3, max9295_rgb888_gmsl2);
+    max929x_write_array(I2C_NO_3, max96717_rgb888_gmsl2);
+#endif // SER_CFG
+#if defined (DES_CFG)
+    Status = xgpio_i2c_reg16_read(I2C_NO_3, 0x90>>1, 0x0000, &ret8, STRETCH_ON);
+	Status = xgpio_i2c_reg16_read(I2C_NO_3, 0x90>>1, 0x0001, &ret8, STRETCH_ON);
+#endif // DES_CFG
+#if defined (SER_CFG)
+    Status = xgpio_i2c_reg16_read(I2C_NO_3, 0x80>>1, 0x0000, &ret8, STRETCH_ON);
+    Status = xgpio_i2c_reg16_read(I2C_NO_3, 0x80>>1, 0x0001, &ret8, STRETCH_ON);
+#endif // SER_CFG
+#endif // SER_CFG || DES_CFG
+```
+*/

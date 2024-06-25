@@ -650,6 +650,31 @@ void init_uart(void)
     /* Bootrom/BSP configures PS7/PSU UART to 115200 bps */
 }
 
+void Timer0Handler(void *CallBackRef, u8 TmrCtrNumber)
+{
+	XTmrCtr *InstancePtr = (XTmrCtr *)CallBackRef;
+//	static int counter = 0;
+	/*
+	 * Check if the timer counter has expired, checking is not necessary
+	 * since that's the reason this function is executed, this just shows
+	 * how the callback reference can be used as a pointer to the instance
+	 * of the timer counter that expired, increment a shared variable so
+	 * the main thread of execution can see the timer expired
+	 */
+	if (XTmrCtr_IsExpired(InstancePtr, TmrCtrNumber)) {
+		if (TmrCtrNumber == 0) {
+#if defined (MODBUS_RTU_SLAVE)
+			g_mods_timeout = 1;
+//			XTmrCtr_SetOptions(InstancePtr, TmrCtrNumber, 0);
+			XTmrCtr_Stop(InstancePtr, TmrCtrNumber);
+#endif // #if defined (MODBUS_RTU_SLAVE)
+		}
+//		if (TmrCtrNumber == 1) {
+//
+//		}
+	}
+}
+
 void timer_callback(XScuTimer * TimerInstance)
 {
 	static int DetectEthLinkStatus = 0;
@@ -740,7 +765,7 @@ void platform_setup_timer(void)
 	XScuTimer_LoadTimer(&TimerInstance, TimerLoadValue);
 }
 
-void platform_setup_interrupts(void)
+int platform_setup_interrupts(void)
 {
 	int Status;
 	XScuGic_Config *GicConfig;    /* The configuration parameters of the controller */
@@ -788,15 +813,20 @@ void platform_setup_interrupts(void)
 	 * interrupt for the device occurs, the device driver handler performs
 	 * the specific interrupt processing for the device
 	 */
+	platform_setup_timer();
 	Status = XScuGic_Connect(&InterruptController, TIMER_IRPT_INTR,
 			   (Xil_ExceptionHandler)timer_callback,
 			   (void *)&TimerInstance);
+
+#if defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID) && !defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID)
+	timer0_init();
+#endif // #if defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID) && !defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID)
 
 	if (Status != XST_SUCCESS) {
 		return XST_FAILURE;
 	}
 
-	return;
+	return Status;
 }
 
 void platform_enable_interrupts()
@@ -970,6 +1000,31 @@ void init_uart(void)
     /* Bootrom/BSP configures PS7/PSU UART to 115200 bps */
 }
 
+void Timer0Handler(void *CallBackRef, u8 TmrCtrNumber)
+{
+	XTmrCtr *InstancePtr = (XTmrCtr *)CallBackRef;
+//	static int counter = 0;
+	/*
+	 * Check if the timer counter has expired, checking is not necessary
+	 * since that's the reason this function is executed, this just shows
+	 * how the callback reference can be used as a pointer to the instance
+	 * of the timer counter that expired, increment a shared variable so
+	 * the main thread of execution can see the timer expired
+	 */
+	if (XTmrCtr_IsExpired(InstancePtr, TmrCtrNumber)) {
+		if (TmrCtrNumber == 0) {
+#if defined (MODBUS_RTU_SLAVE)
+			g_mods_timeout = 1;
+//			XTmrCtr_SetOptions(InstancePtr, TmrCtrNumber, 0);
+			XTmrCtr_Stop(InstancePtr, TmrCtrNumber);
+#endif // #if defined (MODBUS_RTU_SLAVE)
+		}
+//		if (TmrCtrNumber == 1) {
+//
+//		}
+	}
+}
+
 void platform_clear_interrupt( XTtcPs * TimerInstance )
 {
 	u32 StatusEvent;
@@ -977,7 +1032,6 @@ void platform_clear_interrupt( XTtcPs * TimerInstance )
 	StatusEvent = XTtcPs_GetInterruptStatus(TimerInstance);
 	XTtcPs_ClearInterruptStatus(TimerInstance, StatusEvent);
 }
-
 
 void timer_callback(XTtcPs * TimerInstance)
 {
@@ -1040,7 +1094,7 @@ void platform_setup_timer(void)
 	XTtcPs_SetPrescaler(Timer, Prescaler);
 }
 
-void platform_setup_interrupts(void)
+int platform_setup_interrupts(void)
 {
 	int Status;
 	XScuGic_Config *GicConfig;    /* The configuration parameters of the controller */
@@ -1088,15 +1142,20 @@ void platform_setup_interrupts(void)
 	 * interrupt for the device occurs, the device driver handler performs
 	 * the specific interrupt processing for the device
 	 */
+	platform_setup_timer();
 	Status = XScuGic_Connect(&InterruptController, TIMER_IRPT_INTR,
 			   (Xil_ExceptionHandler)timer_callback,
 			   (void *)&TimerInstance);
+
+#if defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID) && !defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID)
+	timer0_init();
+#endif // #if defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID) && !defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID)
 
 	if (Status != XST_SUCCESS) {
 		return XST_FAILURE;
 	}
 
-	return;
+	return Status;
 }
 
 void platform_enable_interrupts()

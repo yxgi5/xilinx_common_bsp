@@ -94,3 +94,18 @@ int axis_switch_cfg(u8 s_num)
 }
 
 #endif // XPAR_XAXIS_SWITCH_NUM_INSTANCES
+
+
+/*
+you need modify the function implement
+
+usage: like follows
+```
+    Status = axis_switch_cfg(0);
+    if (Status != XST_SUCCESS)
+	{
+		Xil_Assert(__FILE__, __LINE__);
+		return XST_FAILURE ;
+	}
+```
+*/

@@ -51,25 +51,13 @@
 volatile u32 __HW_VER__;
 #endif
 
-#if defined(XPAR_XGPIO_NUM_INSTANCES) && (XPAR_XCSI2TX_NUM_INSTANCES)
-XGpio XGpioOutput;
-#endif
+
 
 int main()
 {
 	int Status ;
 
-    init_platform();
-
-#if defined(XPAR_XGPIO_NUM_INSTANCES) && (XPAR_XCSI2TX_NUM_INSTANCES)
-    Status = xgpio_setup(&XGpioOutput, XPAR_GPIO_0_DEVICE_ID, 0, 0) ;
-    if (Status != XST_SUCCESS)
-	{
-    	Xil_Assert(__FILE__, __LINE__);
-		return XST_FAILURE ;
-	}
-#endif // XPAR_XGPIO_NUM_INSTANCES
-
+    init_platform(); // include interrupts setup
 
 #if defined(XPAR_XGPIO_I2C_0_AXI_GPIO_0_DEVICE_ID)
     Status = xgpio_i2c_init();
@@ -87,26 +75,10 @@ int main()
 //	}
 #endif // XPAR_XGPIO_I2C_0_AXI_GPIO_0_DEVICE_ID
 
-//#if defined (XPAR_RS485_HEIR_0_AXI_GPIO_0_DEVICE_ID)
-//    Status = rs485_heir_xgpio_setup();
-//    if (Status != XST_SUCCESS)
-//	{
-//		Xil_Assert(__FILE__, __LINE__);
-//		return XST_FAILURE ;
-//	}
-//    UartLiteRs485_Output();
-//#endif // XPAR_RS485_HEIR_AXI_GPIO_0_DEVICE_ID
-
-#if defined (XPAR_XIICPS_NUM_INSTANCES)
-    ps_i2c_config();
-#endif // XPAR_XIICPS_NUM_INSTANCES
-
 #if defined(XPAR_AXI_IIC_0_DEVICE_ID)
     XIic_WriteReg(XPAR_IIC_0_BASEADDR, XIIC_GPO_REG_OFFSET, 0);
 #endif // XPAR_AXI_IIC_0_DEVICE_ID
-#if defined (XPAR_XGPIOPS_NUM_INSTANCES)
-    emio_init();
-#endif // XPAR_XGPIOPS_NUM_INSTANCES
+
 
     bsp_printf("\r\n\r\n***************************\n\r");
     bsp_printf("Test common API.\n\r");
@@ -136,20 +108,6 @@ int main()
 #if defined(__SIL9136_H__)
     sil9136_config();
 #endif
-
-#if defined(XPAR_XGPIO_NUM_INSTANCES) && defined (XPAR_XCSI2TX_NUM_INSTANCES)
-	XGpio_DiscreteWrite(&XGpioOutput, 1, 0x24); // RGB888
-//	XGpio_DiscreteWrite(&XGpioOutput, 1, 0x2A); // RAW8
-//	XGpio_DiscreteWrite(&XGpioOutput, 1, 0x2B); // RAW10
-//	XGpio_DiscreteWrite(&XGpioOutput, 1, 0x2C); // RAW12
-//	XGpio_DiscreteWrite(&XGpioOutput, 1, 0x1E); // YUV422_8bit
-//	XGpio_DiscreteWrite(&XGpioOutput, 2, VIDEO_COLUMNS*24/8<<16); // WC RGB888
-//	XGpio_DiscreteWrite(&XGpioOutput, 2, 3840*24/8<<16); // WC RGB888
-//	XGpio_DiscreteWrite(&XGpioOutput, 2, (1920*12/8)<<16); // WC RAW12
-	XGpio_DiscreteWrite(&XGpioOutput, 2, (1920*24/8)<<16); // WC RGB888
-//	XGpio_DiscreteWrite(&XGpioOutput, 2, (VIDEO_COLUMNS*10/8)<<16); // WC RAW10
-//	XGpio_DiscreteWrite(&XGpioOutput, 2, (1920*16/8)<<16); // WC YUV422_8bit
-#endif // XPAR_XGPIO_NUM_INSTANCES
 
 #if defined (SER_CFG) || defined (DES_CFG)
     // MAX9296 config
@@ -246,23 +204,6 @@ int main()
 	}
 #endif // XPAR_XVPROCSS_NUM_INSTANCES
 
-#if defined (XPAR_XCSI2TX_NUM_INSTANCES)
-	Status = csi_tx_config();
-	if (Status != XST_SUCCESS)
-	{
-		Xil_Assert(__FILE__, __LINE__);
-		return XST_FAILURE ;
-	}
-#endif // XPAR_XCSI2TX_NUM_INSTANCES
-
-#if defined (XPAR_XCSI_NUM_INSTANCES)
-	Status = csi_rx_config();
-	if (Status != XST_SUCCESS)
-	{
-		Xil_Assert(__FILE__, __LINE__);
-		return XST_FAILURE ;
-	}
-#endif // XPAR_XCSI_NUM_INSTANCES
 
 #if defined (UDP_UPDATE)
 	udp_server_setup();

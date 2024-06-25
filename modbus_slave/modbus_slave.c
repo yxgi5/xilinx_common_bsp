@@ -1130,7 +1130,7 @@ void MODS_ReciveNew(uint8_t _byte)
 	g_mods_timeout = 0;
 
 // 如果收出现错误，可以适当增大间隔
-#if defined (XPAR_TMRCTR_0_DEVICE_ID)
+#if defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID)
 #if (SBAUD485 == 4800U)
 	timeout = 729700*(((float)XPAR_TMRCTR_0_CLOCK_FREQ_HZ/1000000)/100); // in unit of 10ns
 #elif (SBAUD485 == 9600U)
@@ -1142,9 +1142,12 @@ void MODS_ReciveNew(uint8_t _byte)
 #elif (SBAUD485 == 38400U)
 	timeout = 88500*(((float)XPAR_TMRCTR_0_CLOCK_FREQ_HZ/1000000)/100); // in unit of 10ns
 #endif
-
+#if defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID)
 	StartHardTimer1(timeout);
-#endif // #if defined (XPAR_TMRCTR_0_DEVICE_ID)
+#else
+	StartHardTimer0(timeout);
+#endif // #if defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID)
+#endif // #if defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID)
 
 	if (g_tModS.RxCount < S_RX_BUF_SIZE)
 	{
@@ -1183,16 +1186,16 @@ test command:
 /*
 usage:
 
-    before main_loop
-
+    before main_loop, call
+```
     Uart0VarInit();
     Uart0_Init();
     MODS_VarInit();
-
-    in main_loop
-    {
+```
+    in main_loop, call
+```
         MODS_Poll();
-    }
+```
 
 */
 

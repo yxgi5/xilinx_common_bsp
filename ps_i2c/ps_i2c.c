@@ -110,3 +110,13 @@ int ps_i2c_config(void)
 }
 
 #endif // XPAR_XIICPS_NUM_INSTANCES
+
+
+/*
+usage:
+
+call follows before main_loop,
+```
+	ps_i2c_config();
+```
+*/

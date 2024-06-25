@@ -67,6 +67,9 @@ bsp config tcp_wnd 65535
 bsp config n_rx_descriptors 512
 bsp config n_tx_descriptors 512
  */
+
+// if you want to use follow liwp related module at the same time, keep a single `server_netif` definition
+//#define ETH_COMMAND_SRV
 //#define UDP_UPDATE
 #define TCP_UPDATE
 

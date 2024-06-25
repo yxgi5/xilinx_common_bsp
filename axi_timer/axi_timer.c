@@ -164,7 +164,7 @@ int timer0_init()
 *
 ******************************************************************************/
 #if defined (INTC_DEVICE_ID) || defined (INTC_CONNECT)
-#if defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID)
+#if defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID) && defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID)
 int timer1_init()
 {
 	int Status = XST_SUCCESS;
@@ -218,9 +218,74 @@ void StartHardTimer1(uint32_t _uiTimeOut)
 
 	XTmrCtr_Start(&axi_timer1, TIMER_CNTR_0);
 }
-#endif // #if defined (INTC_DEVICE_ID) || defined (INTC_CONNECT)
-#endif // #if defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID)
 
+#endif // #if defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID) && defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID)
+
+#if defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID) && !defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID)
+int timer0_init()
+{
+	int Status = XST_SUCCESS;
+
+	/*
+	 * Initialize the timer counter so that it's ready to use,
+	 * specify the device ID that is generated in xparameters.h
+	 */
+	Status = XTmrCtr_Initialize(&axi_timer0, XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID);
+	if (Status != XST_SUCCESS) {
+		return XST_FAILURE;
+	}
+
+	XTmrCtr_SetOptions(&axi_timer0, TIMER_CNTR_0, XTC_INT_MODE_OPTION);
+
+	/*
+	 * Connect a device driver handler that will be called when an interrupt
+	 * for the device occurs, the device driver handler performs the
+	 * specific interrupt processing for the device
+	 */
+	XTmrCtr_SetHandler(&axi_timer0, Timer0Handler, &axi_timer0);
+#if defined (__MICROBLAZE__)
+	Status = INTC_CONNECT(&InterruptController, XPAR_PROCESSOR_SUBSYSTEM_MICROBLAZE_0_AXI_INTC_MODBUS_RTU_0_AXI_TIMER_0_INTERRUPT_INTR,
+				(XInterruptHandler)XTmrCtr_InterruptHandler,
+				(void *)&axi_timer0);
+#else
+	Status = INTC_CONNECT(&InterruptController, XPAR_FABRIC_MODBUS_RTU_0_AXI_TIMER_0_INTERRUPT_INTR,
+				(XInterruptHandler)XTmrCtr_InterruptHandler,
+				(void *)&axi_timer0);
+#endif // #if defined (__MICROBLAZE__)
+	if (Status != XST_SUCCESS) {
+		return XST_FAILURE;
+	}
+
+#if defined (__MICROBLAZE__)
+	// Don't forget Enable the interrupt for the specific interrupt source in proper place
+	XIntc_Enable(&InterruptController, XPAR_PROCESSOR_SUBSYSTEM_MICROBLAZE_0_AXI_INTC_MODBUS_RTU_0_AXI_TIMER_0_INTERRUPT_INTR);
+#else
+	XScuGic_Enable(&InterruptController, XPAR_FABRIC_MODBUS_RTU_0_AXI_TIMER_0_INTERRUPT_INTR);
+#endif // #if defined (__MICROBLAZE__)
+
+	// Don't forget start timer in proper place
+//	XTmrCtr_Start(&axi_timer0, TIMER_CNTR_0);
+
+
+	return Status;
+}
+void StartHardTimer0(uint32_t _uiTimeOut)
+{
+
+//	Xil_AssertVoid(_pCallBack != NULL);
+
+//	TimerCounterInst.CallBackRef=_pCallBack;
+
+//	XTmrCtr_Stop(&TimerCounterInst, TIMER_CNTR_1);
+
+	XTmrCtr_SetResetValue(&axi_timer0, TIMER_CNTR_0, 0xffffffff-_uiTimeOut);
+
+	XTmrCtr_Start(&axi_timer0, TIMER_CNTR_0);
+}
+#endif // #if defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID) && !defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID)
+
+
+#endif // #if defined (INTC_DEVICE_ID) || defined (INTC_CONNECT)
 
 #endif //#if defined (XPAR_XTMRCTR_NUM_INSTANCES)
 

@@ -455,3 +455,24 @@ void tcp_transfer_data(void)
 #endif // TCP_UPDATE
 
 #endif // XPAR_XEMACPS_NUM_INSTANCES || XPAR_XAXIETHERNET_NUM_INSTANCES
+
+
+/*
+usage:
+call tcp_server_setup() and platform_enable_interrupts() before the main_loop
+call tcp_transfer_data() in the main_loop
+run
+```
+    if (TcpFastTmrFlag) {
+        tcp_fasttmr();
+        TcpFastTmrFlag = 0;
+    }
+    if (TcpSlowTmrFlag) {
+        tcp_slowtmr();
+        TcpSlowTmrFlag = 0;
+    }
+```
+in the main_loop, if tcp_transfer_data() not content it
+keep a single `server_netif` definition, if you have more than one lwip process.
+
+*/

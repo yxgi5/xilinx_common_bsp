@@ -4,7 +4,7 @@
 // 释放总线，有主机在总线发送了stop，且sda和scl被拉高
 
 #include "../bsp.h"
-#if defined (XPAR_XGPIOPS_NUM_INSTANCES)
+#if defined (XPAR_XGPIOPS_NUM_INSTANCES) && !(EMIO_I2C_NO_BUTT == 0)
 
 #define  GPIOPS_ID  XPAR_XGPIOPS_0_DEVICE_ID  //PS 端 GPIO 器件 ID
 static  XGpioPs  gpiops_inst; //PS 端 GPIO 驱动实例
@@ -712,5 +712,17 @@ int emio_i2c_32b32_read(emio_i2c_no i2c, char IIC_ADDR, unsigned int Addr, unsig
 }
 #endif
 
+#endif // #if defined (XPAR_XGPIOPS_NUM_INSTANCES) && !(EMIO_I2C_NO_BUTT == 0)
+
+
+/*
+usage:
+assume you have a emio_i2c_heir
+call follows before main_loop
+```
+#if defined (XPAR_XGPIOPS_NUM_INSTANCES)
+    emio_init();
 #endif // XPAR_XGPIOPS_NUM_INSTANCES
+```
+*/
 

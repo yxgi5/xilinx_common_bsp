@@ -526,3 +526,43 @@ void RS485_SendBuf(uint8_t *_ucaBuf, uint16_t _usLen)
 #endif // #if defined (MODBUS_RTU_SLAVE)
 
 #endif // #if defined (XPAR_XUARTLITE_NUM_INSTANCES) && defined (INTC_DEVICE_ID) && defined (INTC)
+
+
+/*
+usage:
+assume you have one or more axi_uartlite in design, call comSendBuf() to send, call UartGetChar() to get a char from fifo
+call follows before main_loop, if you're using rs232
+```
+#if defined (__UARTLITE_FIFO_H__)
+    Uart0VarInit();
+    Uart0_Init();
+#endif // __UARTLITE_FIFO_H__
+```
+if you are using rs485 but not modbus, follow callbacks in UartXVarInit() must be set
+```
+	g_tUart0.SendBefor = RS485_SendBefor;
+	g_tUart0.SendOver = RS485_SendOver;
+```
+
+
+
+
+call follows before main_loop, if you are using modbus
+```
+#if defined (__UARTLITE_FIFO_H__)
+    Uart0VarInit();
+    Uart0_Init();
+#if defined (MODBUS_RTU_SLAVE)
+    MODS_VarInit();
+#endif // MODBUS_RTU_SLAVE
+#endif // __UARTLITE_FIFO_H__
+```
+follow callbacks in UartXVarInit() must be set
+```
+	g_tUart0.SendBefor = RS485_SendBefor;
+	g_tUart0.SendOver = RS485_SendOver;
+	g_tUart0.ReciveNew = RS485_ReciveNew;
+```
+
+
+*/

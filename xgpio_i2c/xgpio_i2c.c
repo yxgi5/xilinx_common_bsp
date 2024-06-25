@@ -927,3 +927,30 @@ int xgpio_setup(XGpio *InstancePtr, u16 DeviceId, u32 DirectionMask1, u32 Direct
 
 #endif // XPAR_XGPIO_NUM_INSTANCES
 
+/*
+usage:
+assume you have a xgpio_i2c_0 heir
+call follows before main_loop
+
+#if defined(XPAR_XGPIO_I2C_0_AXI_GPIO_0_DEVICE_ID)
+    Status = xgpio_i2c_init();
+    if (Status != XST_SUCCESS)
+	{
+		Xil_Assert(__FILE__, __LINE__);
+		return XST_FAILURE ;
+	}
+//#elif defined (XPAR_XGPIO_NUM_INSTANCES)
+//    Status = xgpio_setup(&XGpioInst, XPAR_AXI_GPIO_0_DEVICE_ID, 0, 0);
+//    if (Status != XST_SUCCESS)
+//	{
+//		Xil_Assert(__FILE__, __LINE__);
+//		return XST_FAILURE ;
+//	}
+#endif // XPAR_XGPIO_I2C_0_AXI_GPIO_0_DEVICE_ID
+
+then, you can access i2c devices like:
+```
+	Status = xgpio_i2c_reg16_read(I2C_NO_3, 0x90>>1, 0x0000, &ret8, STRETCH_ON);
+    Status = xgpio_i2c_reg16_read(I2C_NO_3, 0x90>>1, 0x0001, &ret8, STRETCH_ON);
+```
+*/
