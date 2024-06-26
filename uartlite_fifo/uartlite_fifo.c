@@ -296,14 +296,18 @@ int Uart0_Init(void)
 	 * specific interrupt processing for the device.
 	 */
 #if defined (XPAR_XSCUGIC_NUM_INSTANCES)
+	XUartLite_SetRecvHandler(&UartLiteRs485, Uart0RxCpltIRQ, &g_tUart0);
+	XUartLite_SetSendHandler(&UartLiteRs485, Uart0TxCpltIRQ, &g_tUart0);
 	Status = INTC_CONNECT(&InterruptController, XPAR_FABRIC_UARTLITE_0_VEC_ID,
-			   //(XInterruptHandler)XUartLite_InterruptHandler,
-			   (XInterruptHandler)Uart0IntrHandler,
+			   (XInterruptHandler)XUartLite_InterruptHandler,
+//			   (XInterruptHandler)Uart0IntrHandler,
 			   (void *)&UartLiteRs485);
 #else
+	XUartLite_SetRecvHandler(&UartLiteRs485, Uart0RxCpltIRQ, &g_tUart0);
+	XUartLite_SetSendHandler(&UartLiteRs485, Uart0TxCpltIRQ, &g_tUart0);
 	Status = INTC_CONNECT(&InterruptController, XPAR_INTC_0_UARTLITE_0_VEC_ID,
-			   //(XInterruptHandler)XUartLite_InterruptHandler,
-			   (XInterruptHandler)Uart0IntrHandler,
+			   (XInterruptHandler)XUartLite_InterruptHandler,
+//			   (XInterruptHandler)Uart0IntrHandler,
 			   (void *)&UartLiteRs485);
 #endif
 	if (Status != XST_SUCCESS) {

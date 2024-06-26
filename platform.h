@@ -37,10 +37,14 @@ void init_platform(void);
 void cleanup_platform(void);
 
 #if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (ETH_COMMAND_SRV)
-
 #if defined (__MICROBLAZE__)
 //void timer00_callback();
 void Timer0Handler(void *CallBackRef, u8 TmrCtrNumber);
+#endif // #if defined (__MICROBLAZE__)
+#endif // #if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (ETH_COMMAND_SRV)
+
+#if defined(MODBUS_RTU_SLAVE)
+#if defined (__MICROBLAZE__)
 void Timer1Handler(void *CallBackRef, u8 TmrCtrNumber);
 #endif // #if defined (__MICROBLAZE__)
 
@@ -52,8 +56,7 @@ void Timer0Handler(void *CallBackRef, u8 TmrCtrNumber);
 void Timer0Handler(void *CallBackRef, u8 TmrCtrNumber);
 #endif // #if defined (PLATFORM_ZYNQMP)
 
-#endif // #if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (ETH_COMMAND_SRV)
-
+#endif // MODBUS_RTU_SLAVE
 
 #if defined (ARMR5) || (__aarch64__) || (__arm__)
 uint64_t get_time_ms(void);
