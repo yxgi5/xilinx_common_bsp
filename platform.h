@@ -45,7 +45,7 @@ void Timer1Handler(void *CallBackRef, u8 TmrCtrNumber);
 #endif // #if defined (__MICROBLAZE__)
 
 #if defined (PLATFORM_ZYNQ)
-
+void Timer0Handler(void *CallBackRef, u8 TmrCtrNumber);
 #endif // #if defined (PLATFORM_ZYNQ)
 
 #if defined (PLATFORM_ZYNQMP)

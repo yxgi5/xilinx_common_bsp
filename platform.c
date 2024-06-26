@@ -21,6 +21,7 @@ INTC InterruptController;
 
 #if defined (__LWIPOPTS_H_)
 #include "arch/cc.h"
+struct netif server_netif;
 #endif // __LWIPOPTS_H_
 
 /* Platform timer is calibrated for 250 ms, so kept interval value 4 to call
@@ -37,7 +38,7 @@ volatile int TcpSlowTmrFlag = 0;
 	void dhcp_fine_tmr();
 	void dhcp_coarse_tmr();
 #endif // LWIP_DHCP
-//extern struct netif *echo_netif;
+
 
 //#include "xtmrctr.h"
 //#include "xtmrctr_l.h"
@@ -304,6 +305,7 @@ INTC InterruptController;
 
 #if defined (__LWIPOPTS_H_)
 #include "arch/cc.h"
+struct netif server_netif;
 #endif // __LWIPOPTS_H_
 
 /* Platform timer is calibrated for 250 ms, so kept interval value 4 to call
@@ -320,12 +322,11 @@ volatile int TcpSlowTmrFlag = 0;
 	void dhcp_fine_tmr();
 	void dhcp_coarse_tmr();
 #endif // LWIP_DHCP
-//extern struct netif *echo_netif;
 
 //#include "xtmrctr.h"
 //#include "xtmrctr_l.h"
 #define PLATFORM_EMAC_BASEADDR XPAR_AXIETHERNET_0_BASEADDR
-#define PLATFORM_TIMER_BASEADDR XPAR_PROCESSOR_SUBSYSTEM_AXI_TIMER_0_BASEADDR
+#define PLATFORM_TIMER_BASEADDR XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_BASEADDR
 #define PLATFORM_TIMER_INTERRUPT_INTR XPAR_PROCESSOR_SUBSYSTEM_MICROBLAZE_0_AXI_INTC_PROCESSOR_SUBSYSTEM_AXI_TIMER_0_INTERRUPT_INTR
 #define PLATFORM_TIMER_INTERRUPT_MASK (1 << XPAR_PROCESSOR_SUBSYSTEM_MICROBLAZE_0_AXI_INTC_PROCESSOR_SUBSYSTEM_AXI_TIMER_0_INTERRUPT_INTR)
 
@@ -592,9 +593,9 @@ INTC InterruptController;
 
 #if defined (__LWIPOPTS_H_)
 #include "arch/cc.h"
+struct netif server_netif;
 #endif // __LWIPOPTS_H_
 
-#include "arch/cc.h"
 //		#define INTC_DEVICE_ID			XPAR_SCUGIC_SINGLE_DEVICE_ID
 //#define INTC_DEVICE_ID			XPAR_SCUGIC_0_DEVICE_ID
 //#define INTC_BASE_ADDR 			XPAR_SCUGIC_0_CPU_BASEADDR
@@ -621,7 +622,8 @@ volatile int TcpSlowTmrFlag = 0;
 	static int ResetRxCntr = 0;
 #endif
 XScuTimer TimerInstance;
-//extern struct netif *netif;
+
+#define PLATFORM_EMAC_BASEADDR XPAR_XEMACPS_0_BASEADDR
 
 #endif // #if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (ETH_COMMAND_SRV)
 
@@ -943,9 +945,9 @@ INTC InterruptController;
 
 #if defined (__LWIPOPTS_H_)
 #include "arch/cc.h"
+struct netif server_netif;
 #endif // __LWIPOPTS_H_
 
-#include "arch/cc.h"
 //		#define INTC_DEVICE_ID			XPAR_SCUGIC_SINGLE_DEVICE_ID
 //#define INTC_DEVICE_ID			XPAR_SCUGIC_0_DEVICE_ID
 //#define INTC_BASE_ADDR 			XPAR_SCUGIC_0_CPU_BASEADDR
@@ -971,7 +973,8 @@ volatile int TcpSlowTmrFlag = 0;
 static XInterval Interval;
 static u8 Prescaler;
 XTtcPs TimerInstance;
-//extern struct netif *netif;
+
+#define PLATFORM_EMAC_BASEADDR XPAR_XEMACPS_0_BASEADDR
 
 #endif // #if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (ETH_COMMAND_SRV)
 

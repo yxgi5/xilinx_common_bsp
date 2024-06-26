@@ -43,8 +43,6 @@ extern volatile int TcpSlowTmrFlag;
 
 #define TCP_SER_PORT            (6789)
 
-extern struct netif server_netif;
-
 void tcp_transfer_data(void);
 int tcp_server_setup(void);
 

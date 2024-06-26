@@ -43,8 +43,6 @@ extern volatile int TcpSlowTmrFlag;
 
 #define UDP_SER_PORT            (6789)
 
-extern struct netif server_netif;
-
 void udp_transfer_data(void);
 int udp_server_setup(void);
 

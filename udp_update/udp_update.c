@@ -39,7 +39,7 @@ err_t dhcp_start(struct netif *netif);
 #endif
 #endif
 
-struct netif server_netif;
+extern struct netif server_netif;
 
 
 #if LWIP_IPV6==1
