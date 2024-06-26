@@ -12,6 +12,10 @@ Xilinx Common Bare-Metal API
 
 . 库代码设计原则: 各模块尽量解耦，可调用函数接口和全局变量放在头文件(extern声明全局变量)，模块内尽量用static函数, 模块内尽可能给出使用示例。
 
+. dbg_trace.h 提供一个简单的可开关控制打印系统
+
+. bitmanip.h 提供常用宏定义
+
 . lwip网络库应的定时器模块，可以采用 platform 展示的 timer 设置, 也可以换掉 (硬核有定时器，但也可以用axi_timer, 这样有利于代码一致性)
 
 . io 模拟的 emio_i2c、xgpio_i2c是vivado heir对应的代码, xgpio_i2c 等在linux环境使用不如 axi_iic 方便, ps iic 不支持 stretching, i2c应尽可能采用 axi_iic。
@@ -22,15 +26,28 @@ Xilinx Common Bare-Metal API
 
 . rs485是一个 vivado heir对应的代码，如果仅打印可选这个。modbus_rtu 也对应一个 vivado heir(可以作为主从两用)，从机库会调用rs485、uart_fifo等额外的库，3.5T判断用的 timer 尽量采用 axi_timer。 
 
+
+
 TODO：
+
 * clk_wiz 添加给频率自动计算
+
 * vtc 还没有利用xvidc已经定义的时序，可以改进为使用库定义的相关用法
+
 * IAP升级只保留两种简单升级，暂不进行md5校验等升级交互。也暂不进行分区升级和指定地址升级。这样可以直接用 python 脚本或 NetAssist.exe 进行升级，网络环境时应应该比较好。IAP 刷新之后复位控制添加。
+
 * 上位机没有必要做直接地址读写操作，全部采用 msg 消息反馈机制
+
 * 还是有必要做golden区，放一个通用的可升级固件可打印无其他功能的程序
+
 * Modbus(主)，Can 通讯等添加
+
 * 串口打印菜单的设计, 修改 eeprom有关的设置和 配置表，i2c/spi等调试操作
+
 * psuart 来实现 modbus_rtu, 可以动态调整波特率
+
 * 可以保留eeprom有关的设置和 配置表 更新保存编辑什么的
+
 * 使用 RTOS 可以简化设计，专门任务对于需要的模块。
+
 * 
