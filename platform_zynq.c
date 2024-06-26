@@ -11,11 +11,10 @@ INTC InterruptController;
 	#define UART_BAUD 9600
 #endif
 
-#if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (ETH_COMMAND_SRV)
+#if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
 
 #if defined (__LWIPOPTS_H_)
 #include "arch/cc.h"
-struct netif server_netif;
 #endif // __LWIPOPTS_H_
 
 //		#define INTC_DEVICE_ID			XPAR_SCUGIC_SINGLE_DEVICE_ID
@@ -47,7 +46,7 @@ XScuTimer TimerInstance;
 
 #define PLATFORM_EMAC_BASEADDR XPAR_XEMACPS_0_BASEADDR
 
-#endif // #if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (ETH_COMMAND_SRV)
+#endif // #if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
 
 void enable_caches(void)
 {
@@ -100,7 +99,7 @@ void Timer0Handler(void *CallBackRef, u8 TmrCtrNumber)
 	}
 }
 
-#if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (ETH_COMMAND_SRV)
+#if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
 
 void timer_callback(XScuTimer * TimerInstance)
 {
@@ -191,7 +190,7 @@ void platform_setup_timer(void)
 	XScuTimer_LoadTimer(&TimerInstance, TimerLoadValue);
 }
 
-#endif // #if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (ETH_COMMAND_SRV)
+#endif // #if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
 
 int platform_setup_interrupts(void)
 {
@@ -241,12 +240,12 @@ int platform_setup_interrupts(void)
 	 * interrupt for the device occurs, the device driver handler performs
 	 * the specific interrupt processing for the device
 	 */
-#if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (ETH_COMMAND_SRV)
+#if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
 	platform_setup_timer();
 	Status = XScuGic_Connect(&InterruptController, TIMER_IRPT_INTR,
 			   (Xil_ExceptionHandler)timer_callback,
 			   (void *)&TimerInstance);
-#endif // #if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (ETH_COMMAND_SRV)
+#endif // #if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
 
 #if defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID) && !defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID)
 	timer0_init();
@@ -266,11 +265,11 @@ void platform_enable_interrupts()
 	 */
 //	Xil_ExceptionEnableMask(XIL_EXCEPTION_IRQ);
 	Xil_ExceptionEnable();
-#if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (ETH_COMMAND_SRV)
+#if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
 	XScuGic_Enable(&InterruptController, TIMER_IRPT_INTR);
 	XScuTimer_EnableInterrupt(&TimerInstance);
 	XScuTimer_Start(&TimerInstance);
-#endif // #if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (ETH_COMMAND_SRV)
+#endif // #if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
 }
 
 void init_platform(void)

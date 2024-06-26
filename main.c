@@ -204,23 +204,18 @@ int main()
 	}
 #endif // XPAR_XVPROCSS_NUM_INSTANCES
 
-
-#if defined (UDP_UPDATE)
-	udp_server_setup();
-#elif defined (TCP_UPDATE)
-	tcp_server_setup();
-#endif
+#if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
+	lwip_common_init(&server_netif);
+#endif // #if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
 
 #if defined (INTC_DEVICE_ID) || defined (INTC)
 	platform_enable_interrupts();
 #endif //#if defined (INTC_DEVICE_ID) || defined (INTC)
     while(1)
     {
-#if defined (UDP_UPDATE)
-    	udp_transfer_data();
-#elif defined (TCP_UPDATE)
-    	tcp_transfer_data();
-#endif
+#if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
+    	transfer_data(&server_netif);
+#endif // #if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
 
 #if	defined (MODBUS_RTU_SLAVE)
     	MODS_Poll();

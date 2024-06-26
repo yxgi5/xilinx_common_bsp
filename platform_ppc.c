@@ -12,7 +12,7 @@ INTC InterruptController;
 	#define UART_BAUD 9600
 #endif
 
-#if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (ETH_COMMAND_SRV)
+#if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
 
 #if !defined (XPAR_XAXIETHERNET_NUM_INSTANCES)
 #error "No ethernet in design"
@@ -20,7 +20,6 @@ INTC InterruptController;
 
 #if defined (__LWIPOPTS_H_)
 #include "arch/cc.h"
-struct netif server_netif;
 #endif // __LWIPOPTS_H_
 
 /* Platform timer is calibrated for 250 ms, so kept interval value 4 to call
@@ -45,7 +44,7 @@ volatile int TcpSlowTmrFlag = 0;
 #define PLATFORM_TIMER_INTERRUPT_INTR XPAR_PROCESSOR_SUBSYSTEM_MICROBLAZE_0_AXI_INTC_PROCESSOR_SUBSYSTEM_AXI_TIMER_0_INTERRUPT_INTR
 #define PLATFORM_TIMER_INTERRUPT_MASK (1 << XPAR_PROCESSOR_SUBSYSTEM_MICROBLAZE_0_AXI_INTC_PROCESSOR_SUBSYSTEM_AXI_TIMER_0_INTERRUPT_INTR)
 
-#endif // #if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (ETH_COMMAND_SRV)
+#endif // #if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
 
 #define MHZ 400
 #define PIT_INTERVAL (250*MHZ*1000)
@@ -74,7 +73,7 @@ void init_uart(void)
 }
 
 
-#if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (ETH_COMMAND_SRV)
+#if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
 #if defined (__AXI_TIMER_H_) && defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID)
 
 void timer_callback(void)
@@ -145,7 +144,7 @@ void platform_setup_timer(void)
 }
 
 #endif // #if defined (__AXI_TIMER_H_) && defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID)
-#endif // #if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (ETH_COMMAND_SRV)
+#endif // #if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
 
 void platform_setup_interrupts(void)
 {
@@ -164,11 +163,11 @@ void platform_setup_interrupts(void)
 	Xil_ExceptionInit();
 	Xil_ExceptionRegisterHandler(XIL_EXCEPTION_ID_INT, (XExceptionHandler)INTC_HANDLER, &InterruptController);
 
-#if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (ETH_COMMAND_SRV)
+#if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
 #if defined (__AXI_TIMER_H_) && defined (XPAR_TMRCTR_0_DEVICE_ID)
 	platform_setup_timer();
 #endif // #if defined (__AXI_TIMER_H_) && defined (XPAR_TMRCTR_0_DEVICE_ID)
-#endif // #if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (ETH_COMMAND_SRV)
+#endif // #if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
 
 #ifdef XPAR_ETHERNET_MAC_IP2INTC_IRPT_MASK
 	/* Enable timer and EMAC interrupts in the interrupt controller */

@@ -1,16 +1,16 @@
-#ifndef __TCP_UPDATE_H__
+#ifndef __LWIP_COMMON_H__
 
 //#include "xparameters.h"
 #if defined (XPAR_XEMACPS_NUM_INSTANCES) || defined (XPAR_XAXIETHERNET_NUM_INSTANCES)
-
-#if defined (TCP_UPDATE)
-#define __TCP_UPDATE_H__
+#if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
+#define __LWIP_COMMON_H__
 #include "lwipopts.h"
 #include "lwip/priv/tcp_priv.h"
 #include "lwip/init.h"
 #include "lwip/inet.h"
 #include "lwip/err.h"
 #include "netif/xadapter.h"
+#include "lwip/udp.h"
 #include "lwip/tcp.h"
 
 #if LWIP_IPV6==1
@@ -39,15 +39,25 @@ extern volatile int TcpSlowTmrFlag;
 #define PLATFORM_EMAC_BASEADDR XPAR_AXIETHERNET_0_BASEADDR
 #endif // XPAR_XAXIETHERNET_NUM_INSTANCES
 
-#define MAX_FLASH_LEN   32*1024*1024
+//#define MAX_FLASH_LEN   32*1024*1024
 
-#define TCP_SER_PORT            (6789)
 
-void tcp_transfer_data(void);
-int tcp_server_setup(void);
+//#if defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
+//extern uint8_t receivebuf[1500] = {0};
+//extern uint8_t send_buf[1500] = {0};
+//extern int receivelen = 0;
+//extern int sendlen = 0;
+//extern u8 cerrent_ch;
+//extern u8 reset_pl;
+//#endif // if defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
 
-#endif // TCP_UPDATE
+extern struct netif server_netif;
 
-#endif // XPAR_XEMACPS_NUM_INSTANCES && TCP_UPDATE
+void send_msg(const char *msg);
+void process_print(u8 percent);
+int lwip_common_init(struct netif *netif);
+void transfer_data(struct netif *netif);
 
-#endif // __TCP_UPDATE_H__
+#endif // #if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
+#endif // XPAR_XEMACPS_NUM_INSTANCES || XPAR_XAXIETHERNET_NUM_INSTANCES
+#endif // #ifndef __LWIP_COMMON_H__

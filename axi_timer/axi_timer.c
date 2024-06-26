@@ -103,7 +103,7 @@ void XTmrCtr_SetCallBack(XTmrCtr * InstancePtr, void * _pCallBack)
 }
 
 #if defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID)
-#if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (ETH_COMMAND_SRV)
+#if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
 int timer0_init()
 {
 	int Status = XST_SUCCESS;
@@ -150,7 +150,7 @@ int timer0_init()
 
 	return Status;
 }
-#endif //#if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (ETH_COMMAND_SRV)
+#endif //#if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
 #endif //#if defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID)
 
 /*****************************************************************************/

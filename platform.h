@@ -36,12 +36,12 @@
 void init_platform(void);
 void cleanup_platform(void);
 
-#if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (ETH_COMMAND_SRV)
+#if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
 #if defined (__MICROBLAZE__)
 //void timer00_callback();
 void Timer0Handler(void *CallBackRef, u8 TmrCtrNumber);
 #endif // #if defined (__MICROBLAZE__)
-#endif // #if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (ETH_COMMAND_SRV)
+#endif // #if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
 
 #if defined(MODBUS_RTU_SLAVE)
 #if defined (__MICROBLAZE__)

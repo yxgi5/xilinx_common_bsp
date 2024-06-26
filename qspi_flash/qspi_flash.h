@@ -197,7 +197,7 @@
  * Max page size to initialize write and read buffer
  */
 #define PAGE_SIZE 256
-
+#define MAX_FLASH_LEN   32*1024*1024
 // u32  FLASH_UPGRADE_ADDRESS =0x800000;   //  8MB
 
 #define ENTER_4B	1
@@ -308,7 +308,7 @@ extern XQspiPsu QspiInstance;
 #define FLASH_SR_IS_READY_MASK		0x01 /* Ready mask */
 
 #define PAGE_SIZE		256			// modify if needed！！！！
-
+#define MAX_FLASH_LEN   32*1024*1024
 /*
  * Sixteen MB
  */
@@ -387,15 +387,19 @@ typedef struct{
 	u8 NumDie;				/* No. of die forming a single flash */
 } FlashInfo;
 
+#if (XPAR_XQSPIPS_NUM_INSTANCES == 1U)
+extern XQspiPs QspiInstance;
+#endif // XPAR_XQSPIPS_NUM_INSTANCES
+
+int qspi_init(void);
+#if defined (UDP_UPDATE) || defined (TCP_UPDATE)
+int qspi_update(u32 total_bytes, const u8 *flash_data);
+#endif // UDP_UPDATE || TCP_UPDATE
 void FlashErase(XQspiPs *QspiPtr, u32 Address, u32 ByteCount);
 void FlashWrite(XQspiPs *QspiPtr, u32 Address, u32 ByteCount, u8 Command);
 void FlashRead(XQspiPs *QspiPtr, u32 Address, u32 ByteCount, u8 Command);
 int FlashReadID(void);
 void FlashQuadEnable(XQspiPs *QspiPtr);
-
-#if (XPAR_XQSPIPS_NUM_INSTANCES == 1U)
-extern XQspiPs QspiInstance;
-#endif // XPAR_XQSPIPS_NUM_INSTANCES
 
 #endif // XPAR_XQSPIPS_NUM_INSTANCES
 
@@ -454,7 +458,7 @@ extern XQspiPs QspiInstance;
 #define FLASH_SR_IS_READY_MASK		0x01 /* Ready mask */
 
 #define PAGE_SIZE		256			// modify if needed！！！！
-
+#define MAX_FLASH_LEN   32*1024*1024
 /*
  * Sixteen MB
  */
@@ -533,13 +537,17 @@ typedef struct{
 	u8 NumDie;				/* No. of die forming a single flash */
 } FlashInfo;
 
+extern XSpi XSpiInstance;
+
+int qspi_init(void);
+#if defined (UDP_UPDATE) || defined (TCP_UPDATE)
+int qspi_update(u32 total_bytes, const u8 *flash_data);
+#endif // UDP_UPDATE || TCP_UPDATE
 void FlashErase(XSpi *XSpiPtr, u32 Address, u32 ByteCount);
 void FlashWrite(XSpi *XSpiPtr, u32 Address, u32 ByteCount, u8 Command);
 void FlashRead(XSpi *XSpiPtr, u32 Address, u32 ByteCount, u8 Command);
 int FlashReadID(void);
 void FlashQuadEnable(XSpi *XSpiPtr);
-
-extern XSpi  XSpiInstance;
 
 #endif // XPAR_AXI_QUAD_SPI_0_SPI_MODE == 2U
 

@@ -259,20 +259,20 @@ int qspi_update(u32 total_bytes, const u8 *flash_data)
     //²Á³ýFLASH
 #if 1
     printf("Performing Erase Operation...\r\n");
-    sent_msg("Performing Erase Operation...\r\n");
+    send_msg("Performing Erase Operation...\r\n");
     start_time = get_time_s();
     FlashErase(&QspiInstance, 0, total_bytes);
     over_time = get_time_s();
     elapsed_time = over_time - start_time;
     printf("Erase Operation Successful.\r\n");
     printf("INFO:Elapsed time = %2.3f sec.\r\n", elapsed_time);
-    sent_msg("Erase Operation Successful.\r\n");
+    send_msg("Erase Operation Successful.\r\n");
     sprintf(msg, "INFO:Elapsed time = %2.3f sec.\r\n",elapsed_time);
-    sent_msg(msg);
+    send_msg(msg);
 #endif
 #if 1
     printf("Performing Program Operation...\r\n");
-    sent_msg("Performing Program Operation...\r\n");
+    send_msg("Performing Program Operation...\r\n");
     start_time = get_time_s();
     for (i = 0; i < total_page; i++) {
         process_percent = writed_len / (float) total_bytes * 10 + (float)1/2;
@@ -304,9 +304,9 @@ int qspi_update(u32 total_bytes, const u8 *flash_data)
     elapsed_time = over_time - start_time;
     printf("Program Operation Successful.\r\n");
     printf("INFO:Elapsed time = %2.3f sec.\r\n", elapsed_time);
-    sent_msg("Program Operation Successful.\r\n");
+    send_msg("Program Operation Successful.\r\n");
     sprintf(msg, "INFO:Elapsed time = %2.3f sec.\r\n",elapsed_time);
-    sent_msg(msg);
+    send_msg(msg);
 #endif
     if (Flash_Config_Table[FCTIndex].FlashDeviceSize > SIXTEENMB)
     {
@@ -317,7 +317,7 @@ int qspi_update(u32 total_bytes, const u8 *flash_data)
     	BufferPtr = &ReadBuffer[DATA_OFFSET + DUMMY_SIZE];
     }
     printf("Performing Verify Operation...\r\n");
-    sent_msg("Performing Verify Operation...\r\n");
+    send_msg("Performing Verify Operation...\r\n");
     memset(ReadBuffer, 0x00, sizeof(ReadBuffer));
     start_time = get_time_s();
     while (readed_len < total_bytes) {
@@ -353,9 +353,9 @@ int qspi_update(u32 total_bytes, const u8 *flash_data)
             elapsed_time = over_time - start_time;
             printf("Verify Operation Successful.\r\n");
             printf("INFO:Elapsed time = %2.3f sec.\r\n", elapsed_time);
-            sent_msg("Verify Operation Successful.\r\n");
+            send_msg("Verify Operation Successful.\r\n");
             sprintf(msg, "INFO:Elapsed time = %2.3f sec.\r\n",elapsed_time);
-            sent_msg(msg);
+            send_msg(msg);
         }
         readed_len += PAGE_SIZE;
         read_addr += PAGE_SIZE;
@@ -367,7 +367,7 @@ error_printf:
     printf("Verify data error at address 0x%lx\tSend Data is 0x%x\tRead Data is 0x%x\r\n",
             read_addr + i, flash_data[readed_len + i], BufferPtr[i]);
     sprintf(msg, "Verify data error at address 0x%lx.\r\n",read_addr + i);
-    sent_msg(msg);
+    send_msg(msg);
     return XST_FAILURE;
 }
 
