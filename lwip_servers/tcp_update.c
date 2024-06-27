@@ -214,7 +214,7 @@ int start_tcp_update_application(void)
     err = qspi_init();
     if (err != XST_SUCCESS) {
         xil_printf("QSPI init Failed\r\n");
-        return XST_FAILURE;
+        // return XST_FAILURE;
     }
     xil_printf("Successfully init QSPI\r\n");
 

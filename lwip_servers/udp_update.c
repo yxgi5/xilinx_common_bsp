@@ -155,7 +155,7 @@ void udp_update_recv_callback(void *arg, struct udp_pcb *upcb, struct pbuf *p,
 		{
 			total_bytes -= 6;
 			start_update_flag = 1;
-			tcp_update_svr_send_msg("\r\nStart QSPI Update\r\n");
+			udp_update_svr_send_msg("\r\nStart QSPI Update\r\n");
 		}
     }
 
@@ -230,7 +230,7 @@ void transfer_udp_update_data(void)
 usage:
 
 call udp_server_setup() and platform_enable_interrupts() before the main_loop
-call tcp_transfer_data() in the main_loop
+call udp_transfer_data() in the main_loop
 run
 ```
     if (TcpFastTmrFlag) {
