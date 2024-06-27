@@ -37,7 +37,7 @@ int adc_i2c_read(i2c_no i2c, char IIC_ADDR, u16 * ret)
 
 		if(ch > 0)
 		{
-			xil_printf("\r\n");
+			bsp_printf("\r\n");
 		}
 	}
 	else if (i==1)
@@ -90,11 +90,11 @@ int adc_config(void)
     status = xgpio_i2c_reg16_read(I2C_NO_4, 0x10, 0x1000, &ret,STRETCH_OFF);
     if(status!= XST_SUCCESS)
 	{
-		xil_printf("xgipo_i2c_%d_read_id failed\r\n", I2C_NO_4);
+		bsp_printf("xgipo_i2c_%d_read_id failed\r\n", I2C_NO_4);
 	}
     else
     {
-    	xil_printf("xgipo_i2c_%d_read_id = 0x%02x\r\n", I2C_NO_4, ret);
+    	bsp_printf("xgipo_i2c_%d_read_id = 0x%02x\r\n", I2C_NO_4, ret);
     }
 //	if(ret==0x81)
 //	{
@@ -116,73 +116,73 @@ int adc_config(void)
 	status = xgpio_i2c_reg16_write(I2C_NO_4, 0x10, 0x0804, 0x00,STRETCH_OFF);
 	if (status != XST_SUCCESS)
 	{
-		xil_printf("\r\nadc config faild 0!\r\n");
+		bsp_printf("\r\nadc config faild 0!\r\n");
 		return XST_FAILURE;
 	}
 	status = xgpio_i2c_reg16_write(I2C_NO_4, 0x10, 0x0810, 0x00,STRETCH_OFF);
 	if (status != XST_SUCCESS)
 	{
-		xil_printf("\r\nadc config faild 1!\r\n");
+		bsp_printf("\r\nadc config faild 1!\r\n");
 		return XST_FAILURE;
 	}
 	status = xgpio_i2c_reg16_write(I2C_NO_4, 0x10, 0x0805, 0x00,STRETCH_OFF);
 	if (status != XST_SUCCESS)
 	{
-		xil_printf("\r\nadc config faild 2!\r\n");
+		bsp_printf("\r\nadc config faild 2!\r\n");
 		return XST_FAILURE;
 	}
 	status = xgpio_i2c_reg16_write(I2C_NO_4, 0x10, 0x080F, 0x32,STRETCH_OFF);
 	if (status != XST_SUCCESS)
 	{
-		xil_printf("\r\nadc config faild 3!\r\n");
+		bsp_printf("\r\nadc config faild 3!\r\n");
 		return XST_FAILURE;
 	}
 	status = xgpio_i2c_reg16_write(I2C_NO_4, 0x10, 0x08C3, 0x00,STRETCH_OFF);
 	if (status != XST_SUCCESS)
 	{
-		xil_printf("\r\nadc config faild 4!\r\n");
+		bsp_printf("\r\nadc config faild 4!\r\n");
 		return XST_FAILURE;
 	}
 	status = xgpio_i2c_reg16_write(I2C_NO_4, 0x10, 0x08C5, 0x00,STRETCH_OFF);
 	if (status != XST_SUCCESS)
 	{
-		xil_printf("\r\nadc config faild 5!\r\n");
+		bsp_printf("\r\nadc config faild 5!\r\n");
 		return XST_FAILURE;
 	}
 	status = xgpio_i2c_reg16_write(I2C_NO_4, 0x10, 0x08C7, 0x00,STRETCH_OFF);
 	if (status != XST_SUCCESS)
 	{
-		xil_printf("\r\nadc config faild 6!\r\n");
+		bsp_printf("\r\nadc config faild 6!\r\n");
 		return XST_FAILURE;
 	}
 	status = xgpio_i2c_reg16_write(I2C_NO_4, 0x10, 0x08C9, 0x00,STRETCH_OFF);
 	if (status != XST_SUCCESS)
 	{
-		xil_printf("\r\nadc config faild 7!\r\n");
+		bsp_printf("\r\nadc config faild 7!\r\n");
 		return XST_FAILURE;
 	}
 	status = xgpio_i2c_reg16_write(I2C_NO_4, 0x10, 0x08CB, 0x00,STRETCH_OFF);
 	if (status != XST_SUCCESS)
 	{
-		xil_printf("\r\nadc config faild 8!\r\n");
+		bsp_printf("\r\nadc config faild 8!\r\n");
 		return XST_FAILURE;
 	}
 	status = xgpio_i2c_reg16_write(I2C_NO_4, 0x10, 0x08CD, 0x00,STRETCH_OFF);
 	if (status != XST_SUCCESS)
 	{
-		xil_printf("\r\nadc config faild 9!\r\n");
+		bsp_printf("\r\nadc config faild 9!\r\n");
 		return XST_FAILURE;
 	}
 	status = xgpio_i2c_reg16_write(I2C_NO_4, 0x10, 0x08CF, 0x00,STRETCH_OFF);
 	if (status != XST_SUCCESS)
 	{
-		xil_printf("\r\nadc config faild 10!\r\n");
+		bsp_printf("\r\nadc config faild 10!\r\n");
 		return XST_FAILURE;
 	}
 	status = xgpio_i2c_reg16_write(I2C_NO_4, 0x10, 0x08D1, 0x00,STRETCH_OFF);
 	if (status != XST_SUCCESS)
 	{
-		xil_printf("\r\nadc config faild 11!\r\n");
+		bsp_printf("\r\nadc config faild 11!\r\n");
 		return XST_FAILURE;
 	}
 
@@ -198,12 +198,12 @@ int adc_read(u16 * val)
     status = adc_i2c_read(I2C_NO_4, 0x10, &ret);
 //    if(status!= XST_SUCCESS)
 //	{
-//		//xil_printf("xgipo_i2c_%d_read_id failed\r\n", I2C_NO_4);
+//		//bsp_printf("xgipo_i2c_%d_read_id failed\r\n", I2C_NO_4);
 //    	asm("nop");
 //	}
 //    else
 //    {
-////    	//xil_printf("xgipo_i2c_%d_read_id = 0x%02x\r\n", I2C_NO_4, id);
+////    	//bsp_printf("xgipo_i2c_%d_read_id = 0x%02x\r\n", I2C_NO_4, id);
 ////    	i2c_scl_pos(I2C_NO_4);
 ////    	i2c_scl_pos(I2C_NO_4);
 ////    	i2c_scl_pos(I2C_NO_4);

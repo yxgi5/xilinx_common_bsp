@@ -9,7 +9,6 @@
 #define __QSPI_FLASH_H__
 //#include "xparameters.h"	/* SDK generated parameters */
 #include "xqspipsu.h"		/* QSPI device driver */
-//#include "xil_printf.h"
 //#if defined (ARMR5) || (__aarch64__) || (__arm__)
 //#include "xtime_l.h"
 //#endif
@@ -404,11 +403,15 @@ void FlashQuadEnable(XQspiPs *QspiPtr);
 #endif // XPAR_XQSPIPS_NUM_INSTANCES
 
 
-#if (XPAR_AXI_QUAD_SPI_0_SPI_MODE == 2U)
+//#if (XPAR_AXI_QUAD_SPI_0_SPI_MODE == 2U)
+//#if (XPAR_PROCESSOR_SUBSYSTEM_AXI_QUAD_SPI_0_SPI_MODE == 2U)
+#if (XPAR_SPI_0_SPI_MODE == 2U)
 #define __QSPI_FLASH_H__
 #include "xspi.h"		/* SPI device driver */
 #include "xspi_l.h"
-#define QSPI_DEVICE_ID 		XPAR_AXI_QUAD_SPI_0_DEVICE_ID
+//#define QSPI_DEVICE_ID 		XPAR_AXI_QUAD_SPI_0_DEVICE_ID
+//#define QSPI_DEVICE_ID 		XPAR_PROCESSOR_SUBSYSTEM_AXI_QUAD_SPI_0_DEVICE_ID
+#define QSPI_DEVICE_ID 		XPAR_SPI_0_DEVICE_ID
 
 //·¢ËÍµœFLASHÆ÷ŒþµÄÖžÁî
 #define WRITE_STATUS_CMD	0x01
@@ -549,6 +552,8 @@ void FlashRead(XSpi *XSpiPtr, u32 Address, u32 ByteCount, u8 Command);
 int FlashReadID(void);
 void FlashQuadEnable(XSpi *XSpiPtr);
 
-#endif // XPAR_AXI_QUAD_SPI_0_SPI_MODE == 2U
+//#endif // #if (XPAR_AXI_QUAD_SPI_0_SPI_MODE == 2U)
+//#endif // #if (XPAR_PROCESSOR_SUBSYSTEM_AXI_QUAD_SPI_0_SPI_MODE == 2U)
+#endif // #if (XPAR_SPI_0_SPI_MODE == 2U)
 
 #endif // __QSPI_FLASH_H__

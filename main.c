@@ -67,7 +67,7 @@ int main()
 		return XST_FAILURE ;
 	}
 //#elif defined (XPAR_XGPIO_NUM_INSTANCES)
-//    Status = xgpio_setup(&XGpioInst, XPAR_AXI_GPIO_0_DEVICE_ID, 0, 0);
+//    Status = xgpio_setup(&XGpioInst, XPAR_GPIO_0_DEVICE_ID, 0, 0);
 //    if (Status != XST_SUCCESS)
 //	{
 //		Xil_Assert(__FILE__, __LINE__);
@@ -84,7 +84,8 @@ int main()
     bsp_printf("Test common API.\n\r");
     bsp_printf("\r\n%s, UTC %s\r\n",__DATE__,__TIME__);
 #if defined (XPAR_AXI_LITE_REG_NUM_INSTANCES) && (XPAR_AXI_LITE_REG_0_DEVICE_ID == 0)
-	__HW_VER__ = AXI_LITE_REG_mReadReg(XPAR_AXI_LITE_REG_0_S00_AXI_BASEADDR, AXI_LITE_REG_S00_AXI_SLV_REG0_OFFSET);
+	__HW_VER__ = AXI_LITE_REG_mReadReg(XPAR_PROCESSOR_SUBSYSTEM_AXI_LITE_REG_0_S00_AXI_BASEADDR, AXI_LITE_REG_S00_AXI_SLV_REG0_OFFSET);
+//	__HW_VER__ = AXI_LITE_REG_mReadReg(XPAR_AXI_LITE_REG_0_S00_AXI_BASEADDR, AXI_LITE_REG_S00_AXI_SLV_REG0_OFFSET);
 	bsp_printf("hardware ver = 0x%08x\n\r", __HW_VER__);
 #endif // XPAR_AXI_LITE_REG_NUM_INSTANCES
 #ifdef SW_VER_BY_COMPILE_TIME

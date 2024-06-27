@@ -73,6 +73,18 @@ bsp config n_tx_descriptors 512
 #define TCP_COMMAND_SRV
 #define UDP_UPDATE
 #define TCP_UPDATE
+/* TCP_UPDATE need bigger tcp_snd_buf than default
+domain active
+bsp setlib -name lwip211
+bsp config mem_size 33554432
+bsp config memp_n_pbuf 4096
+bsp config memp_n_tcp_pcb 1024
+bsp config memp_n_tcp_seg 1024
+##bsp config pbuf_pool_size 2048
+bsp config pbuf_pool_size 4096
+bsp config tcp_snd_buf 65536
+bsp config tcp_wnd 8192
+*/
 
 #define USING_EEPROM
 

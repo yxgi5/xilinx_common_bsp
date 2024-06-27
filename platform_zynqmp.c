@@ -157,7 +157,7 @@ void platform_setup_timer(void)
 
 	Status = XTtcPs_CfgInitialize(Timer, Config, Config->BaseAddress);
 	if (Status != XST_SUCCESS) {
-		xil_printf("In %s: Timer Cfg initialization failed...\r\n",
+		bsp_printf("In %s: Timer Cfg initialization failed...\r\n",
 				__func__);
 				return;
 	}

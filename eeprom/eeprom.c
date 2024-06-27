@@ -45,14 +45,14 @@ int I2cMux_Eeprom(void)
   u8 Buffer;
   int Status;
 
-  xil_printf("Set i2c mux... \r\n");
+  bsp_printf("Set i2c mux... \r\n");
 
   /* Select SI5324 clock generator */
   Buffer = 0x1;
   Status = XIicPs_MasterSendPolled(&ps_i2c_0, (u8 *)&Buffer, 1, I2C_MUX_ADDR);
   if(Status==XST_SUCCESS)
   {
-	  xil_printf("Set i2c mux done\r\n");
+	  bsp_printf("Set i2c mux done\r\n");
   }
   else
   {

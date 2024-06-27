@@ -4,7 +4,6 @@
 
 //#include "xparameters.h"	/* SDK generated parameters */
 //#include "xqspipsu.h"		/* QSPIPSU device driver */
-//#include "xil_printf.h"
 //#include "xil_cache.h"
 //#include "xtime_l.h"
 //#include "stdio.h"
@@ -89,15 +88,15 @@ u8 CmdBfr[8];
 void show_flash_info(int idx)
 {
 	FlashInfo*flash_ptr=&Flash_Config_Table[idx];
-	xil_printf("SectSize:%d\r\n",flash_ptr->SectSize);
-	xil_printf("NumSect:%d\r\n",flash_ptr->NumSect);
-	xil_printf("SectMask:%d\r\n",flash_ptr->SectMask);
-	xil_printf("NumPage:%d\r\n",flash_ptr->NumPage);
-	xil_printf("PageSize:%d\r\n",flash_ptr->PageSize);
-	xil_printf("DeviceIDMemSize:%d\r\n",flash_ptr->DeviceIDMemSize);
-	xil_printf("FlashDeviceSize:%d\r\n",flash_ptr->FlashDeviceSize);
-	xil_printf("ManufacturerID:%d\r\n",flash_ptr->ManufacturerID);
-	xil_printf("NumDie:%d\r\n",flash_ptr->NumDie);
+	bsp_printf("SectSize:%d\r\n",flash_ptr->SectSize);
+	bsp_printf("NumSect:%d\r\n",flash_ptr->NumSect);
+	bsp_printf("SectMask:%d\r\n",flash_ptr->SectMask);
+	bsp_printf("NumPage:%d\r\n",flash_ptr->NumPage);
+	bsp_printf("PageSize:%d\r\n",flash_ptr->PageSize);
+	bsp_printf("DeviceIDMemSize:%d\r\n",flash_ptr->DeviceIDMemSize);
+	bsp_printf("FlashDeviceSize:%d\r\n",flash_ptr->FlashDeviceSize);
+	bsp_printf("ManufacturerID:%d\r\n",flash_ptr->ManufacturerID);
+	bsp_printf("NumDie:%d\r\n",flash_ptr->NumDie);
 }
 
 int qspi_init()
@@ -146,10 +145,10 @@ int qspi_init()
 		return XST_FAILURE;
 	}
 
-	xil_printf("Flash connection mode : %d \n\r",
+	bsp_printf("Flash connection mode : %d \n\r",
 			QspiPsuConfig->ConnectionMode);
-	xil_printf("where 0 - Single; 1 - Stacked; 2 - Parallel \n\r");
-	xil_printf("FCTIndex: %d \n\r", FCTIndex);
+	bsp_printf("where 0 - Single; 1 - Stacked; 2 - Parallel \n\r");
+	bsp_printf("FCTIndex: %d \n\r", FCTIndex);
 
 	show_flash_info(FCTIndex);
 
@@ -179,7 +178,7 @@ int qspi_init()
 		FSRFlag = 0;
 	}
 
-	xil_printf("ReadCmd: 0x%x, WriteCmd: 0x%x, StatusCmd: 0x%x, FSRFlag: %d\n\r",
+	bsp_printf("ReadCmd: 0x%x, WriteCmd: 0x%x, StatusCmd: 0x%x, FSRFlag: %d\n\r",
 			ReadCmd, WriteCmd, StatusCmd, FSRFlag);
 
 	if (Flash_Config_Table[FCTIndex].FlashDeviceSize > SIXTEENMB) {
@@ -363,10 +362,10 @@ error_printf:
 //		return XST_FAILURE;
 //	}
 //
-//	xil_printf("Flash connection mode : %d\n\r",
+//	bsp_printf("Flash connection mode : %d\n\r",
 //			QspiPsuConfig->ConnectionMode);
-//	xil_printf("where 0 - Single; 1 - Stacked; 2 - Parallel\n\r");
-//	xil_printf("FCTIndex: %d\n\r", FCTIndex);
+//	bsp_printf("where 0 - Single; 1 - Stacked; 2 - Parallel\n\r");
+//	bsp_printf("FCTIndex: %d\n\r", FCTIndex);
 //	/*
 //	 * Address size and read command selection
 //	 * Micron flash on REMUS doesn't support this 4B write/erase cmd
@@ -381,7 +380,7 @@ error_printf:
 //	FSRFlag = 0;
 //
 //
-//	xil_printf("ReadCmd: 0x%x, WriteCmd: 0x%x,"
+//	bsp_printf("ReadCmd: 0x%x, WriteCmd: 0x%x,"
 //			" StatusCmd: 0x%x, FSRFlag: %d\n\r",
 //			ReadCmd, WriteCmd, StatusCmd, FSRFlag);
 //
@@ -563,7 +562,7 @@ int FlashReadID(XQspiPsu *QspiPsuPtr)
 		return XST_FAILURE;
 	}
 
-	xil_printf("FlashID=0x%x 0x%x 0x%x\n\r", ReadBfrPtr[0], ReadBfrPtr[1],
+	bsp_printf("FlashID=0x%x 0x%x 0x%x\n\r", ReadBfrPtr[0], ReadBfrPtr[1],
 			ReadBfrPtr[2]);
 
 	/* In case of dual, read both and ensure they are same make/size */
@@ -962,7 +961,7 @@ int FlashErase(XQspiPsu *QspiPsuPtr, u32 Address, u32 ByteCount, u8 *WriteBfrPtr
 		NumSect++;
 	}
 
-	xil_printf("Erase Size is %u Bytes\r\n", NumSect*Flash_Config_Table[FCTIndex].SectSize) ;
+	bsp_printf("Erase Size is %u Bytes\r\n", NumSect*Flash_Config_Table[FCTIndex].SectSize) ;
 
 	for (Sector = 0; Sector < NumSect; Sector++) {
 
@@ -1654,17 +1653,17 @@ void print_percent(int percent)
 {
 	switch(percent)
 	{
-	case 0 : xil_printf("0%%..") ; break ;
-	case 1 : xil_printf("10%%..") ; break ;
-	case 2 : xil_printf("20%%..") ; break ;
-	case 3 : xil_printf("30%%..") ; break ;
-	case 4 : xil_printf("40%%..") ; break ;
-	case 5 : xil_printf("50%%..") ; break ;
-	case 6 : xil_printf("60%%..") ; break ;
-	case 7 : xil_printf("70%%..") ; break ;
-	case 8 : xil_printf("80%%..") ; break ;
-	case 9 : xil_printf("90%%..") ; break ;
-	case 10 : xil_printf("100%..") ; break ;
+	case 0 : bsp_printf("0%%..") ; break ;
+	case 1 : bsp_printf("10%%..") ; break ;
+	case 2 : bsp_printf("20%%..") ; break ;
+	case 3 : bsp_printf("30%%..") ; break ;
+	case 4 : bsp_printf("40%%..") ; break ;
+	case 5 : bsp_printf("50%%..") ; break ;
+	case 6 : bsp_printf("60%%..") ; break ;
+	case 7 : bsp_printf("70%%..") ; break ;
+	case 8 : bsp_printf("80%%..") ; break ;
+	case 9 : bsp_printf("90%%..") ; break ;
+	case 10 : bsp_printf("100%..") ; break ;
 	default : break ;
 	}
 }

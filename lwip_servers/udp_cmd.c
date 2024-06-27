@@ -7,7 +7,7 @@
 
 void print_udp_cmd_header(void)
 {
-    xil_printf("%20s %6d\r\n", "UDP CMD", UDP_CMD_SVR_PORT);
+    bsp_printf("%20s %6d\r\n", "UDP CMD", UDP_CMD_SVR_PORT);
 }
 
 static uint8_t checksum(uint8_t * ptr, int16_t cnt)
@@ -314,10 +314,10 @@ void udp_cmd_recv_callback(void *arg, struct udp_pcb *upcb, struct pbuf *p,
 
     udp_connect(upcb, addr, port);
 #ifdef PRINT_REMOTE
-	  xil_printf("local %s port %d connected with ",
+	  bsp_printf("local %s port %d connected with ",
 	  			inet_ntoa(echo_netif->ip_addr),
 				echo_server_port);
-	  xil_printf("%s port %d\r\n", inet_ntoa(*addr),
+	  bsp_printf("%s port %d\r\n", inet_ntoa(*addr),
 			  port);
 #endif
 	udp_send(upcb,pq);

@@ -12,7 +12,7 @@ static int start_update_flag = 0 ;
 
 void print_udp_update_header(void)
 {
-    xil_printf("%20s %6d\r\n", "UDP Update", UDP_UPDATE_SVR_PORT);
+    bsp_printf("%20s %6d\r\n", "UDP Update", UDP_UPDATE_SVR_PORT);
 }
 
 void udp_update_svr_send_msg(const char *msg)
@@ -22,12 +22,12 @@ void udp_update_svr_send_msg(const char *msg)
 
 	pbuf2sent = pbuf_alloc(PBUF_TRANSPORT, strlen(msg), PBUF_POOL);
     if (!pbuf2sent)
-        xil_printf("Error allocating pbuf\r\n");
+        bsp_printf("Error allocating pbuf\r\n");
 
     memcpy(pbuf2sent->payload, msg, strlen(msg));
 
     if (udp_send(client_pcb, pbuf2sent) != ERR_OK)
-        xil_printf("UDP send error\r\n");
+        bsp_printf("UDP send error\r\n");
 
     pbuf_free(pbuf2sent);
 #endif
@@ -38,47 +38,47 @@ void udp_update_process_print(u8 percent)
     switch (percent) {
     case 0:
     	udp_update_svr_send_msg("0%..");
-        xil_printf("0%%..");
+        bsp_printf("0%%..");
         break;
     case 1:
     	udp_update_svr_send_msg("10%..");
-        xil_printf("10%%..");
+        bsp_printf("10%%..");
         break;
     case 2:
     	udp_update_svr_send_msg("20%..");
-        xil_printf("20%%..");
+        bsp_printf("20%%..");
         break;
     case 3:
     	udp_update_svr_send_msg("30%..");
-        xil_printf("30%%..");
+        bsp_printf("30%%..");
         break;
     case 4:
     	udp_update_svr_send_msg("40%..");
-        xil_printf("40%%..");
+        bsp_printf("40%%..");
         break;
     case 5:
     	udp_update_svr_send_msg("50%..");
-        xil_printf("50%%..");
+        bsp_printf("50%%..");
         break;
     case 6:
     	udp_update_svr_send_msg("60%..");
-        xil_printf("60%%..");
+        bsp_printf("60%%..");
         break;
     case 7:
     	udp_update_svr_send_msg("70%..");
-        xil_printf("70%%..");
+        bsp_printf("70%%..");
         break;
     case 8:
     	udp_update_svr_send_msg("80%..");
-        xil_printf("80%%..");
+        bsp_printf("80%%..");
         break;
     case 9:
     	udp_update_svr_send_msg("90%..");
-        xil_printf("90%%..");
+        bsp_printf("90%%..");
         break;
     case 10:
     	udp_update_svr_send_msg("100%\r\n");
-        xil_printf("100%%\r\n");
+        bsp_printf("100%%\r\n");
     default:
         break;
     }
@@ -112,8 +112,8 @@ void udp_update_process_print(u8 percent)
 //		{
 //			memcpy(&FlashRxBuffer[ReceivedCount], pData, udp_len - 6);
 //			ReceivedCount += udp_len - 6 ;
-//			xil_printf("Received Size is %u Bytes\r\n", ReceivedCount) ;
-//			xil_printf("Initialization done, programming the memory\r\n") ;
+//			bsp_printf("Received Size is %u Bytes\r\n", ReceivedCount) ;
+//			bsp_printf("Initialization done, programming the memory\r\n") ;
 //			start_update_flag = 1 ;
 //		}
 //		else
@@ -141,7 +141,7 @@ void udp_update_recv_callback(void *arg, struct udp_pcb *upcb, struct pbuf *p,
         start_update_flag = 0;
         total_bytes = 0;
         udp_update_svr_send_msg("Clear received data\r\n");
-        xil_printf("Clear received data\r\n");
+        bsp_printf("Clear received data\r\n");
     } else {
         while (q->tot_len != q->len) {
             memcpy(&rxbuffer[total_bytes], q->payload, q->len);
@@ -195,17 +195,17 @@ void transfer_udp_update_data(void)
 	{
 //		Status = update_qspi(&QspiInstance, QSPIPSU_DEVICE_ID, ReceivedCount, FlashRxBuffer) ;
 //		if (Status != XST_SUCCESS)
-//			xil_printf("Update Flash Error!\r\n") ;
+//			bsp_printf("Update Flash Error!\r\n") ;
 //		StartUpdate = 0 ;
 //		ReceivedCount = 0;
-        xil_printf("Start QSPI Update!\r\n");
-        xil_printf("file size of BOOT.bin is %lu Bytes\r\n", total_bytes);
+        bsp_printf("Start QSPI Update!\r\n");
+        bsp_printf("file size of BOOT.bin is %lu Bytes\r\n", total_bytes);
         sprintf(msg, "file size of BOOT.bin is %lu Bytes\r\n", total_bytes);
         udp_update_svr_send_msg(msg);
         if (qspi_update(total_bytes, rxbuffer) != XST_SUCCESS)
         {
         	udp_update_svr_send_msg("Update Qspi Error!\r\n");
-            xil_printf("Update Qspi Error!\r\n");
+            bsp_printf("Update Qspi Error!\r\n");
         }
         else
         {

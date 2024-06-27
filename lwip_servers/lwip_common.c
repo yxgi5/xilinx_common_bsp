@@ -35,8 +35,8 @@ struct netif server_netif;
 void print_ip6(char *msg, ip_addr_t *ip)
 {
 	print(msg);
-//	xil_printf(" %s\n\r", inet6_ntoa(*ip));
-	xil_printf(" %x:%x:%x:%x:%x:%x:%x:%x\n\r",
+//	bsp_printf(" %s\n\r", inet6_ntoa(*ip));
+	bsp_printf(" %x:%x:%x:%x:%x:%x:%x:%x\n\r",
 			IP6_ADDR_BLOCK1(&ip->u_addr.ip6),
 			IP6_ADDR_BLOCK2(&ip->u_addr.ip6),
 			IP6_ADDR_BLOCK3(&ip->u_addr.ip6),
@@ -51,7 +51,7 @@ void print_ip6(char *msg, ip_addr_t *ip)
 void print_ip(char *msg, ip_addr_t *ip)
 {
 	print(msg);
-	xil_printf("%d.%d.%d.%d\n\r", ip4_addr1(ip), ip4_addr2(ip),
+	bsp_printf("%d.%d.%d.%d\n\r", ip4_addr1(ip), ip4_addr2(ip),
 			ip4_addr3(ip), ip4_addr4(ip));
 }
 
@@ -67,28 +67,28 @@ void assign_default_ip(ip_addr_t *ip, ip_addr_t *mask, ip_addr_t *gw)
 {
 	int err;
 
-	xil_printf("Configuring default IP %s \r\n", DEFAULT_IP_ADDRESS);
+	bsp_printf("Configuring default IP %s \r\n", DEFAULT_IP_ADDRESS);
 
 	err = inet_aton(DEFAULT_IP_ADDRESS, ip);
 	if (!err)
-		xil_printf("Invalid default IP address: %d\r\n", err);
+		bsp_printf("Invalid default IP address: %d\r\n", err);
 
 	err = inet_aton(DEFAULT_IP_MASK, mask);
 	if (!err)
-		xil_printf("Invalid default IP MASK: %d\r\n", err);
+		bsp_printf("Invalid default IP MASK: %d\r\n", err);
 
 	err = inet_aton(DEFAULT_GW_ADDRESS, gw);
 	if (!err)
-		xil_printf("Invalid default gateway address: %d\r\n", err);
+		bsp_printf("Invalid default gateway address: %d\r\n", err);
 }
 #endif // LWIP_IPV6
 
 
 void print_headers()
 {
-    xil_printf("\r\n");
-    xil_printf("%20s %6s\r\n", "Server", "Port");
-    xil_printf("%20s %6s\r\n", "--------------------", "------");
+    bsp_printf("\r\n");
+    bsp_printf("%20s %6s\r\n", "Server", "Port");
+    bsp_printf("%20s %6s\r\n", "--------------------", "------");
 #if defined (UDP_UPDATE)
 	print_udp_update_header();
 #endif // #if defined (UDP_UPDATE)
@@ -101,7 +101,7 @@ void print_headers()
 #if defined (UDP_COMMAND_SRV)
 	print_udp_cmd_header();
 #endif // #if defined (UDP_COMMAND_SRV)
-    xil_printf("\r\n");
+    bsp_printf("\r\n");
 }
 
 void start_applications(void)
@@ -110,10 +110,10 @@ void start_applications(void)
 	int Status;
 	Status = qspi_init();
     if (Status != XST_SUCCESS) {
-        xil_printf("QSPI init Failed\r\n");
+        bsp_printf("QSPI init Failed\r\n");
         // return XST_FAILURE;
     }
-    xil_printf("Successfully init QSPI\r\n");
+    bsp_printf("Successfully init QSPI\r\n");
 #endif // #if defined (UDP_UPDATE) || defined (TCP_UPDATE)
 
 #if defined (UDP_UPDATE)
@@ -180,7 +180,7 @@ int lwip_common_init(struct netif *netif)
 //		/* Define this board specific macro in order perform PHY reset on ZCU102 */
 //#ifdef XPS_BOARD_ZCU102
 //	if(IicPhyReset()) {
-//		xil_printf("Error performing PHY reset \n\r");
+//		bsp_printf("Error performing PHY reset \n\r");
 //		return -1;
 //	}
 //#endif
@@ -206,14 +206,14 @@ int lwip_common_init(struct netif *netif)
 	if (!xemac_add(netif, &ipaddr, &netmask,
 			&gw, mac_ethernet_address,
 			PLATFORM_EMAC_BASEADDR)) {
-		xil_printf("Error adding N/W interface\n\r");
+		bsp_printf("Error adding N/W interface\n\r");
 		return XST_FAILURE;
 	}
 #else
 	/* Add network interface to the netif_list, and set it as default */
 	if (!xemac_add(netif, NULL, NULL, NULL, mac_ethernet_address,
 			PLATFORM_EMAC_BASEADDR)) {
-		xil_printf("Error adding N/W interface\n\r");
+		bsp_printf("Error adding N/W interface\n\r");
 		return XST_FAILURE;
 	}
 	netif->ip6_autoconfig_enabled = 1;
@@ -255,8 +255,8 @@ int lwip_common_init(struct netif *netif)
 	}
 	if (dhcp_timoutcntr <= 0) {
 		if ((netif->ip_addr.addr) == 0) {
-			xil_printf("DHCP request timed out\r\n");
-			xil_printf("Configuring default IP of 192.168.1.10\r\n");
+			bsp_printf("DHCP request timed out\r\n");
+			bsp_printf("Configuring default IP of 192.168.1.10\r\n");
 			IP4_ADDR(&(netif->ip_addr),  192, 168,   1, 10);
 			IP4_ADDR(&(netif->netmask), 255, 255, 255,  0);
 			IP4_ADDR(&(netif->gw),      192, 168,   1,  1);

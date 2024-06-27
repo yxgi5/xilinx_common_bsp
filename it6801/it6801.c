@@ -410,29 +410,29 @@ void it6801_InterruptHandler(void)
 	hdmirxwr(0x09, Reg09h);
 	hdmirxwr(0xD0, RegD0h);
 
-	xil_printf("Reg0A = 0x%02X \r\n", Reg0Ah);
+	bsp_printf("Reg0A = 0x%02X \r\n", Reg0Ah);
 #if 0
 	if(Reg05h)
 	{
-		xil_printf("Reg05 = 0x%02X \r\n", Reg05h);
+		bsp_printf("Reg05 = 0x%02X \r\n", Reg05h);
 
 		if( Reg05h & 0x80 )
 		{
-			xil_printf("#### Port 0 HDCP Off Detected ###\r\n");
+			bsp_printf("#### Port 0 HDCP Off Detected ###\r\n");
 		}
 		if(Reg05h & 0x40)
 		{
-			xil_printf("#### Port 0 ECC Error ####\r\n");
+			bsp_printf("#### Port 0 ECC Error ####\r\n");
 			//TODO: hdmirx_INT_P0_ECC
 		}
 		if(Reg05h & 0x20)
 		{
-			xil_printf("#### Port 0 HDMI/DVI Mode change ####\r\n");
+			bsp_printf("#### Port 0 HDMI/DVI Mode change ####\r\n");
 			//TODO: if(CLKCheck(0)) ; hdmirx_INT_HDMIMode_Chg(it6802,0);
 		}
 		if( Reg05h & 0x08 )
 		{
-			xil_printf("#### Port 0 HDCP Authentication Start ###\r\n");
+			bsp_printf("#### Port 0 HDCP Authentication Start ###\r\n");
 			//TODO:
 
 			if( Reg0Ah & 0x40)
@@ -442,7 +442,7 @@ void it6801_InterruptHandler(void)
 		}
 		if( Reg05h & 0x10 )
 		{
-			xil_printf("#### Port 0 HDCP Authentication Done ####\r\n");
+			bsp_printf("#### Port 0 HDCP Authentication Done ####\r\n");
 			if( Reg0Ah & 0x40 )
 			{
 				//TODO:
@@ -450,16 +450,16 @@ void it6801_InterruptHandler(void)
 		}
 		if( Reg05h & 0x04 )
 		{
-			xil_printf("#### Port 0 Input Clock Change Detect ####\r\n");
+			bsp_printf("#### Port 0 Input Clock Change Detect ####\r\n");
 		}
 		if( Reg05h & 0x02 )
 		{
-			xil_printf("#### Port 0 Rx CKOn Detect ####\r\n");
+			bsp_printf("#### Port 0 Rx CKOn Detect ####\r\n");
 			// TODO:
 		}
 		if( Reg05h & 0x01 )
 		{
-			xil_printf("#### Port 0 Power 5V change ####\r\n");
+			bsp_printf("#### Port 0 Power 5V change ####\r\n");
 			// TODO: hdmirx_INT_5V_Pwr_Chg
 		}
 	}

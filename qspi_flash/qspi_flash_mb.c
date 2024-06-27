@@ -1,6 +1,8 @@
 #include "../bsp.h"
 
-#if (XPAR_AXI_QUAD_SPI_0_SPI_MODE == 2U)
+// #if (XPAR_AXI_QUAD_SPI_0_SPI_MODE == 2U)
+// #if (XPAR_PROCESSOR_SUBSYSTEM_AXI_QUAD_SPI_0_SPI_MODE == 2U)
+#if (XPAR_SPI_0_SPI_MODE == 2U)
 
 #if defined (UDP_UPDATE) || defined (TCP_UPDATE)
 XSpi  XSpiInstance;
@@ -123,15 +125,15 @@ int FlashEnterExit4BAddMode(XSpi *QspiPtr, unsigned int Enable)
 void show_flash_info(int idx)
 {
 	FlashInfo*flash_ptr=&Flash_Config_Table[idx];
-	xil_printf("SectSize:%d\r\n",flash_ptr->SectSize);
-	xil_printf("NumSect:%d\r\n",flash_ptr->NumSect);
-	xil_printf("SectMask:%d\r\n",flash_ptr->SectMask);
-	xil_printf("NumPage:%d\r\n",flash_ptr->NumPage);
-	xil_printf("PageSize:%d\r\n",flash_ptr->PageSize);
-	xil_printf("DeviceIDMemSize:%d\r\n",flash_ptr->DeviceIDMemSize);
-	xil_printf("FlashDeviceSize:%d\r\n",flash_ptr->FlashDeviceSize);
-	xil_printf("ManufacturerID:%d\r\n",flash_ptr->ManufacturerID);
-	xil_printf("NumDie:%d\r\n",flash_ptr->NumDie);
+	bsp_printf("SectSize:%d\r\n",flash_ptr->SectSize);
+	bsp_printf("NumSect:%d\r\n",flash_ptr->NumSect);
+	bsp_printf("SectMask:%d\r\n",flash_ptr->SectMask);
+	bsp_printf("NumPage:%d\r\n",flash_ptr->NumPage);
+	bsp_printf("PageSize:%d\r\n",flash_ptr->PageSize);
+	bsp_printf("DeviceIDMemSize:%d\r\n",flash_ptr->DeviceIDMemSize);
+	bsp_printf("FlashDeviceSize:%d\r\n",flash_ptr->FlashDeviceSize);
+	bsp_printf("ManufacturerID:%d\r\n",flash_ptr->ManufacturerID);
+	bsp_printf("NumDie:%d\r\n",flash_ptr->NumDie);
 }
 
 int qspi_init()
@@ -181,7 +183,7 @@ int qspi_init()
 
 
     FlashReadID();
-    xil_printf("FCTIndex: %d \n\r", FCTIndex);
+    bsp_printf("FCTIndex: %d \n\r", FCTIndex);
     show_flash_info(FCTIndex);
     FlashQuadEnable(&XSpiInstance);
 
@@ -899,5 +901,7 @@ void FlashQuadEnable(XSpi *QspiPtr)
 }
 #endif  // #if defined (UDP_UPDATE) || defined (TCP_UPDATE)
 
-#endif // XPAR_AXI_QUAD_SPI_0_SPI_MODE == 2U
+//#endif // #if (XPAR_AXI_QUAD_SPI_0_SPI_MODE == 2U)
+//#endif // #if (XPAR_PROCESSOR_SUBSYSTEM_AXI_QUAD_SPI_0_SPI_MODE == 2U)
+#endif // #if (XPAR_SPI_0_SPI_MODE == 2U)
 

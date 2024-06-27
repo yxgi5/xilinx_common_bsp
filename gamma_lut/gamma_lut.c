@@ -11,11 +11,11 @@ int gamma_lut_init(u16 deviceid,u32 hsize,u32 vsize) {
 	XV_gamma_lut_Config *gamma_lut_config;
 
 	if ( (gamma_lut_config = XV_gamma_lut_LookupConfig(deviceid)) == NULL) {
-		xil_printf("XV_gamma_lut_LookupConfig() failed\r\n");
+		bsp_printf("XV_gamma_lut_LookupConfig() failed\r\n");
 		return XST_FAILURE;
 	}
 	if (XV_gamma_lut_CfgInitialize(&gamma_lut, gamma_lut_config, gamma_lut_config->BaseAddress)) {
-		xil_printf("XV_gamma_lut_CfgInitialize() failed\r\n");
+		bsp_printf("XV_gamma_lut_CfgInitialize() failed\r\n");
 		return XST_FAILURE;
 	}
 
@@ -25,24 +25,24 @@ int gamma_lut_init(u16 deviceid,u32 hsize,u32 vsize) {
 
 	if (XV_gamma_lut_Write_HwReg_gamma_lut_0_Words(&gamma_lut, 0, (int *) xgamma8_06,
 			sizeof(xgamma8_10)/sizeof(int)) != sizeof(xgamma8_10)/sizeof(int)) {
-		xil_printf("Gamma correction LUT write failed\r\n");
+		bsp_printf("Gamma correction LUT write failed\r\n");
 		return XST_FAILURE;
 	}
 	if (XV_gamma_lut_Write_HwReg_gamma_lut_1_Words(&gamma_lut, 0, (int *) xgamma8_08,
 			sizeof(xgamma8_10)/sizeof(int)) != sizeof(xgamma8_10)/sizeof(int)) {
-		xil_printf("Gamma correction LUT write failed\r\n");
+		bsp_printf("Gamma correction LUT write failed\r\n");
 		return XST_FAILURE;
 	}
 	if (XV_gamma_lut_Write_HwReg_gamma_lut_2_Words(&gamma_lut, 0, (int *) xgamma8_06,
 			sizeof(xgamma8_10)/sizeof(int)) != sizeof(xgamma8_10)/sizeof(int)) {
-		xil_printf("Gamma correction LUT write failed\r\n");
+		bsp_printf("Gamma correction LUT write failed\r\n");
 		return XST_FAILURE;
 	}
 
 	XV_gamma_lut_EnableAutoRestart(&gamma_lut);
 	XV_gamma_lut_Start(&gamma_lut);
 
-	xil_printf("Gamma correction LUT initialized\r\n");
+	bsp_printf("Gamma correction LUT initialized\r\n");
 
 	return XST_SUCCESS;
 }
@@ -54,11 +54,11 @@ int gamma_lut_init(u16 deviceid,u32 hsize,u32 vsize,u8 format) {
 	XV_gamma_lut_Config *gamma_lut_config;
 
 	if ( (gamma_lut_config = XV_gamma_lut_LookupConfig(deviceid)) == NULL) {
-		xil_printf("XV_gamma_lut_LookupConfig() failed\r\n");
+		bsp_printf("XV_gamma_lut_LookupConfig() failed\r\n");
 		return XST_FAILURE;
 	}
 	if (XV_gamma_lut_CfgInitialize(&gamma_lut, gamma_lut_config, gamma_lut_config->BaseAddress)) {
-		xil_printf("XV_gamma_lut_CfgInitialize() failed\r\n");
+		bsp_printf("XV_gamma_lut_CfgInitialize() failed\r\n");
 		return XST_FAILURE;
 	}
 
@@ -68,24 +68,24 @@ int gamma_lut_init(u16 deviceid,u32 hsize,u32 vsize,u8 format) {
 
 	if (XV_gamma_lut_Write_HwReg_gamma_lut_0_Words(&gamma_lut, 0, (int *) xgamma8_curves[format],
 			sizeof(xgamma8_10)/sizeof(int)) != sizeof(xgamma8_10)/sizeof(int)) {
-		xil_printf("Gamma correction LUT write failed\r\n");
+		bsp_printf("Gamma correction LUT write failed\r\n");
 		return XST_FAILURE;
 	}
 	if (XV_gamma_lut_Write_HwReg_gamma_lut_1_Words(&gamma_lut, 0, (int *) xgamma8_curves[format],
 			sizeof(xgamma8_10)/sizeof(int)) != sizeof(xgamma8_10)/sizeof(int)) {
-		xil_printf("Gamma correction LUT write failed\r\n");
+		bsp_printf("Gamma correction LUT write failed\r\n");
 		return XST_FAILURE;
 	}
 	if (XV_gamma_lut_Write_HwReg_gamma_lut_2_Words(&gamma_lut, 0, (int *) xgamma8_curves[format],
 			sizeof(xgamma8_10)/sizeof(int)) != sizeof(xgamma8_10)/sizeof(int)) {
-		xil_printf("Gamma correction LUT write failed\r\n");
+		bsp_printf("Gamma correction LUT write failed\r\n");
 		return XST_FAILURE;
 	}
 
 	XV_gamma_lut_EnableAutoRestart(&gamma_lut);
 	XV_gamma_lut_Start(&gamma_lut);
 
-	xil_printf("Gamma correction LUT initialized\r\n");
+	bsp_printf("Gamma correction LUT initialized\r\n");
 
 	return XST_SUCCESS;
 }

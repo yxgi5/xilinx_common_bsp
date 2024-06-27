@@ -56,11 +56,11 @@ int vpss_config(void)
 	XVprocSs_Config *VprocCfgPtr;
 
     /* User registers custom timing table */
-	//xil_printf("INFO> Registering Custom Timing Table with %d entries \r\n", (XVIDC_CM_NUM_SUPPORTED - (XVIDC_VM_CUSTOM + 1)));
+	//bsp_printf("INFO> Registering Custom Timing Table with %d entries \r\n", (XVIDC_CM_NUM_SUPPORTED - (XVIDC_VM_CUSTOM + 1)));
 	Status = XVidC_RegisterCustomTimingModes(XVidC_MyVideoTimingMode, (XVIDC_CM_NUM_SUPPORTED - (XVIDC_VM_CUSTOM + 1)));
 	if (Status != XST_SUCCESS)
 	{
-//		xil_printf("ERR: Unable to register custom timing table\r\n\r\n");
+		bsp_printf("ERR: Unable to register custom timing table\r\n\r\n");
 		Xil_Assert(__FILE__, __LINE__);
 		return(XST_FAILURE);
 	}

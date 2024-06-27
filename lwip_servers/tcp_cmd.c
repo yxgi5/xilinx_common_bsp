@@ -7,7 +7,7 @@ static struct tcp_pcb *client_pcb = NULL;
 
 void print_tcp_cmd_header(void)
 {
-    xil_printf("%20s %6d\r\n", "TCP CMD", TCP_CMD_SVR_PORT);
+    bsp_printf("%20s %6d\r\n", "TCP CMD", TCP_CMD_SVR_PORT);
 }
 
 static uint8_t checksum(uint8_t * ptr, int16_t cnt)
@@ -64,7 +64,7 @@ static err_t tcp_cmd_recv_callback(void *arg, struct tcp_pcb *tpcb, struct pbuf 
 	if (tcp_sndbuf(tpcb) > p->len) {
 		err = tcp_write(tpcb, p->payload, p->len, 1);
 	} else
-		xil_printf("no space in tcp_sndbuf\n\r");
+		bsp_printf("no space in tcp_sndbuf\n\r");
 
 	/* free the received pbuf */
 	pbuf_free(p);
@@ -75,7 +75,7 @@ static err_t tcp_cmd_recv_callback(void *arg, struct tcp_pcb *tpcb, struct pbuf 
 	/* do not read the packet if we are not in ESTABLISHED state */
 	if (!p) {
 		tcp_server_close(tpcb);
-		xil_printf("tcp connection closed\r\n");
+		bsp_printf("tcp connection closed\r\n");
 		return ERR_OK;
 	}
 
@@ -368,7 +368,7 @@ static err_t tcp_cmd_recv_callback(void *arg, struct tcp_pcb *tpcb, struct pbuf 
 		err = tcp_write(tpcb, send_buf1, sendlen1, TCP_WRITE_FLAG_COPY);
 //		err = tcp_write(tpcb, msg, strlen(msg), TCP_WRITE_FLAG_COPY);
 	} else
-		xil_printf("no space in tcp_sndbuf\n\r");
+		bsp_printf("no space in tcp_sndbuf\n\r");
 
 	return ERR_OK;
 #endif
@@ -384,12 +384,12 @@ static void tcp_server_err(void *arg, err_t err)
 	tcp_server_close(client_pcb);
 	client_pcb = NULL;
 //	tcp_conn_report(diff_ms, TCP_ABORTED_REMOTE);
-	xil_printf("TCP connection aborted\n\r");
+	bsp_printf("TCP connection aborted\n\r");
 }
 
 static err_t accept_callback(void *arg, struct tcp_pcb *newpcb, err_t err)
 {
-    xil_printf("tcp_server: Connection Accepted\r\n");
+    bsp_printf("tcp_server: Connection Accepted\r\n");
     client_pcb = newpcb;
 
     tcp_recv(client_pcb, tcp_cmd_recv_callback);
@@ -410,7 +410,7 @@ int start_tcp_cmd_application(void)
 	/* Create a new TCP PCB structure  */
     pcb = tcp_new();
     if (!pcb) {
-        xil_printf("Error creating PCB. Out of Memory\n\r");
+        bsp_printf("Error creating PCB. Out of Memory\n\r");
         return -1;
     }
 
@@ -418,7 +418,7 @@ int start_tcp_cmd_application(void)
 	/* Using IP_ANY_TYPE==IP_ADDR_ANY allow the pcb to be used by any local interface */
     err = tcp_bind(pcb, IP_ANY_TYPE, TCP_CMD_SVR_PORT);
     if (err != ERR_OK) {
-        xil_printf("Unable to bind to port %d: err = %d\n\r", TCP_CMD_SVR_PORT, err);
+        bsp_printf("Unable to bind to port %d: err = %d\n\r", TCP_CMD_SVR_PORT, err);
         tcp_close(pcb);
         return -2;
     }
@@ -427,13 +427,13 @@ int start_tcp_cmd_application(void)
 
     pcb = tcp_listen(pcb);
     if (!pcb) {
-        xil_printf("Out of memory while tcp_listen\n\r");
+        bsp_printf("Out of memory while tcp_listen\n\r");
         return -3;
     }
 
     tcp_accept(pcb, accept_callback);
 
-    xil_printf("TCP server started @ port %d\n\r", TCP_CMD_SVR_PORT);
+    bsp_printf("TCP server started @ port %d\n\r", TCP_CMD_SVR_PORT);
 
     return 0;
 }

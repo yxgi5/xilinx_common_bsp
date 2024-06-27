@@ -167,7 +167,7 @@ void vtiming_gen_run
 	// Get Video Resolution timing
     if (verbose)
     {
-		xil_printf("\tVideo Resolution = %s\n\r", vres_get_name(resolution_id));
+		bsp_printf("\tVideo Resolution = %s\n\r", vres_get_name(resolution_id));
 	}
 	vres_get_timing(resolution_id, &VideoTiming);
 	HFrontPorch = VideoTiming.HFrontPorch;
@@ -232,19 +232,19 @@ void vtiming_gen_run
 
 	if ( verbose == 1 )
 	{
-		xil_printf("\tVTC Generator Configuration\n\r" );
-		xil_printf("\t\tHorizontal Timing:\n\r" );
-		xil_printf("\t\t\tHActiveStart = %d\r\n", Signal.HActiveStart);
-		xil_printf("\t\t\tHFrontPorchStart %d\r\n", Signal.HFrontPorchStart);
-		xil_printf("\t\t\tHSyncStart %d\r\n", Signal.HSyncStart);
-		xil_printf("\t\t\tHBackPorchStart %d\r\n", Signal.HBackPorchStart);
-		xil_printf("\t\t\tHTotal = %d\r\n", Signal.HTotal);
-		xil_printf("\t\tVertical Timing:\n\r" );
-		xil_printf("\t\t\tV0ActiveStart %d\r\n", Signal.V0ActiveStart);
-		xil_printf("\t\t\tV0FrontPorchStart %d\r\n", Signal.V0FrontPorchStart);
-		xil_printf("\t\t\tV0SyncStart %d\r\n", Signal.V0SyncStart);
-		xil_printf("\t\t\tV0BackPorchStart %d\r\n", Signal.V0BackPorchStart);
-		xil_printf("\t\t\tV0Total %d\r\n", Signal.V0Total);
+		bsp_printf("\tVTC Generator Configuration\n\r" );
+		bsp_printf("\t\tHorizontal Timing:\n\r" );
+		bsp_printf("\t\t\tHActiveStart = %d\r\n", Signal.HActiveStart);
+		bsp_printf("\t\t\tHFrontPorchStart %d\r\n", Signal.HFrontPorchStart);
+		bsp_printf("\t\t\tHSyncStart %d\r\n", Signal.HSyncStart);
+		bsp_printf("\t\t\tHBackPorchStart %d\r\n", Signal.HBackPorchStart);
+		bsp_printf("\t\t\tHTotal = %d\r\n", Signal.HTotal);
+		bsp_printf("\t\tVertical Timing:\n\r" );
+		bsp_printf("\t\t\tV0ActiveStart %d\r\n", Signal.V0ActiveStart);
+		bsp_printf("\t\t\tV0FrontPorchStart %d\r\n", Signal.V0FrontPorchStart);
+		bsp_printf("\t\t\tV0SyncStart %d\r\n", Signal.V0SyncStart);
+		bsp_printf("\t\t\tV0BackPorchStart %d\r\n", Signal.V0BackPorchStart);
+		bsp_printf("\t\t\tV0Total %d\r\n", Signal.V0Total);
 	}
 
 	// Write configuration to hardware

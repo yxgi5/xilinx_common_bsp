@@ -168,14 +168,14 @@ void platform_setup_timer(void)
 			ConfigPtr->BaseAddr);
 	if (Status != XST_SUCCESS) {
 
-		xil_printf("In %s: Scutimer Cfg initialization failed...\r\n",
+		bsp_printf("In %s: Scutimer Cfg initialization failed...\r\n",
 		__func__);
 		return;
 	}
 
 	Status = XScuTimer_SelfTest(&TimerInstance);
 	if (Status != XST_SUCCESS) {
-		xil_printf("In %s: Scutimer Self test failed...\r\n",
+		bsp_printf("In %s: Scutimer Self test failed...\r\n",
 		__func__);
 		return;
 
