@@ -234,8 +234,7 @@ int start_tcp_update_application(void)
     }
 
     tcp_accept(pcb, accept_callback);
-
-    bsp_printf("TCP server started @ port %d\n\r", TCP_UPDATE_SVR_PORT);
+//    bsp_printf("TCP server started @ port %d\n\r", TCP_UPDATE_SVR_PORT);
 
     return 0;
 }
@@ -274,7 +273,7 @@ void transfer_tcp_update_data(void)
 	{
 //		Status = update_qspi(&QspiInstance, QSPIPSU_DEVICE_ID, ReceivedCount, FlashRxBuffer) ;
 //		if (Status != XST_SUCCESS)
-//			bsp_printf("Update Flash Error!\r\n") ;
+//			bsp_printf(TXT_RED "In %s: Update flash failed...\r\n" TXT_RST, __func__);
 //		StartUpdate = 0 ;
 //		ReceivedCount = 0;
         bsp_printf("Start QSPI Update!\r\n");

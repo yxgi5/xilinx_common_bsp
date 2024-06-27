@@ -44,3 +44,14 @@
 	} while (0)
 
 #endif // __DEBUG_TRACE_H__
+
+
+/*
+note:
+find . -type f -name "*.[ch]" -o -name "*.cxx"  | xargs sed -i 's/xil_printf/bsp_printf/g'
+find . ! \( -name "dbg_trace.h" -o -name "bsp.h" \) -a \( -name "*.[ch]" -o -name "*.cxx" \) | xargs sed -i 's/xil_printf/bsp_printf/g'
+
+usage:
+	bsp_printf("CSI Rx Ss 0 Init failed status = %x.\r\n", Status);
+	bsp_printf(TXT_RED "CSI Rx Ss 0 Init failed status = %x.\r\n" TXT_RST, Status);
+*/

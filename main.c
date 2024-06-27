@@ -86,14 +86,15 @@ int main()
 #if defined (XPAR_AXI_LITE_REG_NUM_INSTANCES) && (XPAR_AXI_LITE_REG_0_DEVICE_ID == 0)
 	__HW_VER__ = AXI_LITE_REG_mReadReg(XPAR_PROCESSOR_SUBSYSTEM_AXI_LITE_REG_0_S00_AXI_BASEADDR, AXI_LITE_REG_S00_AXI_SLV_REG0_OFFSET);
 //	__HW_VER__ = AXI_LITE_REG_mReadReg(XPAR_AXI_LITE_REG_0_S00_AXI_BASEADDR, AXI_LITE_REG_S00_AXI_SLV_REG0_OFFSET);
-	bsp_printf("hardware ver = 0x%08x\n\r", __HW_VER__);
+	bsp_printf(TXT_GREEN "hardware ver = 0x%08x\n\r" TXT_RST, __HW_VER__);
 #endif // XPAR_AXI_LITE_REG_NUM_INSTANCES
 #ifdef SW_VER_BY_COMPILE_TIME
     __SW_VER__ = GetSoftWareVersion();
     bsp_printf("software ver = 0x%08x\n\r", __SW_VER__);
     bsp_printf("***************************\n\r");
 #elif defined (__SW_VER__)
-    bsp_printf("software ver = 0x%08x\n\r", __SW_VER__);
+//    bsp_printf("software ver = 0x%08x\n\r", __SW_VER__);
+    bsp_printf(TXT_GREEN "software ver = 0x%08x\n\r" TXT_RST, __SW_VER__);
     bsp_printf("***************************\n\r");
 #endif // __SW_VER__ || SW_VER_BY_COMPILE_TIME
 

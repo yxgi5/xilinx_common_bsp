@@ -167,15 +167,13 @@ void platform_setup_timer(void)
 	Status = XScuTimer_CfgInitialize(&TimerInstance, ConfigPtr,
 			ConfigPtr->BaseAddr);
 	if (Status != XST_SUCCESS) {
-
-		bsp_printf("In %s: Scutimer Cfg initialization failed...\r\n",
-		__func__);
+		bsp_printf(TXT_RED "In %s: Scutimer Cfg initialization failed...\r\n" TXT_RST, __func__);
 		return;
 	}
 
 	Status = XScuTimer_SelfTest(&TimerInstance);
 	if (Status != XST_SUCCESS) {
-		bsp_printf("In %s: Scutimer Self test failed...\r\n",
+		bsp_printf(TXT_RED "In %s: Scutimer Self test failed...\r\n" TXT_RST,
 		__func__);
 		return;
 
@@ -213,6 +211,7 @@ int platform_setup_interrupts(void)
 	Status = XScuGic_CfgInitialize(&InterruptController, GicConfig,
 					GicConfig->CpuBaseAddress);
 	if (Status != XST_SUCCESS) {
+		bsp_printf(TXT_RED "In %s: XScuGic_CfgInitialize failed...\r\n" TXT_RST, __func__);
 		return XST_FAILURE;
 	}
 	/*
@@ -245,15 +244,19 @@ int platform_setup_interrupts(void)
 	Status = XScuGic_Connect(&InterruptController, TIMER_IRPT_INTR,
 			   (Xil_ExceptionHandler)timer_callback,
 			   (void *)&TimerInstance);
+	if (Status != XST_SUCCESS) {
+		bsp_printf(TXT_RED "In %s: network timer interrupt setup failed...\r\n" TXT_RST, __func__);
+		return XST_FAILURE;
+	}
 #endif // #if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
 
 #if defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID) && !defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID)
-	timer0_init();
-#endif // #if defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID) && !defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID)
-
+	Status = timer0_init();
 	if (Status != XST_SUCCESS) {
+		bsp_printf(TXT_RED "In %s: timer0_init failed...\r\n" TXT_RST, __func__);
 		return XST_FAILURE;
 	}
+#endif // #if defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID) && !defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID)
 
 	return Status;
 }

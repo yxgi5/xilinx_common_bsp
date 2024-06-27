@@ -22,7 +22,7 @@ int Csi2RxSs_Init(XCsiSs *InstancePtr, u32 DeviceId)
 	ConfigPtr = XCsiSs_LookupConfig(DeviceId);
 	if (!ConfigPtr)
 	{
-		bsp_printf("CSI2RxSs LookupCfg failed\r\n");
+		bsp_printf(TXT_RED "CSI2RxSs LookupCfg failed\r\n" TXT_RST);
 		return XST_FAILURE;
 	}
 
@@ -30,7 +30,7 @@ int Csi2RxSs_Init(XCsiSs *InstancePtr, u32 DeviceId)
 			ConfigPtr->BaseAddr);
 	if (Status != XST_SUCCESS)
 	{
-		bsp_printf("CsiRxSs Cfg init failed - %x\r\n", Status);
+		bsp_printf(TXT_RED "CsiRxSs Cfg init failed - %x\r\n" TXT_RST, Status);
 		return XST_FAILURE;
 	}
 
@@ -44,7 +44,7 @@ int csi_rx_config(void)
 	Status = Csi2RxSs_Init(&Csi2RxSsInst_0, XPAR_MIPI_CSI2_RX_SUBSYST_0_DEVICE_ID);
 	if (Status != XST_SUCCESS)
 	{
-		Xil_Assert(__FILE__, __LINE__);
+		//Xil_Assert(__FILE__, __LINE__);
 		bsp_printf(TXT_RED "CSI Rx Ss 0 Init failed status = %x.\r\n"
 						 TXT_RST, Status);
 		return XST_FAILURE;
@@ -61,7 +61,7 @@ int csi_rx_config(void)
 	Status = XCsiSs_Activate(&Csi2RxSsInst_0, XCSI_ENABLE);
 	if (Status != XST_SUCCESS)
 	{
-		Xil_Assert(__FILE__, __LINE__);
+		//Xil_Assert(__FILE__, __LINE__);
 		bsp_printf(TXT_RED "CSI Rx Ss 0 Activate failed status = %x.\r\n"
 						 TXT_RST, Status);
 		return XST_FAILURE;
@@ -73,7 +73,7 @@ int csi_rx_config(void)
 	Status = Csi2RxSs_Init(&Csi2RxSsInst_1, XPAR_CSI_1_DEVICE_ID);
 	if (Status != XST_SUCCESS)
 	{
-		Xil_Assert(__FILE__, __LINE__);
+		//Xil_Assert(__FILE__, __LINE__);
 		bsp_printf(TXT_RED "CSI Rx Ss 1 Init failed status = %x.\r\n"
 						 TXT_RST, Status);
 		return XST_FAILURE;
@@ -84,7 +84,7 @@ int csi_rx_config(void)
 	Status = XCsi_Activate(&Csi2RxSsInst_1, XCSI_ENABLE);
 	if (Status != XST_SUCCESS)
 	{
-		Xil_Assert(__FILE__, __LINE__);
+		//Xil_Assert(__FILE__, __LINE__);
 		bsp_printf(TXT_RED "CSI Rx Ss 1 Activate failed status = %x.\r\n"
 						 TXT_RST, Status);
 		return XST_FAILURE;
@@ -95,7 +95,7 @@ int csi_rx_config(void)
 	Status = Csi2RxSs_Init(&Csi2RxSsInst_2, XPAR_CSI_2_DEVICE_ID);
 	if (Status != XST_SUCCESS)
 	{
-		Xil_Assert(__FILE__, __LINE__);
+		//Xil_Assert(__FILE__, __LINE__);
 		bsp_printf(TXT_RED "CSI Rx Ss 2 Init failed status = %x.\r\n"
 						 TXT_RST, Status);
 		return XST_FAILURE;
@@ -106,7 +106,7 @@ int csi_rx_config(void)
 	Status = XCsi_Activate(&Csi2RxSsInst_2, XCSI_ENABLE);
 	if (Status != XST_SUCCESS)
 	{
-		Xil_Assert(__FILE__, __LINE__);
+		//Xil_Assert(__FILE__, __LINE__);
 		bsp_printf(TXT_RED "CSI Rx Ss 2 Activate failed status = %x.\r\n"
 						 TXT_RST, Status);
 		return XST_FAILURE;
@@ -117,7 +117,7 @@ int csi_rx_config(void)
 	Status = Csi2RxSs_Init(&Csi2RxSsInst_3, XPAR_CSI_3_DEVICE_ID);
 	if (Status != XST_SUCCESS)
 	{
-		Xil_Assert(__FILE__, __LINE__);
+		//Xil_Assert(__FILE__, __LINE__);
 		bsp_printf(TXT_RED "CSI Rx Ss 3 Init failed status = %x.\r\n"
 						 TXT_RST, Status);
 		return XST_FAILURE;
@@ -128,7 +128,7 @@ int csi_rx_config(void)
 	Status = XCsi_Activate(&Csi2RxSsInst_3, XCSI_ENABLE);
 	if (Status != XST_SUCCESS)
 	{
-		Xil_Assert(__FILE__, __LINE__);
+		//Xil_Assert(__FILE__, __LINE__);
 		bsp_printf(TXT_RED "CSI Rx Ss 3 Activate failed status = %x.\r\n"
 						 TXT_RST, Status);
 		return XST_FAILURE;

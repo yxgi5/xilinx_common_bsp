@@ -152,11 +152,13 @@ void platform_setup_interrupts(void)
 
 	Status = XIntc_Initialize(&InterruptController, XPAR_INTC_0_DEVICE_ID);
 	if (Status != XST_SUCCESS) {
+		bsp_printf(TXT_RED "XIntc_Initialize Failed\r\n" TXT_RST);
 		return XST_FAILURE;
 	}
 
 	Status = XIntc_Start(&InterruptController, XIN_REAL_MODE);
 	if (Status != XST_SUCCESS) {
+		bsp_printf(TXT_RED "XIntc_Start Failed\r\n" TXT_RST);
 		return XST_FAILURE;
 	}
 

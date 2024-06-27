@@ -80,13 +80,13 @@ int ps_i2c_init(XIicPs *Iic,short DeviceID ,u32 IIC_SCLK_RATE)
 
 	Config = XIicPs_LookupConfig(DeviceID);
 	if (NULL == Config) {
-		bsp_printf("XIicPs_LookupConfig failure\r\n");
+		bsp_printf(TXT_RED "XIicPs_LookupConfig failure\r\n" TXT_RST);
 		return XST_FAILURE;
 	}
 
 	Status = XIicPs_CfgInitialize(Iic, Config, Config->BaseAddress);
 	if (Status != XST_SUCCESS) {
-		bsp_printf("XIicPs_CfgInitialize failure\r\n");
+		bsp_printf(TXT_RED "XIicPs_CfgInitialize failure\r\n" TXT_RST);
 		return XST_FAILURE;
 	}
 	XIicPs_SetSClk(Iic, IIC_SCLK_RATE);
@@ -102,7 +102,7 @@ int ps_i2c_config(void)
 	Status = ps_i2c_init(&ps_i2c_0, XPAR_PSU_I2C_0_DEVICE_ID, 100000);
 	if (Status != XST_SUCCESS)
 	{
-		Xil_Assert(__FILE__, __LINE__);
+		//Xil_Assert(__FILE__, __LINE__);
 		return XST_FAILURE;
 	}
 

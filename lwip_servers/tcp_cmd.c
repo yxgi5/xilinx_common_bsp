@@ -432,8 +432,7 @@ int start_tcp_cmd_application(void)
     }
 
     tcp_accept(pcb, accept_callback);
-
-    bsp_printf("TCP server started @ port %d\n\r", TCP_CMD_SVR_PORT);
+//    bsp_printf("TCP server started @ port %d\n\r", TCP_CMD_SVR_PORT);
 
     return 0;
 }

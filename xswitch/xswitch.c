@@ -46,7 +46,7 @@ int AxisSwitch(u16 DeviceId, XAxis_Switch * pAxisSwitch, u8 SiIndex, u8 MiIndex)
     Status = XAxisScr_CfgInitialize(pAxisSwitch, Config,
                         Config->BaseAddress);
     if (Status != XST_SUCCESS) {
-    	bsp_printf("AXI4-Stream initialization failed.\r\n");
+		bsp_printf(TXT_RED "In %s: AXI4-Stream initialization failed...\r\n" TXT_RST, __func__);
         return XST_FAILURE;
     }
 
@@ -83,6 +83,7 @@ int axis_switch_cfg(u8 s_num)
     if (Status != XST_SUCCESS)
 	{
 //		Xil_Assert(__FILE__, __LINE__);
+		bsp_printf(TXT_RED "In %s: AxisSwitch failed...\r\n" TXT_RST, __func__);
 		return XST_FAILURE ;
 	}
 

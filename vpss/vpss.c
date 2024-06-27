@@ -60,7 +60,7 @@ int vpss_config(void)
 	Status = XVidC_RegisterCustomTimingModes(XVidC_MyVideoTimingMode, (XVIDC_CM_NUM_SUPPORTED - (XVIDC_VM_CUSTOM + 1)));
 	if (Status != XST_SUCCESS)
 	{
-		bsp_printf("ERR: Unable to register custom timing table\r\n\r\n");
+		bsp_printf(TXT_RED "In %s: register custom timing table failed...\r\n" TXT_RST, __func__);
 		Xil_Assert(__FILE__, __LINE__);
 		return(XST_FAILURE);
 	}
@@ -88,7 +88,8 @@ int vpss_config(void)
 	{
 //		while(1)
 //			NOP();
-    	Xil_Assert(__FILE__, __LINE__);
+    	bsp_printf(TXT_RED "In %s: XVprocSs_CfgInitialize failed...\r\n" TXT_RST, __func__);
+    	// Xil_Assert(__FILE__, __LINE__);
 		return(XST_FAILURE);
 	}
 
@@ -126,7 +127,8 @@ int vpss_config(void)
 	Status = XVprocSs_SetVidStreamIn(&VprocInst0, &StreamIn);
 	if (Status != XST_SUCCESS)
 	{
-		Xil_Assert(__FILE__, __LINE__);
+		bsp_printf(TXT_RED "In %s: XVprocSs_SetVidStreamIn failed...\r\n" TXT_RST, __func__);
+		// Xil_Assert(__FILE__, __LINE__);
 		return XST_FAILURE ;
 	}
 
@@ -163,15 +165,16 @@ int vpss_config(void)
     Status = XVprocSs_SetVidStreamOut(&VprocInst0, &StreamOut);
 	if (Status != XST_SUCCESS)
 	{
-		Xil_Assert(__FILE__, __LINE__);
+		bsp_printf(TXT_RED "In %s: XVprocSs_SetVidStreamOut failed...\r\n" TXT_RST, __func__);
+		//Xil_Assert(__FILE__, __LINE__);
 		return XST_FAILURE ;
 	}
 
     Status = XVprocSs_SetSubsystemConfig(&VprocInst0);
     if(Status!= XST_SUCCESS)
     {
-//    	bsp_printf("VPSS0 failed\r\n");
-    	Xil_Assert(__FILE__, __LINE__);
+    	bsp_printf(TXT_RED "In %s: XVprocSs_SetSubsystemConfig failed...\r\n" TXT_RST, __func__);
+    	//Xil_Assert(__FILE__, __LINE__);
     	return(XST_FAILURE);
     }
     //bsp_printf("VPSS0 Started\r\n");

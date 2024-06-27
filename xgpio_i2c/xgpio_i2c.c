@@ -102,6 +102,7 @@ int xgpio_i2c_init(void)
 	Status = XGpio_Initialize(&XGpioInstI2c, XGPIO_ID) ;
 	if (Status != XST_SUCCESS)
 	{
+		bsp_printf(TXT_RED "In %s: XGpio_Initialize failed...\r\n" TXT_RST, __func__);
 		return XST_FAILURE ;
 	}
 	XGpio_SetDataDirection(&XGpioInstI2c, 1, 0xffffffff);
@@ -913,6 +914,7 @@ int xgpio_setup(XGpio *InstancePtr, u16 DeviceId, u32 DirectionMask1, u32 Direct
 	Status = XGpio_Initialize(InstancePtr, DeviceId) ;
 	if (Status != XST_SUCCESS)
 	{
+		bsp_printf(TXT_RED "In %s: XGpio_Initialize failed...\r\n" TXT_RST, __func__);
 		return XST_FAILURE ;
 	}
 	/* set as output */

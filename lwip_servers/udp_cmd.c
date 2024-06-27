@@ -351,7 +351,7 @@ int start_udp_cmd_application(void)
 
     /* Set a receive callback for the upcb */
 	udp_recv(pcb, udp_cmd_recv_callback, NULL);
-	bsp_printf("UDP server started @ port %d\n\r", UDP_CMD_SVR_PORT);
+//	bsp_printf("UDP server started @ port %d\n\r", UDP_CMD_SVR_PORT);
 
 	return 0;
 }

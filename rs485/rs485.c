@@ -13,6 +13,7 @@ int rs485_heir_xgpio_setup()
 	Status = XGpio_Initialize(&XGpioInstRs485Ctl, XPAR_MODBUS_RTU_0_AXI_GPIO_0_DEVICE_ID) ;
 	if (Status != XST_SUCCESS)
 	{
+		bsp_printf(TXT_RED "In %s: XGpio_Initialize failed...\r\n" TXT_RST, __func__);
 		return XST_FAILURE;
 	}
 
@@ -31,6 +32,7 @@ int rs485_heir_xuart_setup()
 	Status = XUartLite_Initialize(&UartLiteRs485, XPAR_MODBUS_RTU_0_AXI_UARTLITE_0_DEVICE_ID);
 	if (Status != XST_SUCCESS)
 	{
+		bsp_printf(TXT_RED "In %s: XUartLite_Initialize failed...\r\n" TXT_RST, __func__);
 		return XST_FAILURE;
 	}
 

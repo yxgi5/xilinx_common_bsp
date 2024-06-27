@@ -97,8 +97,8 @@ int XClk_Wiz_dynamic_reconfig(XClk_Wiz * ClkWizInstance, u32 DeviceId)
     Status = Wait_For_Lock(CfgPtr_Dynamic);
     if(Status)
     {
-    	bsp_printf("\n ERROR: Clock is not locked for default frequency"
-                   " : 0x%x\n\r",
+    	bsp_printf(TXT_RED "\n ERROR: Clock is not locked for default frequency"
+                   " : 0x%x\n\r"  TXT_RST,
                    *(u32 *) (CfgPtr_Dynamic->BaseAddr + 0x04) & CLK_LOCK);
     }
 
@@ -107,8 +107,8 @@ int XClk_Wiz_dynamic_reconfig(XClk_Wiz * ClkWizInstance, u32 DeviceId)
 
     if(*(u32 *) (CfgPtr_Dynamic->BaseAddr + 0x04) & CLK_LOCK)
     {
-    	bsp_printf("\n ERROR: Clock is locked : 0x%x \t expected "
-                   "0x00\n\r",
+    	bsp_printf(TXT_RED "\n ERROR: Clock is locked : 0x%x \t expected "
+                   "0x00\n\r" TXT_RST,
                    *(u32 *) (CfgPtr_Dynamic->BaseAddr + 0x04) & CLK_LOCK);
     }
 
@@ -119,8 +119,8 @@ int XClk_Wiz_dynamic_reconfig(XClk_Wiz * ClkWizInstance, u32 DeviceId)
     Status = Wait_For_Lock(CfgPtr_Dynamic);
     if(Status)
     {
-    	bsp_printf("\n ERROR: Clock is not locked after SW reset :"
-                   "0x%x \t Expected  : 0x1\n\r",
+    	bsp_printf(TXT_RED "\n ERROR: Clock is not locked after SW reset :"
+                   "0x%x \t Expected  : 0x1\n\r" TXT_RST,
                    *(u32 *) (CfgPtr_Dynamic->BaseAddr + 0x04) & CLK_LOCK);
     }
 
@@ -201,8 +201,8 @@ int XClk_Wiz_dynamic_reconfig(XClk_Wiz * ClkWizInstance, u32 DeviceId)
     Status = Wait_For_Lock(CfgPtr_Dynamic);
     if(Status)
     {
-    	bsp_printf("\n ERROR: Clock is not locked : 0x%x \t Expected "
-                   ": 0x1\n\r",
+    	bsp_printf(TXT_RED "\n ERROR: Clock is not locked : 0x%x \t Expected "
+                   ": 0x1\n\r" TXT_RST,
                    *(u32 *) (CfgPtr_Dynamic->BaseAddr + 0x04) & CLK_LOCK);
     }
 
@@ -217,7 +217,7 @@ int clkwiz_config(void)
     Status = XClk_Wiz_dynamic_reconfig(&ClkWiz_Dynamic0, XPAR_CLK_WIZ_0_DEVICE_ID);
     if (Status != XST_SUCCESS)
     {
-    	bsp_printf("XClk_Wiz0 dynamic reconfig failed.\r\n");
+    	bsp_printf(TXT_RED "XClk_Wiz0 dynamic reconfig failed.\r\n" TXT_RST);
     	return XST_FAILURE;
     }
 //    bsp_printf("XClk_Wiz0 dynamic reconfig ok\n\r");

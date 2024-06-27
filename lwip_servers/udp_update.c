@@ -183,7 +183,7 @@ int start_udp_update_application(void)
 	}
 	udp_recv(pcb, udp_update_recv_callback, NULL);
 //	IP4_ADDR(&target_addr, 192,168,1,35);
-	bsp_printf("UDP server started @ port %d\n\r", UDP_UPDATE_SVR_PORT);
+//	bsp_printf("UDP server started @ port %d\n\r", UDP_UPDATE_SVR_PORT);
 
 	return 0;
 }
@@ -195,7 +195,7 @@ void transfer_udp_update_data(void)
 	{
 //		Status = update_qspi(&QspiInstance, QSPIPSU_DEVICE_ID, ReceivedCount, FlashRxBuffer) ;
 //		if (Status != XST_SUCCESS)
-//			bsp_printf("Update Flash Error!\r\n") ;
+//			bsp_printf(TXT_RED "In %s: Update flash failed...\r\n" TXT_RST, __func__);
 //		StartUpdate = 0 ;
 //		ReceivedCount = 0;
         bsp_printf("Start QSPI Update!\r\n");

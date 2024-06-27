@@ -283,6 +283,7 @@ int Uart0_Init(void)
 	Status = XUartLite_Initialize(UartPtr, DeviceId);
 #endif //#if defined (MODBUS_RTU_SLAVE)
 	if (Status != XST_SUCCESS) {
+		bsp_printf(TXT_RED "XUartLite_Initialize failed...\r\n" TXT_RST);
 		return XST_FAILURE;
 	}
 
@@ -311,6 +312,7 @@ int Uart0_Init(void)
 			   (void *)&UartLiteRs485);
 #endif
 	if (Status != XST_SUCCESS) {
+		bsp_printf(TXT_RED "UartLite Interrupt setup failed...\r\n" TXT_RST);
 		return XST_FAILURE;
 	}
 	XUartLite_EnableInterrupt(&UartLiteRs485);
@@ -342,7 +344,8 @@ int Uart0_Init(void)
     Status = rs485_heir_xgpio_setup();
     if (Status != XST_SUCCESS)
 	{
-		Xil_Assert(__FILE__, __LINE__);
+    	bsp_printf(TXT_RED "rs485_heir_xgpio_setup failed...\r\n" TXT_RST);
+		//Xil_Assert(__FILE__, __LINE__);
 		return XST_FAILURE ;
 	}
     UartLiteRs485_Input();

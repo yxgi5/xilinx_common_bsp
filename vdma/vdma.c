@@ -34,13 +34,13 @@ int vdma_init(XAxiVdma *InstancePtr, u16 DeviceID)
 
 	Config = XAxiVdma_LookupConfig(DeviceID);
 	if (NULL == Config) {
-		bsp_printf("XAxiVdma_LookupConfig failure\r\n");
+		bsp_printf(TXT_RED "In %s: XAxiVdma_LookupConfig failed...\r\n" TXT_RST, __func__);
 		return XST_FAILURE;
 	}
 
 	Status = XAxiVdma_CfgInitialize(InstancePtr, Config, Config->BaseAddress);
 	if (Status != XST_SUCCESS) {
-		bsp_printf("XAxiVdma_CfgInitialize failure\r\n");
+		bsp_printf(TXT_RED "In %s: XAxiVdma_CfgInitialize failed...\r\n" TXT_RST, __func__);
 		return XST_FAILURE;
 	}
 
@@ -58,7 +58,7 @@ int vdma_read_start(XAxiVdma *InstancePtr)
 	Status = XAxiVdma_DmaStart(InstancePtr, XAXIVDMA_READ);
 	if (Status != XST_SUCCESS)
 	{
-	   bsp_printf("Start read transfer failed %d\n\r", Status);
+	   bsp_printf(TXT_RED "Start read transfer failed %d\r\n" TXT_RST, Status);
 	   return XST_FAILURE;
 	}
 
@@ -94,7 +94,7 @@ int vdma_read_init
 		Status = vdma_init(InstancePtr, DeviceID);
 		if (Status != XST_SUCCESS)
 		{
-			bsp_printf("XAxiVdma_CfgInitialize failure\r\n");
+			bsp_printf(TXT_RED "In %s: XAxiVdma_CfgInitialize failed...\r\n" TXT_RST, __func__);
 			return XST_FAILURE;
 		}
 	}
@@ -102,9 +102,9 @@ int vdma_read_init
 	Status = XAxiVdma_SetFrmStore(InstancePtr, 3, XAXIVDMA_READ);
 	if (Status != XST_SUCCESS)
 	{
-		bsp_printf(
+		bsp_printf(TXT_RED
 			"Setting Frame Store Number Failed in Read Channel"
-							" %d\r\n", Status);
+							" %d\r\n" TXT_RST, Status);
 		return XST_FAILURE;
 	}
 
@@ -119,11 +119,12 @@ int vdma_read_init
 	Status = XAxiVdma_SetFrameCounter(InstancePtr, &FrameCfg);
 	if (Status != XST_SUCCESS)
 	{
-		bsp_printf(
-			"Set frame counter failed %d\r\n", Status);
+		bsp_printf(TXT_RED
+			"Set frame counter failed %d\r\n" TXT_RST, Status);
 
 		if(Status == XST_VDMA_MISMATCH_ERROR)
 			bsp_printf("DMA Mismatch Error\r\n");
+			bsp_printf(TXT_RED "DMA Mismatch Error\r\n" TXT_RST);
 
 		return XST_FAILURE;
 	}
@@ -144,7 +145,7 @@ int vdma_read_init
 	Status = XAxiVdma_DmaConfig(InstancePtr, XAXIVDMA_READ, &ReadCfg);
 	if (Status != XST_SUCCESS)
 	{
-		bsp_printf("Read channel config failed %d\r\n", Status);
+		bsp_printf(TXT_RED "In %s: Read channel config failed %d\r\n" TXT_RST, __func__, , Status);
 		return XST_FAILURE;
 	}
 
@@ -155,14 +156,14 @@ int vdma_read_init
 	Status = XAxiVdma_DmaSetBufferAddr(InstancePtr, XAXIVDMA_READ, ReadCfg.FrameStoreStartAddr);
 	if (Status != XST_SUCCESS)
 	{
-		bsp_printf("Read channel set buffer address failed %d\r\n", Status);
+		bsp_printf(TXT_RED "In %s: Read channel set buffer address failed %d\r\n" TXT_RST, __func__, , Status);
 		return XST_FAILURE;
 	}
 
 	Status = vdma_read_start(InstancePtr);
 	if (Status != XST_SUCCESS)
 	{
-		bsp_printf("error starting VDMA..!");
+		bsp_printf(TXT_RED "In %s: Starting VDMA failed...\r\n" TXT_RST, __func__);
 		return Status;
 	}
 
@@ -178,7 +179,7 @@ int vdma_write_start(XAxiVdma *InstancePtr)
 	Status = XAxiVdma_DmaStart(InstancePtr, XAXIVDMA_WRITE);
 	if (Status != XST_SUCCESS)
 	{
-		bsp_printf("Start write transfer failed %d\n\r", Status);
+		bsp_printf(TXT_RED "In %s: Start write transfer failed...\r\n" TXT_RST, __func__);
 		return XST_FAILURE;
 	}
 	return XST_SUCCESS;
@@ -212,7 +213,7 @@ int vdma_write_init
 		Status = vdma_init(InstancePtr, DeviceID);
 		if (Status != XST_SUCCESS)
 		{
-			bsp_printf("XAxiVdma_CfgInitialize failure\r\n");
+			bsp_printf(TXT_RED "In %s: XAxiVdma_CfgInitialize failed...\r\n" TXT_RST, __func__);
 			return XST_FAILURE;
 		}
 	}
@@ -220,9 +221,9 @@ int vdma_write_init
 	Status = XAxiVdma_SetFrmStore(InstancePtr, 3, XAXIVDMA_WRITE);
 	if (Status != XST_SUCCESS)
 	{
-		bsp_printf(
+		bsp_printf(TXT_RED
 		    "Setting Frame Store Number Failed in Write Channel"
-							" %d\r\n", Status);
+							" %d\r\n" TXT_RST, Status);
 		return XST_FAILURE;
 	}
 
@@ -237,10 +238,10 @@ int vdma_write_init
 	Status = XAxiVdma_SetFrameCounter(InstancePtr, &FrameCfg);
 	if (Status != XST_SUCCESS)
 	{
-		bsp_printf(
-			"Set frame counter failed %d\r\n", Status);
+		bsp_printf(TXT_RED
+			"Set frame counter failed %d\r\n" TXT_RST, Status);
 		if(Status == XST_VDMA_MISMATCH_ERROR)
-			bsp_printf("DMA Mismatch Error\r\n");
+			bsp_printf(TXT_RED "DMA Mismatch Error\r\n" TXT_RST);
 		return XST_FAILURE;
 	}
 
@@ -260,7 +261,7 @@ int vdma_write_init
 	Status = XAxiVdma_DmaConfig(InstancePtr, XAXIVDMA_WRITE, &WriteCfg);
 	if (Status != XST_SUCCESS)
 	{
-		bsp_printf("Write channel config failed %d\r\n", Status);
+		bsp_printf(TXT_RED "In %s: Write channel config failed %d\r\n" TXT_RST, __func__, Status);
 		return XST_FAILURE;
 	}
 
@@ -272,14 +273,14 @@ int vdma_write_init
 	Status = XAxiVdma_DmaSetBufferAddr(InstancePtr, XAXIVDMA_WRITE, WriteCfg.FrameStoreStartAddr);
 	if (Status != XST_SUCCESS)
 	{
-		bsp_printf("Write channel set buffer address failed %d\r\n", Status);
+		bsp_printf(TXT_RED "In %s: Write channel set buffer address failed %d\r\n" TXT_RST, __func__, Status);
 		return XST_FAILURE;
 	}
 
 	Status = vdma_write_start(InstancePtr);
 	if (Status != XST_SUCCESS)
 	{
-		bsp_printf("error starting VDMA..!");
+		bsp_printf(TXT_RED "In %s: Start VDMA failed...\r\n" TXT_RST, __func__);
 		return Status;
 	}
 
@@ -1608,7 +1609,7 @@ int vdma_config(void)
 		Status = vdma_init(&Vdma0, XPAR_AXI_VDMA_0_DEVICE_ID);
 		if (Status != XST_SUCCESS)
 		{
-			bsp_printf("XAxiVdma_CfgInitialize failure\r\n");
+			bsp_printf(TXT_RED "In %s: XAxiVdma_CfgInitialize failed...\r\n" TXT_RST, __func__);
 			return XST_FAILURE;
 		}
 	}
@@ -1646,7 +1647,7 @@ int vdma_config(void)
 		Status = vdma_init(&Vdma1, XPAR_AXI_VDMA_1_DEVICE_ID);
 		if (Status != XST_SUCCESS)
 		{
-			bsp_printf("XAxiVdma_CfgInitialize failure\r\n");
+			bsp_printf(TXT_RED "In %s: XAxiVdma_CfgInitialize failed...\r\n" TXT_RST, __func__);
 			return XST_FAILURE;
 		}
 	}
@@ -1683,7 +1684,7 @@ int vdma_config(void)
 		Status = vdma_init(&Vdma2, XPAR_AXI_VDMA_2_DEVICE_ID);
 		if (Status != XST_SUCCESS)
 		{
-			bsp_printf("XAxiVdma_CfgInitialize failure\r\n");
+			bsp_printf(TXT_RED "In %s: XAxiVdma_CfgInitialize failed...\r\n" TXT_RST, __func__);
 			return XST_FAILURE;
 		}
 	}
@@ -1720,7 +1721,7 @@ int vdma_config(void)
 		Status = vdma_init(&Vdma3, XPAR_AXI_VDMA_3_DEVICE_ID);
 		if (Status != XST_SUCCESS)
 		{
-			bsp_printf("XAxiVdma_CfgInitialize failure\r\n");
+			bsp_printf(TXT_RED "In %s: XAxiVdma_CfgInitialize failed...\r\n" TXT_RST, __func__);
 			return XST_FAILURE;
 		}
 	}
@@ -1757,7 +1758,7 @@ int vdma_config(void)
 		Status = vdma_init(&Vdma4, XPAR_AXI_VDMA_4_DEVICE_ID);
 		if (Status != XST_SUCCESS)
 		{
-			bsp_printf("XAxiVdma_CfgInitialize failure\r\n");
+			bsp_printf(TXT_RED "In %s: XAxiVdma_CfgInitialize failed...\r\n" TXT_RST, __func__);
 			return XST_FAILURE;
 		}
 	}
@@ -1794,7 +1795,7 @@ int vdma_config(void)
 		Status = vdma_init(&Vdma5, XPAR_AXI_VDMA_5_DEVICE_ID);
 		if (Status != XST_SUCCESS)
 		{
-			bsp_printf("XAxiVdma_CfgInitialize failure\r\n");
+			bsp_printf(TXT_RED "In %s: XAxiVdma_CfgInitialize failed...\r\n" TXT_RST, __func__);
 			return XST_FAILURE;
 		}
 	}
@@ -1831,7 +1832,7 @@ int vdma_config(void)
 		Status = vdma_init(&Vdma6, XPAR_AXI_VDMA_6_DEVICE_ID);
 		if (Status != XST_SUCCESS)
 		{
-			bsp_printf("XAxiVdma_CfgInitialize failure\r\n");
+			bsp_printf(TXT_RED "In %s: XAxiVdma_CfgInitialize failed...\r\n" TXT_RST, __func__);
 			return XST_FAILURE;
 		}
 	}
@@ -1867,7 +1868,7 @@ int vdma_config(void)
 		Status = vdma_init(&Vdma7, XPAR_AXI_VDMA_7_DEVICE_ID);
 		if (Status != XST_SUCCESS)
 		{
-			bsp_printf("XAxiVdma_CfgInitialize failure\r\n");
+			bsp_printf(TXT_RED "In %s: XAxiVdma_CfgInitialize failed...\r\n" TXT_RST, __func__);
 			return XST_FAILURE;
 		}
 	}

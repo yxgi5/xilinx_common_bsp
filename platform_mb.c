@@ -180,11 +180,13 @@ int platform_setup_interrupts(void)
 
 	Status = XIntc_Initialize(&InterruptController, XPAR_INTC_0_DEVICE_ID);
 	if (Status != XST_SUCCESS) {
+		bsp_printf(TXT_RED "XIntc_Initialize Failed\r\n" TXT_RST);
 		return XST_FAILURE;
 	}
 
 	Status = XIntc_Start(&InterruptController, XIN_REAL_MODE);
 	if (Status != XST_SUCCESS) {
+		bsp_printf(TXT_RED "XIntc_Start Failed\r\n" TXT_RST);
 		return XST_FAILURE;
 	}
 
@@ -193,12 +195,20 @@ int platform_setup_interrupts(void)
 
 #if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
 #if defined (__AXI_TIMER_H_) && defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID)
-	timer0_init();
+	Status = timer0_init();
+	if (Status != XST_SUCCESS) {
+		bsp_printf(TXT_RED "timer0_init Failed\r\n" TXT_RST);
+		return XST_FAILURE;
+	}
 #endif // #if defined (__AXI_TIMER_H_) && defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID)
 #endif // #if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
 
 #if defined (__AXI_TIMER_H_) && defined (MODBUS_RTU_SLAVE)
-	timer1_init();
+	Status = timer1_init();
+	if (Status != XST_SUCCESS) {
+		bsp_printf(TXT_RED "timer1_init Failed\r\n" TXT_RST);
+		return XST_FAILURE;
+	}
 #endif // #if defined (__AXI_TIMER_H_) && defined (MODBUS_RTU_SLAVE)
 
 #ifdef XPAR_ETHERNET_MAC_IP2INTC_IRPT_MASK

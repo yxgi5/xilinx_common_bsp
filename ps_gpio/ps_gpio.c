@@ -20,6 +20,7 @@ int PsGpioSetup(XGpioPs *InstancePtr, u16 DeviceId)
 	Status = XGpioPs_CfgInitialize(InstancePtr, GPIO_CONFIG, GPIO_CONFIG->BaseAddr) ;
 	if (Status != XST_SUCCESS)
 	{
+		bsp_printf(TXT_RED "XGpioPs_CfgInitialize failed...\r\n" TXT_RST);
 		return XST_FAILURE ;
 	}
 	/* set as output */

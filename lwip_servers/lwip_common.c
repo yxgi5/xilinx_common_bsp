@@ -110,10 +110,11 @@ void start_applications(void)
 	int Status;
 	Status = qspi_init();
     if (Status != XST_SUCCESS) {
-        bsp_printf("QSPI init Failed\r\n");
+        bsp_printf(TXT_RED "In %s: QSPI init failed...\r\n" TXT_RST, __func__);
         // return XST_FAILURE;
     }
-    bsp_printf("Successfully init QSPI\r\n");
+//    bsp_printf("Successfully init QSPI\r\n");
+
 #endif // #if defined (UDP_UPDATE) || defined (TCP_UPDATE)
 
 #if defined (UDP_UPDATE)
