@@ -169,12 +169,6 @@ int start_udp_update_application(void)
 	struct udp_pcb *pcb;
 	err_t err;
 
-    err = qspi_init();
-    if (err != XST_SUCCESS) {
-        bsp_printf("QSPI init Failed\r\n");
-    }
-    bsp_printf("Successfully init QSPI\r\n");
-
 	pcb = udp_new();
 	if (!pcb) {
 		bsp_printf("Error creating PCB. Out of Memory\n\r");

@@ -106,6 +106,16 @@ void print_headers()
 
 void start_applications(void)
 {
+#if defined (UDP_UPDATE) || defined (TCP_UPDATE)
+	int Status;
+	Status = qspi_init();
+    if (Status != XST_SUCCESS) {
+        xil_printf("QSPI init Failed\r\n");
+        // return XST_FAILURE;
+    }
+    xil_printf("Successfully init QSPI\r\n");
+#endif // #if defined (UDP_UPDATE) || defined (TCP_UPDATE)
+
 #if defined (UDP_UPDATE)
 	start_udp_update_application();
 #endif // #if defined (UDP_UPDATE)
@@ -118,6 +128,7 @@ void start_applications(void)
 #if defined (UDP_COMMAND_SRV)
 	start_udp_cmd_application();
 #endif // #if defined (UDP_COMMAND_SRV)
+
 }
 
 void transfer_data(struct netif *netif)

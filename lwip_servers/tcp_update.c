@@ -211,13 +211,6 @@ int start_tcp_update_application(void)
     struct tcp_pcb *pcb;
     err_t err;
 
-    err = qspi_init();
-    if (err != XST_SUCCESS) {
-        xil_printf("QSPI init Failed\r\n");
-        // return XST_FAILURE;
-    }
-    xil_printf("Successfully init QSPI\r\n");
-
 //    pcb = tcp_new_ip_type(IPADDR_TYPE_ANY);
     pcb = tcp_new();
     if (!pcb) {
