@@ -88,7 +88,7 @@ void print_headers()
 {
     xil_printf("\r\n");
     xil_printf("%20s %6s\r\n", "Server", "Port");
-    xil_printf("%20s %6s %s\r\n", "--------------------", "------");
+    xil_printf("%20s %6s\r\n", "--------------------", "------");
 #if defined (UDP_UPDATE)
 	print_udp_update_header();
 #endif // #if defined (UDP_UPDATE)
