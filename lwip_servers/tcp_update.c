@@ -191,12 +191,12 @@ static void tcp_server_err(void *arg, err_t err)
 	tcp_server_close(client_pcb);
 	client_pcb = NULL;
 //	tcp_conn_report(diff_ms, TCP_ABORTED_REMOTE);
-	bsp_printf("TCP connection aborted\n\r");
+	bsp_printf("tcp_update_ser: Connection aborted\n\r");
 }
 
 static err_t accept_callback(void *arg, struct tcp_pcb *newpcb, err_t err)
 {
-    bsp_printf("tcp_server: Connection Accepted\r\n");
+    bsp_printf("tcp_update_ser: Connection Accepted\r\n");
     client_pcb = newpcb;
 
     tcp_recv(client_pcb, tcp_update_recv_callback);
