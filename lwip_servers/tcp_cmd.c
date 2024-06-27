@@ -3,11 +3,11 @@
 #if defined (XPAR_XEMACPS_NUM_INSTANCES) || defined (XPAR_XAXIETHERNET_NUM_INSTANCES)
 #if defined (TCP_COMMAND_SRV)
 
-static struct udp_pcb *client_pcb = NULL;
+static struct tcp_pcb *client_pcb = NULL;
 
 void print_tcp_cmd_header(void)
 {
-    xil_printf("%20s %6d\r\n", "TCP CMD", UDP_CMD_SVR_PORT);
+    xil_printf("%20s %6d\r\n", "TCP CMD", TCP_CMD_SVR_PORT);
 }
 
 static uint8_t checksum(uint8_t * ptr, int16_t cnt)
@@ -48,6 +48,30 @@ u8 reset_pl;
 
 static err_t tcp_cmd_recv_callback(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, err_t err)
 {
+#if 0
+	/* do not read the packet if we are not in ESTABLISHED state */
+	if (!p) {
+		tcp_close(tpcb);
+		tcp_recv(tpcb, NULL);
+		return ERR_OK;
+	}
+
+	/* indicate that the packet has been received */
+	tcp_recved(tpcb, p->len);
+
+	/* echo back the payload */
+	/* in this case, we assume that the payload is < TCP_SND_BUF */
+	if (tcp_sndbuf(tpcb) > p->len) {
+		err = tcp_write(tpcb, p->payload, p->len, 1);
+	} else
+		xil_printf("no space in tcp_sndbuf\n\r");
+
+	/* free the received pbuf */
+	pbuf_free(p);
+
+	return ERR_OK;
+#else
+
 	/* do not read the packet if we are not in ESTABLISHED state */
 	if (!p) {
 		tcp_server_close(tpcb);
@@ -347,6 +371,7 @@ static err_t tcp_cmd_recv_callback(void *arg, struct tcp_pcb *tpcb, struct pbuf 
 		xil_printf("no space in tcp_sndbuf\n\r");
 
 	return ERR_OK;
+#endif
 }
 
 
@@ -379,7 +404,7 @@ static err_t accept_callback(void *arg, struct tcp_pcb *newpcb, err_t err)
  */
 int start_tcp_cmd_application(void)
 {
-	struct udp_pcb *pcb;
+	struct tcp_pcb *pcb;
 	err_t err;
 
 	/* Create a new TCP PCB structure  */
@@ -391,9 +416,9 @@ int start_tcp_cmd_application(void)
 
 	/* Bind the pcb to the TCP_PORT port */
 	/* Using IP_ANY_TYPE==IP_ADDR_ANY allow the pcb to be used by any local interface */
-    err = tcp_bind(pcb, IP_ANY_TYPE, TCP_UPDATE_SVR_PORT);
+    err = tcp_bind(pcb, IP_ANY_TYPE, TCP_CMD_SVR_PORT);
     if (err != ERR_OK) {
-        xil_printf("Unable to bind to port %d: err = %d\n\r", TCP_UPDATE_SVR_PORT, err);
+        xil_printf("Unable to bind to port %d: err = %d\n\r", TCP_CMD_SVR_PORT, err);
         tcp_close(pcb);
         return -2;
     }
@@ -408,7 +433,7 @@ int start_tcp_cmd_application(void)
 
     tcp_accept(pcb, accept_callback);
 
-    xil_printf("TCP server started @ port %d\n\r", TCP_UPDATE_SVR_PORT);
+    xil_printf("TCP server started @ port %d\n\r", TCP_CMD_SVR_PORT);
 
     return 0;
 }

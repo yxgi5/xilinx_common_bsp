@@ -150,6 +150,13 @@ void udp_update_recv_callback(void *arg, struct udp_pcb *upcb, struct pbuf *p,
         }
         memcpy(&rxbuffer[total_bytes], q->payload, q->len);
         total_bytes += q->len;
+        // TODO: checksum
+        if(!(memcmp("update", &rxbuffer[total_bytes-6], 6)))
+		{
+			total_bytes -= 6;
+			start_update_flag = 1;
+			tcp_update_svr_send_msg("\r\nStart QSPI Update\r\n");
+		}
     }
 
     pbuf_free(p);

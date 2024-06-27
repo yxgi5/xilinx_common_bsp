@@ -105,7 +105,7 @@ static void tcp_server_close(struct tcp_pcb *pcb)
 	}
 }
 
-static err_t recv_callback(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, err_t err)
+static err_t tcp_update_recv_callback(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, err_t err)
 {
 #if 1
     struct pbuf *q;
@@ -135,6 +135,21 @@ static err_t recv_callback(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, err_
         }
         memcpy(&rxbuffer[total_bytes], q->payload, q->len);
         total_bytes += q->len;
+        // TODO: checksum
+//        if(total_bytes == 15043010)
+//        {
+			if(!(memcmp("update", &rxbuffer[total_bytes-6], 6)))
+			{
+//				NOP();
+				total_bytes -= 6;
+				start_update_flag = 1;
+				tcp_update_svr_send_msg("\r\nStart QSPI Update\r\n");
+			}
+//			else
+//			{
+//				NOP();
+//			}
+//        }
     }
 
     tcp_recved(tpcb, p->tot_len);
@@ -179,12 +194,12 @@ static void tcp_server_err(void *arg, err_t err)
 	xil_printf("TCP connection aborted\n\r");
 }
 
-err_t accept_callback(void *arg, struct tcp_pcb *newpcb, err_t err)
+static err_t accept_callback(void *arg, struct tcp_pcb *newpcb, err_t err)
 {
     xil_printf("tcp_server: Connection Accepted\r\n");
     client_pcb = newpcb;
 
-    tcp_recv(client_pcb, recv_callback);
+    tcp_recv(client_pcb, tcp_update_recv_callback);
     tcp_arg(client_pcb, NULL);
     tcp_err(client_pcb, tcp_server_err);
 
