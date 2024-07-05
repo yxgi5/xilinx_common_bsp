@@ -72,6 +72,7 @@ static uint8_t g_TxBuf7[UART7_TX_BUF_SIZE];		/* 发送缓冲区 */
 static uint8_t g_RxBuf7[UART7_RX_BUF_SIZE];		/* 接收缓冲区 */
 #endif // #if (UART7_FIFO_EN == 7) && defined (XPAR_UARTLITE_7_DEVICE_ID)
 
+#if (UART0_FIFO_EN == 1) && defined (XPAR_UARTLITE_0_DEVICE_ID)
 void Uart0RxCpltIRQ(UART_T *_pUart)
 {
 		/* 从串口接收数据寄存器读取数据存放到接收FIFO */
@@ -280,7 +281,7 @@ int Uart0_Init(void)
 #if defined (MODBUS_RTU_SLAVE)
 	Status = rs485_heir_xuart_setup();
 #else
-	Status = XUartLite_Initialize(UartPtr, DeviceId);
+	Status = XUartLite_Initialize(&UartLite0, XPAR_UARTLITE_0_DEVICE_ID);
 #endif //#if defined (MODBUS_RTU_SLAVE)
 	if (Status != XST_SUCCESS) {
 		bsp_printf(TXT_RED "XUartLite_Initialize failed...\r\n" TXT_RST);
@@ -466,7 +467,7 @@ void comSendBuf(uint8_t *_ucaBuf, uint16_t _usLen)
 	UartSend(pUart, _ucaBuf, _usLen);
 	//XUartLite_Send(pUart->uart, _ucaBuf, _usLen);
 }
-
+#endif // #if (UART0_FIFO_EN == 1) && defined (XPAR_UARTLITE_0_DEVICE_ID)
 
 #if defined (MODBUS_RTU_SLAVE)
 #if !defined (__RS485_H__)

@@ -90,15 +90,20 @@ typedef struct
 	uint8_t Sending;			/* 正在发送中 */
 }UART_T;
 
+#if (UART0_FIFO_EN == 1) && defined (XPAR_UARTLITE_0_DEVICE_ID)
 uint8_t UartGetChar(UART_T *_pUart, uint8_t *_pByte);
 int Uart0_Init(void);
 //void SetupInterruptSystem(XIntc *GicInstancePtr,
 //		XUartLite *UartInstancePtr, u16 UartIntrId);
 void Uart0VarInit(void);
+#endif // #if (UART0_FIFO_EN == 1) && defined (XPAR_UARTLITE_0_DEVICE_ID)
+
+#if defined (MODBUS_RTU_SLAVE)
 void RS485_SendBuf(uint8_t *_ucaBuf, uint16_t _usLen);
 void RS485_SendBefor(void);
 void RS485_SendOver(void);
 void RS485_ReciveNew(uint8_t _byte);
+#endif // #if defined (MODBUS_RTU_SLAVE)
 
 #endif //#if defined (XPAR_XUARTLITE_NUM_INSTANCES) && defined (INTC_DEVICE_ID) && defined (INTC)
 

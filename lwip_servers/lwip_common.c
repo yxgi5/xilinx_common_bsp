@@ -3,11 +3,12 @@
 #if defined (XPAR_XEMACPS_NUM_INSTANCES) || defined (XPAR_XAXIETHERNET_NUM_INSTANCES)
 #if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
 
-//#if defined (UDP_UPDATE) || defined (TCP_UPDATE)
-//u8 rxbuffer[MAX_FLASH_LEN];
-//u32 total_bytes = 0;
-//int start_update_flag = 0 ;
-//#endif // #if defined (UDP_UPDATE) || defined (TCP_UPDATE)
+#if defined (UDP_UPDATE) || defined (TCP_UPDATE)
+u8 rxbuffer[MAX_FLASH_LEN];
+//void * rxbuffer;
+u32 total_bytes = 0;
+int start_update_flag = 0 ;
+#endif // #if defined (UDP_UPDATE) || defined (TCP_UPDATE)
 
 //#if defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
 //uint8_t receivebuf[1500] = {0};
@@ -114,7 +115,7 @@ void start_applications(void)
         // return XST_FAILURE;
     }
 //    bsp_printf("Successfully init QSPI\r\n");
-
+    //rxbuffer = mem_calloc(MAX_FLASH_LEN, sizeof(u8));
 #endif // #if defined (UDP_UPDATE) || defined (TCP_UPDATE)
 
 #if defined (UDP_UPDATE)

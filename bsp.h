@@ -73,16 +73,6 @@
 #include "axis_passthrough_monitor.h"
 #endif // XPAR_AXI_PASSTHROUGH_MONITOR_NUM_INSTANCES
 
-#include "lwip_servers/lwip_common.h"
-#include "lwip_servers/udp_cmd.h"
-#include "lwip_servers/tcp_cmd.h"
-// IAP methods
-// udp remote update
-#include "lwip_servers/udp_update.h"
-// tcp remote update
-#include "lwip_servers/tcp_update.h"
-
-
 // 中断发生器
 //#if defined (__MICROBLAZE__)
 //#include "xintc.h"
@@ -161,5 +151,15 @@ extern INTC InterruptController;	/* Instance of the Interrupt Controller */
 
 // 自定义数据头文件
 #include "serdes/serdes.h"
+
+// lwip servers
+#include "lwip_servers/lwip_common.h"
+#include "lwip_servers/udp_cmd.h"
+#include "lwip_servers/tcp_cmd.h"
+// IAP methods
+// udp remote update
+#include "lwip_servers/udp_update.h"
+// tcp remote update
+#include "lwip_servers/tcp_update.h"
 
 #endif // __BSP_H__

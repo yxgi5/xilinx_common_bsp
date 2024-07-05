@@ -98,13 +98,13 @@ int main()
     bsp_printf("***************************\n\r");
 #endif // __SW_VER__ || SW_VER_BY_COMPILE_TIME
 
-#if defined (__UARTLITE_FIFO_H__)
+#if defined (__UARTLITE_FIFO_H__) && defined (UART0_FIFO_EN)
     Uart0VarInit();
     Uart0_Init();
 #if defined (MODBUS_RTU_SLAVE)
     MODS_VarInit();
 #endif // MODBUS_RTU_SLAVE
-#endif // __UARTLITE_FIFO_H__
+#endif // #if defined (__UARTLITE_FIFO_H__) && defined (UART0_FIFO_EN)
 
 
 #if defined(__SIL9136_H__)

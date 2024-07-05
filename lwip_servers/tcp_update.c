@@ -5,9 +5,9 @@
 
 static struct tcp_pcb *client_pcb = NULL;
 
-static u8 rxbuffer[MAX_FLASH_LEN];
-static u32 total_bytes = 0;
-static int start_update_flag = 0 ;
+//static u8 rxbuffer[MAX_FLASH_LEN];
+//static u32 total_bytes = 0;
+//static int start_update_flag = 0 ;
 
 
 void print_tcp_update_header(void)
