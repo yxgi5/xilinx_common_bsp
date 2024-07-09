@@ -615,3 +615,23 @@ int READ_WDT(u32 *timer_value)
 }
 
 #endif // #if defined (XPAR_XHWICAP_NUM_INSTANCES)
+
+
+/*
+usage:
+```
+    Status = isFallbacked();
+    bsp_printf("isFallbacked = %d\n\r", Status);
+    while(!XUartLite_IsTransmitEmpty(STDOUT_BASEADDRESS));
+    if (!Status)
+    {
+    	u32 RegVal;
+    	READ_WDT(&RegVal);
+    	if(RegVal==0)
+    	{
+    		WATCHDOG_TIMER_CFG(0x40400000); // watch about 2s
+    	}
+    	ISSUE_IPROG(0x00B00000);
+    }
+```
+*/
