@@ -1,28 +1,38 @@
 #ifndef BITMANIP_H
 #define BITMANIP_H
 
-#define U8 unsigned char
-#define U16 unsigned int
-#define U32 unsigned long int
-#define U64 unsigned long long int
-#define S8 signed char
-#define S16 signed int
-// it is better to include <stdint.h> to use defines like uint32_t to ensure bits
+//#define U8 		unsigned char
+//#define U16 	unsigned int
+//#define U32 	unsigned long int
+//#define U64 	unsigned long long int
+//#define S8 		signed char
+//#define S16 	signed int
+//#define uchar	unsigned char
+//#define uint	unsigned int
 
-/*------------*/
+// it is better to include <stdint.h> to use defines like uint32_t to ensure bits
+#define U8 		uint8_t
+#define U16 	uint16_t
+#define U32 	uint32_t
+#define U64 	uint64_t
+#define S8 		int8_t
+#define S16 	int16_t
+#define S32 	int32_t
+#define S64 	int64_t
 #define uchar	unsigned char
 #define uint	unsigned int
-//#define BIT(x)	(1<<(x))
+
+/*------------*/
 #define NOP()	asm("nop")
 #define WDR() 	asm("wdr")
 
 #define BIT(x) (1 << (x)) 	        //select bit (normally implicit 16bit)
 #define BIT32(x) ((U32)1 << (x))    //select bit explicit 32bit
 #define BIT64(x) ((U64)1u << (x))	//select bit explicit 64bit
-#define STB(p,b) ((p)|=(b))         //set bit
-#define CLB(p,b) ((p)&=~(b))        //clear bit
-#define FLB(p,b) ((p)^=(b))         //flip bit
-#define CHB(p,b) ((p) & (b))        //check bit
+#define SETB(p,b) ((p)|=(b))         //set bit
+#define CLRB(p,b) ((p)&=~(b))        //clear bit
+#define FLPB(p,b) ((p)^=(b))         //flip bit
+#define CHKB(p,b) ((p) & (b))        //check bit
 
 #define __BITSPERBYTE 8
 #define __BITS(type)  (__BITSPERBYTE * (int)sizeof(type))

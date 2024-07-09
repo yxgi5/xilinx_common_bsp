@@ -58,9 +58,16 @@
 //#endif
 #if defined (XPAR_XUARTLITE_NUM_INSTANCES)	// 一般用 uart lite，znyq zynqmp mb都可以用
 #include "xuartlite_l.h"
+#include "xuartlite.h"
+#define XUartLite_IsTransmitEmpty(BaseAddress) \
+	((XUartLite_GetStatusReg((BaseAddress)) & XUL_SR_TX_FIFO_EMPTY) == \
+		XUL_SR_TX_FIFO_EMPTY)
 #endif // XPAR_XUARTLITE_NUM_INSTANCESs
 #if defined (XPAR_XUARTPS_NUM_INSTANCES)  // ps uart
 #include "xuartps.h"
+#define XUartPs_IsTransmitEmpty(BaseAddress)			 \
+	((Xil_In32((BaseAddress) + XUARTPS_SR_OFFSET) & 	\
+	 (u32)XUARTPS_SR_TXEMPTY) == (u32)XUARTPS_SR_TXEMPTY)
 #endif // XPAR_XUARTPS_NUM_INSTANCES
 
 // 一般都会设置hw的版本号
