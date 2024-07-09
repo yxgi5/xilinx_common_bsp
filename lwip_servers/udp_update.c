@@ -38,47 +38,47 @@ void udp_update_process_print(u8 percent)
     switch (percent) {
     case 0:
     	udp_update_svr_send_msg("0%..");
-        bsp_printf("0%%..");
+//        bsp_printf("0%%..");
         break;
     case 1:
     	udp_update_svr_send_msg("10%..");
-        bsp_printf("10%%..");
+//        bsp_printf("10%%..");
         break;
     case 2:
     	udp_update_svr_send_msg("20%..");
-        bsp_printf("20%%..");
+//        bsp_printf("20%%..");
         break;
     case 3:
     	udp_update_svr_send_msg("30%..");
-        bsp_printf("30%%..");
+//        bsp_printf("30%%..");
         break;
     case 4:
     	udp_update_svr_send_msg("40%..");
-        bsp_printf("40%%..");
+//        bsp_printf("40%%..");
         break;
     case 5:
     	udp_update_svr_send_msg("50%..");
-        bsp_printf("50%%..");
+//        bsp_printf("50%%..");
         break;
     case 6:
     	udp_update_svr_send_msg("60%..");
-        bsp_printf("60%%..");
+//        bsp_printf("60%%..");
         break;
     case 7:
     	udp_update_svr_send_msg("70%..");
-        bsp_printf("70%%..");
+//        bsp_printf("70%%..");
         break;
     case 8:
     	udp_update_svr_send_msg("80%..");
-        bsp_printf("80%%..");
+//        bsp_printf("80%%..");
         break;
     case 9:
     	udp_update_svr_send_msg("90%..");
-        bsp_printf("90%%..");
+//        bsp_printf("90%%..");
         break;
     case 10:
     	udp_update_svr_send_msg("100%\r\n");
-        bsp_printf("100%%\r\n");
+//        bsp_printf("100%%\r\n");
     default:
         break;
     }

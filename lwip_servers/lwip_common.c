@@ -297,6 +297,43 @@ void process_print(u8 percent)
 #if defined (TCP_UPDATE)
 	tcp_update_process_print(percent);
 #endif // #if defined (UDP_UPDATE)
+
+    switch (percent) {
+    case 0:
+        bsp_printf("0%%..");
+        break;
+    case 1:
+        bsp_printf("10%%..");
+        break;
+    case 2:
+        bsp_printf("20%%..");
+        break;
+    case 3:
+        bsp_printf("30%%..");
+        break;
+    case 4:
+        bsp_printf("40%%..");
+        break;
+    case 5:
+        bsp_printf("50%%..");
+        break;
+    case 6:
+        bsp_printf("60%%..");
+        break;
+    case 7:
+        bsp_printf("70%%..");
+        break;
+    case 8:
+        bsp_printf("80%%..");
+        break;
+    case 9:
+        bsp_printf("90%%..");
+        break;
+    case 10:
+        bsp_printf("100%%\r\n");
+    default:
+        break;
+    }
 }
 
 #endif // #if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
