@@ -7,7 +7,7 @@
 
 extern XHwIcap HwIcap0;
 
-int hwcap_init(void);
+int hwicap_init(void);
 u32 hwicap_GetConfigReg(XHwIcap *InstancePtr, u32 ConfigReg, u32 *RegData);
 
 // low_level ops dose not need call hwcap_init()

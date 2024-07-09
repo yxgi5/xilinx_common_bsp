@@ -10,7 +10,7 @@
 XHwIcap HwIcap0;
 
 
-int hwcap_init(void)
+int hwicap_init(void)
 {
 	int Status;
 	XHwIcap_Config *CfgPtr;
