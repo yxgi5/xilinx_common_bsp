@@ -26,6 +26,7 @@ Xilinx Common Bare-Metal API
 
 . rs485是一个 vivado heir对应的代码，如果仅打印可选这个。modbus_rtu 也对应一个 vivado heir(可以作为主从两用)，从机库会调用rs485、uart_fifo等额外的库，3.5T判断用的 timer 尽量采用 axi_timer。 
 
+. microblaze 的 fsbl 在 vitis_template
 
 
 TODO：
