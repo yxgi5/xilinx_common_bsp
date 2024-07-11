@@ -146,6 +146,7 @@ void Timer0Handler(void *CallBackRef, u8 TmrCtrNumber)
 #endif // #if defined (__AXI_TIMER_H_) && defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID)
 #endif // #if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
 
+#if defined (MODBUS_RTU_SLAVE)
 void Timer1Handler(void *CallBackRef, u8 TmrCtrNumber)
 {
 	XTmrCtr *InstancePtr = (XTmrCtr *)CallBackRef;
@@ -159,17 +160,16 @@ void Timer1Handler(void *CallBackRef, u8 TmrCtrNumber)
 	 */
 	if (XTmrCtr_IsExpired(InstancePtr, TmrCtrNumber)) {
 		if (TmrCtrNumber == 0) {
-#if defined (MODBUS_RTU_SLAVE)
 			g_mods_timeout = 1;
 //			XTmrCtr_SetOptions(InstancePtr, TmrCtrNumber, 0);
 			XTmrCtr_Stop(InstancePtr, TmrCtrNumber);
-#endif // #if defined (MODBUS_RTU_SLAVE)
 		}
 //		if (TmrCtrNumber == 1) {
 //
 //		}
 	}
 }
+#endif // #if defined (MODBUS_RTU_SLAVE)
 
 
 #if defined (INTC_DEVICE_ID) || defined (INTC)

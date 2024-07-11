@@ -106,6 +106,12 @@ int main()
 #endif // MODBUS_RTU_SLAVE
 #endif // #if defined (__UARTLITE_FIFO_H__) && (UART0_FIFO_EN == 1)
 
+#if 0
+	while(!XUartLite_IsTransmitEmpty(STDOUT_BASEADDRESS));
+    WATCHDOG_TIMER_CFG(0x4000000F);
+    ISSUE_IPROG(0);
+#endif
+
 
 #if defined(__SIL9136_H__)
     sil9136_config();
