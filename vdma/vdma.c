@@ -145,7 +145,7 @@ int vdma_read_init
 	Status = XAxiVdma_DmaConfig(InstancePtr, XAXIVDMA_READ, &ReadCfg);
 	if (Status != XST_SUCCESS)
 	{
-		bsp_printf(TXT_RED "In %s: Read channel config failed %d\r\n" TXT_RST, __func__, , Status);
+		bsp_printf(TXT_RED "In %s: Read channel config failed %d\r\n" TXT_RST, __func__, Status);
 		return XST_FAILURE;
 	}
 
@@ -156,7 +156,7 @@ int vdma_read_init
 	Status = XAxiVdma_DmaSetBufferAddr(InstancePtr, XAXIVDMA_READ, ReadCfg.FrameStoreStartAddr);
 	if (Status != XST_SUCCESS)
 	{
-		bsp_printf(TXT_RED "In %s: Read channel set buffer address failed %d\r\n" TXT_RST, __func__, , Status);
+		bsp_printf(TXT_RED "In %s: Read channel set buffer address failed %d\r\n" TXT_RST, __func__, Status);
 		return XST_FAILURE;
 	}
 
