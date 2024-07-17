@@ -7,7 +7,7 @@ static struct udp_pcb *client_pcb = NULL;
 
 //static u8 rxbuffer[MAX_FLASH_LEN];
 //static u32 total_bytes = 0;
-//static int start_update_flag = 0 ;
+static int start_update_flag = 0 ;
 
 
 void print_udp_update_header(void)
@@ -151,12 +151,12 @@ void udp_update_recv_callback(void *arg, struct udp_pcb *upcb, struct pbuf *p,
         memcpy(&rxbuffer[total_bytes], q->payload, q->len);
         total_bytes += q->len;
         // TODO: checksum
-        if(!(memcmp("update", &rxbuffer[total_bytes-6], 6)))
-		{
-			total_bytes -= 6;
-			start_update_flag = 1;
-			udp_update_svr_send_msg("\r\nStart QSPI Update\r\n");
-		}
+//        if(!(memcmp("update", &rxbuffer[total_bytes-6], 6)))
+//		{
+//			total_bytes -= 6;
+//			start_update_flag = 1;
+//			udp_update_svr_send_msg("\r\nStart QSPI Update\r\n");
+//		}
     }
 
     pbuf_free(p);

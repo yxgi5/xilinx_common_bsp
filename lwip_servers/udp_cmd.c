@@ -34,10 +34,12 @@ void udp_cmd_recv_callback(void *arg, struct udp_pcb *upcb, struct pbuf *p,
 		const ip_addr_t *addr, u16_t port)
 {
     struct pbuf *pq;
-	receivelen = p->len;
+	//receivelen = p->len;
+	receivelen = p->tot_len;
 	memset(receivebuf, 0, sizeof(receivebuf));
 	memset(send_buf, 0, sizeof(send_buf));
-	memcpy(receivebuf,p->payload,p->len);
+	//memcpy(receivebuf,p->payload,p->len);
+	pbuf_copy_partial(p, receivebuf, p->tot_len, 0);
     pbuf_free(p);
     int32_t Status=0;
     uint16_t msg_len=0;
@@ -55,11 +57,10 @@ void udp_cmd_recv_callback(void *arg, struct udp_pcb *upcb, struct pbuf *p,
     	memcpy(&msg_addr,receivebuf+5,4);
     	msg_value = Xil_In32(msg_addr); // don't use signed int, otherwise hardfail
     	//mdata=htonl(mdata);
-    	memcpy(send_buf,receivebuf,receivelen);
     	sendlen=receivelen;
-    	//memcpy(send_buf,&sendlen,2);
+    	memcpy(send_buf,receivebuf,receivelen);
     	memcpy(send_buf+9,&msg_value,4);
-    	send_buf[sendlen-1] = checksum(send_buf,sendlen-1); // �����checksum���ȫ��
+    	send_buf[sendlen-1] = checksum(send_buf,sendlen-1);
     	memcpy(send_buf,&sendlen,2);
     }
     if(msg_cmd==0x11)	// write mem addr
@@ -70,33 +71,42 @@ void udp_cmd_recv_callback(void *arg, struct udp_pcb *upcb, struct pbuf *p,
 		//*(volatile unsigned int *)(msg_addr) = msg_value;
 		Xil_Out32(msg_addr, msg_value);
 		msg_value = Xil_In32(msg_addr); // don't use signed int, otherwise hardfail
-
-		memcpy(send_buf,receivebuf,receivelen);
 		sendlen=receivelen;
-		//memcpy(send_buf,&sendlen,2);
+		memcpy(send_buf,receivebuf,receivelen);
 		memcpy(send_buf+9,&msg_value,4);
-		send_buf[sendlen-1] = checksum(send_buf,sendlen-1); // �����checksum���ȫ��
+		send_buf[sendlen-1] = checksum(send_buf,sendlen-1);
 		memcpy(send_buf,&sendlen,2);
 	}
     if(msg_cmd==0x12)	// read mem bulk
 	{
 		memcpy(&msg_addr,receivebuf+5,4);
 		memcpy(&mem_len,receivebuf+9,4);
+		sendlen=receivelen+mem_len*4;
+		if(sendlen > ARRAY_SIZE(send_buf))
+		{
+			return;
+		}
 		memcpy(send_buf,receivebuf,receivelen);
 		memcpy(send_buf+receivelen-1,(void*)msg_addr,mem_len*4);
-		sendlen=receivelen+mem_len*4;
+		send_buf[sendlen-1] = checksum(send_buf,sendlen-1);
 		memcpy(send_buf,&sendlen,2);
-		send_buf[sendlen-1] = checksum(send_buf,sendlen-1); // �����checksum���ȫ��
 	}
     if(msg_cmd==0x13)	// write mem bulk
 	{
 		memcpy(&msg_addr,receivebuf+5,4);
 		memcpy(&mem_len,receivebuf+9,4);
 		memcpy((void*)msg_addr,receivebuf+13,mem_len*4);
+		if(mem_len*4 + 14 > ARRAY_SIZE(send_buf))
+		{
+			return;
+		}
 		sendlen=receivelen-mem_len*4;
+		if(sendlen < 14)
+		{
+			return;
+		}
 		memcpy(send_buf,receivebuf,sendlen);
-//		memcpy(send_buf,&sendlen,2);
-		send_buf[sendlen-1] = checksum(send_buf,sendlen-1); // �����checksum���ȫ��
+		send_buf[sendlen-1] = checksum(send_buf,sendlen-1);
 		memcpy(send_buf,&sendlen,2);
 	}
     if(msg_cmd == 0x20)
@@ -176,7 +186,7 @@ void udp_cmd_recv_callback(void *arg, struct udp_pcb *upcb, struct pbuf *p,
 			memcpy(send_buf,receivebuf,7);
 			memcpy(send_buf+7,&msg_send,4);
 			sendlen = 12;
-			send_buf[sendlen-1] = checksum(send_buf,sendlen-1); // �����checksum���ȫ��
+			send_buf[sendlen-1] = checksum(send_buf,sendlen-1); 
 			memcpy(send_buf,&sendlen,2);
 		}
 		if(cmd_index==1)
@@ -190,7 +200,7 @@ void udp_cmd_recv_callback(void *arg, struct udp_pcb *upcb, struct pbuf *p,
 			memcpy(send_buf,receivebuf,7);
 			memcpy(send_buf+7,&msg_send,4);
 			sendlen = 12;
-			send_buf[sendlen-1] = checksum(send_buf,sendlen-1); // �����checksum���ȫ��
+			send_buf[sendlen-1] = checksum(send_buf,sendlen-1);
 			memcpy(send_buf,&sendlen,2);
 		}
 		if(cmd_index==2)
@@ -204,7 +214,7 @@ void udp_cmd_recv_callback(void *arg, struct udp_pcb *upcb, struct pbuf *p,
 			memcpy(send_buf,receivebuf,7);
 			memcpy(send_buf+7,&msg_send,4);
 			sendlen = 12;
-			send_buf[sendlen-1] = checksum(send_buf,sendlen-1); // �����checksum���ȫ��
+			send_buf[sendlen-1] = checksum(send_buf,sendlen-1); 
 			memcpy(send_buf,&sendlen,2);
 		}
 		if(cmd_index==3)
@@ -218,7 +228,7 @@ void udp_cmd_recv_callback(void *arg, struct udp_pcb *upcb, struct pbuf *p,
 			memcpy(send_buf,receivebuf,7);
 			memcpy(send_buf+7,&msg_send,4);
 			sendlen = 12;
-			send_buf[sendlen-1] = checksum(send_buf,sendlen-1); // �����checksum���ȫ��
+			send_buf[sendlen-1] = checksum(send_buf,sendlen-1); 
 			memcpy(send_buf,&sendlen,2);
 		}
 		if(cmd_index==4)
@@ -232,7 +242,7 @@ void udp_cmd_recv_callback(void *arg, struct udp_pcb *upcb, struct pbuf *p,
 			memcpy(send_buf,receivebuf,7);
 			memcpy(send_buf+7,&msg_send,4);
 			sendlen = 12;
-			send_buf[sendlen-1] = checksum(send_buf,sendlen-1); // �����checksum���ȫ��
+			send_buf[sendlen-1] = checksum(send_buf,sendlen-1); 
 			memcpy(send_buf,&sendlen,2);
 		}
 		if(cmd_index==5)// cur_ch_get
@@ -240,7 +250,7 @@ void udp_cmd_recv_callback(void *arg, struct udp_pcb *upcb, struct pbuf *p,
 			memcpy(send_buf,receivebuf,7);
 			memcpy(send_buf+7,&cerrent_ch,1);
 			sendlen = 9;
-			send_buf[sendlen-1] = checksum(send_buf,sendlen-1); // �����checksum���ȫ��
+			send_buf[sendlen-1] = checksum(send_buf,sendlen-1); 
 			memcpy(send_buf,&sendlen,2);
 		}
 		if(cmd_index==6) //cur_ch_set
@@ -251,7 +261,7 @@ void udp_cmd_recv_callback(void *arg, struct udp_pcb *upcb, struct pbuf *p,
 			memcpy(send_buf,receivebuf,7);
 			memcpy(send_buf+7,&msg_send,1);
 			sendlen = 7 + 1 + 1;
-			send_buf[sendlen-1] = checksum(send_buf,sendlen-1); // �����checksum���ȫ��
+			send_buf[sendlen-1] = checksum(send_buf,sendlen-1); 
 			memcpy(send_buf,&sendlen,2);
 		}
 		if(cmd_index == 7)
@@ -262,18 +272,18 @@ void udp_cmd_recv_callback(void *arg, struct udp_pcb *upcb, struct pbuf *p,
 			memcpy(send_buf,receivebuf,7);
 			memcpy(send_buf+7,&msg_send,1);
 			sendlen = 7 + 1 + 1;
-			send_buf[sendlen-1] = checksum(send_buf,sendlen-1); // �����checksum���ȫ��
+			send_buf[sendlen-1] = checksum(send_buf,sendlen-1); 
 			memcpy(send_buf,&sendlen,2);
 		}
-		if(cmd_index==10) // ��ѯglobal_config
+		if(cmd_index==10) // read global_config
 		{
 			memcpy(send_buf,receivebuf,7);
 		//	memcpy(send_buf+7, &global_config, sizeof(config_Settings_t));
 		//	sendlen = 7 + sizeof(config_Settings_t) + 1;
-			send_buf[sendlen-1] = checksum(send_buf,sendlen-1); // �����checksum���ȫ��
+			send_buf[sendlen-1] = checksum(send_buf,sendlen-1); 
 			memcpy(send_buf,&sendlen,2);
 		}
-		if(cmd_index==11) // д��global_config
+		if(cmd_index==11) // save global_config
 		{
 			int32_t Status;
 			uint8_t sendmsg;
@@ -296,20 +306,21 @@ void udp_cmd_recv_callback(void *arg, struct udp_pcb *upcb, struct pbuf *p,
 			memcpy(send_buf,receivebuf,7);
 			memcpy(send_buf+7,&msg_send,1);
 			sendlen = 7 + 1 + 1;
-			send_buf[sendlen-1] = checksum(send_buf,sendlen-1); // �����checksum���ȫ��
+			send_buf[sendlen-1] = checksum(send_buf,sendlen-1); 
 			memcpy(send_buf,&sendlen,2);
 		}
-		if(cmd_index==12) // ��ѯdefault_config
+		if(cmd_index==12) // read default_config
 		{
 			memcpy(send_buf,receivebuf,7);
 		//	memcpy(send_buf+7, &default_config, sizeof(config_Settings_t));
 			//sendlen = 7 + sizeof(config_Settings_t) + 1;
-			send_buf[sendlen-1] = checksum(send_buf,sendlen-1); // �����checksum���ȫ��
+			send_buf[sendlen-1] = checksum(send_buf,sendlen-1); 
 			memcpy(send_buf,&sendlen,2);
 		}
     }
 
-    pq = pbuf_alloc(PBUF_TRANSPORT,sendlen,PBUF_POOL);
+//    pq = pbuf_alloc(PBUF_TRANSPORT,sendlen,PBUF_POOL);
+    pq = pbuf_alloc(PBUF_TRANSPORT, sendlen, PBUF_RAM);
 	pbuf_take(pq,(char*)send_buf,sendlen);
 
     udp_connect(upcb, addr, port);
@@ -321,6 +332,7 @@ void udp_cmd_recv_callback(void *arg, struct udp_pcb *upcb, struct pbuf *p,
 			  port);
 #endif
 	udp_send(upcb,pq);
+//    udp_sendto(upcb, pq, addr, port);
 	udp_disconnect(upcb);
 	pbuf_free(pq);
 

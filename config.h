@@ -64,7 +64,7 @@ bsp config memp_n_tcp_pcb 1024
 bsp config memp_n_tcp_seg 1024
 ##bsp config pbuf_pool_size 2048
 bsp config pbuf_pool_size 4096
-bsp config tcp_snd_buf 65536
+bsp config tcp_snd_buf 65535
 bsp config tcp_wnd 8192
  * for remote update tcl settings(zynq/znyqmp)
 bsp setlib -name lwip211
@@ -73,7 +73,7 @@ bsp config memp_n_pbuf 1024
 bsp config memp_n_tcp_pcb 32
 bsp config memp_n_tcp_seg 1024
 bsp config pbuf_pool_size 16384
-bsp config tcp_snd_buf 65536
+bsp config tcp_snd_buf 65535
 bsp config tcp_wnd 65535
 bsp config n_rx_descriptors 512
 bsp config n_tx_descriptors 512

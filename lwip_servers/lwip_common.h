@@ -44,7 +44,7 @@ extern volatile int TcpSlowTmrFlag;
 extern u8 rxbuffer[MAX_FLASH_LEN];
 //void * rxbuffer;
 extern u32 total_bytes;
-extern int start_update_flag;
+//extern int start_update_flag;
 #endif // #if defined (UDP_UPDATE) || defined (TCP_UPDATE)
 
 //#if defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)

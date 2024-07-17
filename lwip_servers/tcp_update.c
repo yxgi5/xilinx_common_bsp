@@ -7,7 +7,7 @@ static struct tcp_pcb *client_pcb = NULL;
 
 //static u8 rxbuffer[MAX_FLASH_LEN];
 //static u32 total_bytes = 0;
-//static int start_update_flag = 0 ;
+static int start_update_flag = 0 ;
 
 
 void print_tcp_update_header(void)
@@ -113,6 +113,19 @@ static err_t tcp_update_recv_callback(void *arg, struct tcp_pcb *tpcb, struct pb
     if (!p) {
 //        tcp_close(tpcb);
 //        tcp_recv(tpcb, NULL);
+
+		if(!(memcmp("update", &rxbuffer[total_bytes-6], 6)))
+		{
+//				NOP();
+			total_bytes -= 6;
+			start_update_flag = 1;
+			tcp_update_svr_send_msg("\r\nStart QSPI Update\r\n");
+		}
+//			else
+//			{
+//				NOP();
+//			}
+
     	tcp_server_close(tpcb);
         bsp_printf("tcp connection closed\r\n");
         return ERR_OK;
@@ -136,20 +149,20 @@ static err_t tcp_update_recv_callback(void *arg, struct tcp_pcb *tpcb, struct pb
         memcpy(&rxbuffer[total_bytes], q->payload, q->len);
         total_bytes += q->len;
         // TODO: checksum
-//        if(total_bytes == 15043010)
-//        {
-			if(!(memcmp("update", &rxbuffer[total_bytes-6], 6)))
-			{
-//				NOP();
-				total_bytes -= 6;
-				start_update_flag = 1;
-				tcp_update_svr_send_msg("\r\nStart QSPI Update\r\n");
-			}
-//			else
+////        if(total_bytes == 15043010)
+////        {
+//			if(!(memcmp("update", &rxbuffer[total_bytes-6], 6)))
 //			{
-//				NOP();
+////				NOP();
+//				total_bytes -= 6;
+//				start_update_flag = 1;
+//				tcp_update_svr_send_msg("\r\nStart QSPI Update\r\n");
 //			}
-//        }
+////			else
+////			{
+////				NOP();
+////			}
+////        }
     }
 
     tcp_recved(tpcb, p->tot_len);

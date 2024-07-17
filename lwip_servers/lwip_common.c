@@ -7,7 +7,7 @@
 u8 rxbuffer[MAX_FLASH_LEN];
 //void * rxbuffer;	// cannot use this if bigger than 4MB
 u32 total_bytes = 0;
-int start_update_flag = 0 ;
+//int start_update_flag = 0 ;
 #endif // #if defined (UDP_UPDATE) || defined (TCP_UPDATE)
 
 //#if defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
