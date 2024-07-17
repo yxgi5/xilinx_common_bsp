@@ -11,7 +11,7 @@
 //#include <assert.h>
 //#include <ctype.h>
 
-#dedine __BSP_VER__ 0x00000001 
+#define __BSP_VER__ 0x00000001
 
 /*
  * PLATFORM_ZYNQ or PLATFORM_ZYNQMP defined in xparameters.h
