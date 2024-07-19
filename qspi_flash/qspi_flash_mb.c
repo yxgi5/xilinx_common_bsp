@@ -196,7 +196,7 @@ int qspi_init()
 
 	if (Flash_Config_Table[FCTIndex].FlashDeviceSize > SIXTEENMB)
 	{
-		FlashEnterExit4BAddMode(&XSpiInstance, ENTER_4B);
+		FlashEnterExit4BAddMode(&XSpiInstance, EXIT_4B);
 	}
 
     return XST_SUCCESS;
@@ -270,18 +270,24 @@ int qspi_update(u32 total_bytes, const u8 *flash_data)
     u32 writed_len = 0;
     u32 readed_len = 0;
     u32 write_addr = 0;
-    u32 read_addr = 0;
+    u32 read_addr  = 0;
+    u32 erase_addr = 0;
     char msg[60];
     float start_time, over_time;
     float elapsed_time;
     int i;
     int total_page = total_bytes / PAGE_SIZE + 1;
-    //²Á³ýFLASH
+
+	if (Flash_Config_Table[FCTIndex].FlashDeviceSize > SIXTEENMB)
+	{
+		FlashEnterExit4BAddMode(&XSpiInstance, ENTER_4B);
+	}
+
 #if 1
     printf("Performing Erase Operation...\r\n");
     send_msg("Performing Erase Operation...\r\n");
 //    start_time = get_time_s();
-    FlashErase(&XSpiInstance, 0, total_bytes);
+    FlashErase(&XSpiInstance, erase_addr, total_bytes);
 //    over_time = get_time_s();
 //    elapsed_time = over_time - start_time;
     printf("Erase Operation Successful.\r\n");
@@ -384,6 +390,11 @@ int qspi_update(u32 total_bytes, const u8 *flash_data)
         read_addr += PAGE_SIZE;
     }
 
+	if (Flash_Config_Table[FCTIndex].FlashDeviceSize > SIXTEENMB)
+	{
+		FlashEnterExit4BAddMode(&XSpiInstance, EXIT_4B);
+	}
+
     return XST_SUCCESS;
 
 error_printf:
@@ -391,6 +402,12 @@ error_printf:
             read_addr + i, flash_data[readed_len + i], BufferPtr[i]);
     sprintf(msg, "Verify data error at address 0x%lx.\r\n",read_addr + i);
     send_msg(msg);
+
+	if (Flash_Config_Table[FCTIndex].FlashDeviceSize > SIXTEENMB)
+	{
+		FlashEnterExit4BAddMode(&XSpiInstance, EXIT_4B);
+	}
+
     return XST_FAILURE;
 }
 
