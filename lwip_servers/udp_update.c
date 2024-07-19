@@ -18,18 +18,21 @@ void print_udp_update_header(void)
 void udp_update_svr_send_msg(const char *msg)
 {
 #if (UDP_UPDATE_SVR_SEND_MSG == 1U)
-	static struct pbuf *pbuf2sent;
+	if(client_pcb != NULL)
+	{
+		static struct pbuf *pbuf2sent;
 
-	pbuf2sent = pbuf_alloc(PBUF_TRANSPORT, strlen(msg), PBUF_POOL);
-    if (!pbuf2sent)
-        bsp_printf("Error allocating pbuf\r\n");
+		pbuf2sent = pbuf_alloc(PBUF_TRANSPORT, strlen(msg), PBUF_POOL);
+		if (!pbuf2sent)
+			bsp_printf("Error allocating pbuf\r\n");
 
-    memcpy(pbuf2sent->payload, msg, strlen(msg));
+		memcpy(pbuf2sent->payload, msg, strlen(msg));
 
-    if (udp_send(client_pcb, pbuf2sent) != ERR_OK)
-        bsp_printf("UDP send error\r\n");
+		if (udp_send(client_pcb, pbuf2sent) != ERR_OK)
+			bsp_printf("UDP send error\r\n");
 
-    pbuf_free(pbuf2sent);
+		pbuf_free(pbuf2sent);
+	}
 #endif
 }
 
@@ -211,6 +214,7 @@ void transfer_udp_update_data(void)
         {
             total_bytes = 0;
         }
+    	client_pcb = NULL;
 	}
     start_update_flag = 0;
 }

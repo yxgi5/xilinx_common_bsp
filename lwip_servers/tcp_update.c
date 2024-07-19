@@ -18,23 +18,26 @@ void print_tcp_update_header(void)
 
 void tcp_update_svr_send_msg(const char *msg)
 {
-#if (SEND_MSG == 1U)
-	err_t err;
-    tcp_nagle_disable(client_pcb);
-    u32 tmp = tcp_sndbuf(client_pcb);
-//    if (tcp_sndbuf(client_pcb) > strlen(msg))
-    if(tmp > strlen(msg))
-    {
-        err = tcp_write(client_pcb, msg, strlen(msg), TCP_WRITE_FLAG_COPY);
-        if (err != ERR_OK)
-            bsp_printf("tcp_server: Error on tcp_write: %d\r\n", err);
-        err = tcp_output(client_pcb);
-        if (err != ERR_OK)
-            bsp_printf("tcp_server: Error on tcp_output: %d\r\n", err);
-    } else
-    {
-        bsp_printf("no space in tcp_sndbuf\r\n");
-    }
+#if (TCP_UPDATE_SVR_SEND_MSG == 1U)
+	if(client_pcb != NULL)
+	{
+		err_t err;
+		tcp_nagle_disable(client_pcb);
+		u32 tmp = tcp_sndbuf(client_pcb);
+//	    if (tcp_sndbuf(client_pcb) > strlen(msg))
+		if(tmp > strlen(msg))
+		{
+			err = tcp_write(client_pcb, msg, strlen(msg), TCP_WRITE_FLAG_COPY);
+			if (err != ERR_OK)
+				bsp_printf("tcp_server: Error on tcp_write: %d\r\n", err);
+			err = tcp_output(client_pcb);
+			if (err != ERR_OK)
+				bsp_printf("tcp_server: Error on tcp_output: %d\r\n", err);
+		} else
+		{
+			bsp_printf("no space in tcp_sndbuf\r\n");
+		}
+	}
 #endif
 }
 
@@ -127,6 +130,7 @@ static err_t tcp_update_recv_callback(void *arg, struct tcp_pcb *tpcb, struct pb
 //			}
 
     	tcp_server_close(tpcb);
+    	client_pcb = NULL;
         bsp_printf("tcp connection closed\r\n");
         return ERR_OK;
     }
