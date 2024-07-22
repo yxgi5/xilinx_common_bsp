@@ -82,9 +82,11 @@ void init_uart(void)
     /* Bootrom/BSP configures PS7/PSU UART to 115200 bps */
 }
 
-#if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
-#if defined (__AXI_TIMER_H_) && defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID)
 
+#if defined (INTC_DEVICE_ID) || defined (INTC_CONNECT)
+
+#if defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID) && defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID)
+#if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
 void timer00_callback(void)
 {
 	static int DetectEthLinkStatus = 0;
@@ -142,8 +144,6 @@ void Timer0Handler(void *CallBackRef, u8 TmrCtrNumber)
 //		}
 	}
 }
-
-#endif // #if defined (__AXI_TIMER_H_) && defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID)
 #endif // #if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
 
 #if defined (MODBUS_RTU_SLAVE)
@@ -171,6 +171,39 @@ void Timer1Handler(void *CallBackRef, u8 TmrCtrNumber)
 }
 #endif // #if defined (MODBUS_RTU_SLAVE)
 
+#endif // #if defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID) && defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID)
+
+#if !defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID) && defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID)
+#if defined (MODBUS_RTU_SLAVE)
+void Timer0Handler(void *CallBackRef, u8 TmrCtrNumber)
+{
+	XTmrCtr *InstancePtr = (XTmrCtr *)CallBackRef;
+//	static int counter = 0;
+	/*
+	 * Check if the timer counter has expired, checking is not necessary
+	 * since that's the reason this function is executed, this just shows
+	 * how the callback reference can be used as a pointer to the instance
+	 * of the timer counter that expired, increment a shared variable so
+	 * the main thread of execution can see the timer expired
+	 */
+	if (XTmrCtr_IsExpired(InstancePtr, TmrCtrNumber)) {
+		if (TmrCtrNumber == 0) {
+			g_mods_timeout = 1;
+//			XTmrCtr_SetOptions(InstancePtr, TmrCtrNumber, 0);
+			XTmrCtr_Stop(InstancePtr, TmrCtrNumber);
+		}
+//		if (TmrCtrNumber == 1) {
+//
+//		}
+	}
+}
+#endif // #if defined (MODBUS_RTU_SLAVE)
+#endif // #if !defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID) && defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID)
+
+#endif // #if defined (INTC_DEVICE_ID) || defined (INTC_CONNECT)
+
+
+
 
 #if defined (INTC_DEVICE_ID) || defined (INTC)
 
@@ -193,23 +226,40 @@ int platform_setup_interrupts(void)
 	Xil_ExceptionInit();
 	Xil_ExceptionRegisterHandler(XIL_EXCEPTION_ID_INT, (XExceptionHandler)INTC_HANDLER, &InterruptController);
 
+#if defined (__AXI_TIMER_H_)
+#if defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID) && defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID)
 #if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
-#if defined (__AXI_TIMER_H_) && defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID)
 	Status = timer0_init();
 	if (Status != XST_SUCCESS) {
 		bsp_printf(TXT_RED "timer0_init Failed\r\n" TXT_RST);
 		return XST_FAILURE;
 	}
-#endif // #if defined (__AXI_TIMER_H_) && defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID)
-#endif // #if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
-
-#if defined (__AXI_TIMER_H_) && defined (MODBUS_RTU_SLAVE)
+#endif //#if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
+#if defined (MODBUS_RTU_SLAVE)
 	Status = timer1_init();
 	if (Status != XST_SUCCESS) {
 		bsp_printf(TXT_RED "timer1_init Failed\r\n" TXT_RST);
 		return XST_FAILURE;
 	}
-#endif // #if defined (__AXI_TIMER_H_) && defined (MODBUS_RTU_SLAVE)
+#endif // #if defined (MODBUS_RTU_SLAVE)
+#endif // #if defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID) && defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID)
+
+#if !defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID) && defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID)
+#if defined (MODBUS_RTU_SLAVE)
+	Status = timer0_init();
+	if (Status != XST_SUCCESS) {
+		bsp_printf(TXT_RED "timer1_init Failed\r\n" TXT_RST);
+		return XST_FAILURE;
+	}
+#endif // #if defined (MODBUS_RTU_SLAVE)
+#endif // #if !defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID) && defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID)
+
+#if !defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID) && !defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID)
+// TODO: self defined timer interrupt routine
+#endif // #if !defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID) && !defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID)
+
+#endif // #if defined (__AXI_TIMER_H_)
+
 
 #ifdef XPAR_ETHERNET_MAC_IP2INTC_IRPT_MASK
 	/* Enable timer and EMAC interrupts in the interrupt controller */

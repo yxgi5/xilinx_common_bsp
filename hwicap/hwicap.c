@@ -497,7 +497,8 @@ int isFallbacked(void)
 
 	READ_BOOTSTS(&StsCode);
 	bsp_printf("StsCode = 0x%08x\n\r", (unsigned int)StsCode);
-	if(CHKB(StsCode, BIT32(1)) || CHKB(StsCode, BIT32(9)) )
+//	if(CHKB(StsCode, BIT32(1)) || CHKB(StsCode, BIT32(9)) )
+	if(CHKB(StsCode, BIT32(1)))
 	{
 		return 1;
 	}

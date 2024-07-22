@@ -13,6 +13,10 @@ INTC InterruptController;
 
 #if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
 
+#if !defined (XPAR_XEMACPS_NUM_INSTANCES)
+#error "No ethernet in design"
+#endif
+
 #if defined (__LWIPOPTS_H_)
 #include "arch/cc.h"
 #endif // __LWIPOPTS_H_
@@ -73,7 +77,10 @@ void init_uart(void)
     /* Bootrom/BSP configures PS7/PSU UART to 115200 bps */
 }
 
+#if defined (INTC_DEVICE_ID) || defined (INTC)
 
+#if defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID)
+#if defined (MODBUS_RTU_SLAVE)
 void Timer0Handler(void *CallBackRef, u8 TmrCtrNumber)
 {
 	XTmrCtr *InstancePtr = (XTmrCtr *)CallBackRef;
@@ -87,18 +94,19 @@ void Timer0Handler(void *CallBackRef, u8 TmrCtrNumber)
 	 */
 	if (XTmrCtr_IsExpired(InstancePtr, TmrCtrNumber)) {
 		if (TmrCtrNumber == 0) {
-#if defined (MODBUS_RTU_SLAVE)
 			g_mods_timeout = 1;
 //			XTmrCtr_SetOptions(InstancePtr, TmrCtrNumber, 0);
 			XTmrCtr_Stop(InstancePtr, TmrCtrNumber);
-#endif // #if defined (MODBUS_RTU_SLAVE)
 		}
 //		if (TmrCtrNumber == 1) {
 //
 //		}
 	}
 }
+#endif // #if defined (MODBUS_RTU_SLAVE)
+#endif // #if defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID)
 
+#if defined (XPAR_XEMACPS_NUM_INSTANCES)
 #if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
 
 void timer_callback(XScuTimer * TimerInstance)
@@ -189,6 +197,12 @@ void platform_setup_timer(void)
 }
 
 #endif // #if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
+#endif // #if defined (XPAR_XEMACPS_NUM_INSTANCES)
+
+#endif // #if defined (INTC_DEVICE_ID) || defined (INTC)
+
+
+#if defined (INTC_DEVICE_ID) || defined (INTC)
 
 int platform_setup_interrupts(void)
 {
@@ -250,13 +264,15 @@ int platform_setup_interrupts(void)
 	}
 #endif // #if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
 
-#if defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID) && !defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID)
+#if defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID)
+#if defined (MODBUS_RTU_SLAVE)
 	Status = timer0_init();
 	if (Status != XST_SUCCESS) {
 		bsp_printf(TXT_RED "In %s: timer0_init failed...\r\n" TXT_RST, __func__);
 		return XST_FAILURE;
 	}
-#endif // #if defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID) && !defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID)
+#endif // #if defined (MODBUS_RTU_SLAVE)
+#endif // #if defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID)
 
 	return Status;
 }
@@ -274,6 +290,8 @@ void platform_enable_interrupts()
 	XScuTimer_Start(&TimerInstance);
 #endif // #if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
 }
+
+#endif // #if defined (INTC_DEVICE_ID) || defined (INTC)
 
 void init_platform(void)
 {

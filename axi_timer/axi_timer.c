@@ -94,6 +94,7 @@ axi_timer7;
 //	}
 //}
 
+#if defined (INTC_DEVICE_ID) || defined (INTC_CONNECT)
 
 void XTmrCtr_SetCallBack(XTmrCtr * InstancePtr, void * _pCallBack)
 {
@@ -102,7 +103,7 @@ void XTmrCtr_SetCallBack(XTmrCtr * InstancePtr, void * _pCallBack)
 	InstancePtr->CallBackRef=_pCallBack;
 }
 
-#if defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID)
+#if defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID) && defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID)
 #if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
 int timer0_init()
 {
@@ -124,7 +125,7 @@ int timer0_init()
 
 //	XTmrCtr_SetOptions(&axi_timer0, TIMER_CNTR_1, XTC_INT_MODE_OPTION);
 
-#if defined (INTC_DEVICE_ID) || defined (INTC_CONNECT)
+//#if defined (INTC_DEVICE_ID) || defined (INTC_CONNECT)
 	/*
 	 * Connect a device driver handler that will be called when an interrupt
 	 * for the device occurs, the device driver handler performs the
@@ -142,7 +143,7 @@ int timer0_init()
 
 	// Don't forget Enable the interrupt for the specific interrupt source in proper place
 	XIntc_Enable(&InterruptController, XPAR_PROCESSOR_SUBSYSTEM_MICROBLAZE_0_AXI_INTC_ETHERNET_SUBSYSTEM_AXI_TIMER_0_INTERRUPT_INTR);
-#endif // #if defined (INTC_DEVICE_ID) || defined (INTC_CONNECT)
+//#endif // #if defined (INTC_DEVICE_ID) || defined (INTC_CONNECT)
 
 	// Don't forget start timer in proper place
 	XTmrCtr_Start(&axi_timer0, TIMER_CNTR_0);
@@ -151,7 +152,6 @@ int timer0_init()
 	return Status;
 }
 #endif //#if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
-#endif //#if defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID)
 
 /*****************************************************************************/
 /**
@@ -165,8 +165,8 @@ int timer0_init()
 * @note		None.
 *
 ******************************************************************************/
-#if defined (INTC_DEVICE_ID) || defined (INTC_CONNECT)
-#if defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID) && defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID) && defined (MODBUS_RTU_SLAVE)
+
+#if defined (MODBUS_RTU_SLAVE)
 int timer1_init()
 {
 	int Status = XST_SUCCESS;
@@ -221,9 +221,12 @@ void StartHardTimer1(uint32_t _uiTimeOut)
 	XTmrCtr_Start(&axi_timer1, TIMER_CNTR_0);
 }
 
-#endif // #if defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID) && defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID) && && defined (MODBUS_RTU_SLAVE)
+#endif // #if defined (MODBUS_RTU_SLAVE)
+#endif // #if defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID) && defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID)
 
-#if defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID) && !defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID)
+
+#if !defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID) && defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID)
+#if defined (MODBUS_RTU_SLAVE)
 int timer0_init()
 {
 	int Status = XST_SUCCESS;
@@ -284,7 +287,8 @@ void StartHardTimer0(uint32_t _uiTimeOut)
 
 	XTmrCtr_Start(&axi_timer0, TIMER_CNTR_0);
 }
-#endif // #if defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID) && !defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID)
+#endif // #if defined (MODBUS_RTU_SLAVE)
+#endif // #if !defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID) && defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID)
 
 
 #endif // #if defined (INTC_DEVICE_ID) || defined (INTC_CONNECT)

@@ -36,27 +36,79 @@
 void init_platform(void);
 void cleanup_platform(void);
 
-#if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
-#if defined (__MICROBLAZE__)
-//void timer00_callback();
-void Timer0Handler(void *CallBackRef, u8 TmrCtrNumber);
-#endif // #if defined (__MICROBLAZE__)
-#endif // #if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
 
-#if defined(MODBUS_RTU_SLAVE)
 #if defined (__MICROBLAZE__)
-void Timer1Handler(void *CallBackRef, u8 TmrCtrNumber);
+	#if defined (INTC_DEVICE_ID) || defined (INTC_CONNECT)
+		#if defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID)
+			#if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
+				void Timer0Handler(void *CallBackRef, u8 TmrCtrNumber);
+			#endif // #if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
+
+			#if defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID)
+				#if defined (MODBUS_RTU_SLAVE)
+					void Timer1Handler(void *CallBackRef, u8 TmrCtrNumber);
+				#endif // #if defined (MODBUS_RTU_SLAVE)
+			#else
+				#if defined (MODBUS_RTU_SLAVE)
+					#error "No rs485 heir in design"
+				#endif // #if defined (MODBUS_RTU_SLAVE)
+			#endif // #if defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID)
+		#else
+			#if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
+				#error "No ETHERNET heir in design"
+			#endif // #if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
+
+			#if defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID)
+				#if defined (MODBUS_RTU_SLAVE)
+					void Timer0Handler(void *CallBackRef, u8 TmrCtrNumber);
+				#endif // #if defined (MODBUS_RTU_SLAVE)
+			#else
+				#if defined (MODBUS_RTU_SLAVE)
+					#error "No rs485 heir in design"
+				#endif // #if defined (MODBUS_RTU_SLAVE)
+			#endif // #if defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID)
+
+		#endif // vdefined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID)
+	#endif // #if defined (INTC_DEVICE_ID) || defined (INTC_CONNECT)
 #endif // #if defined (__MICROBLAZE__)
 
-#if defined (PLATFORM_ZYNQ)
-void Timer0Handler(void *CallBackRef, u8 TmrCtrNumber);
+
+#if defined (PLATFORM_ZYNQ) || defined (PLATFORM_ZYNQMP)
+	#if defined (INTC_DEVICE_ID) || defined (INTC_CONNECT)
+		#if defined (XPAR_XEMACPS_NUM_INSTANCES)
+			#if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
+
+			#endif // #if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
+
+			#if defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID)
+				#if defined (MODBUS_RTU_SLAVE)
+					void Timer0Handler(void *CallBackRef, u8 TmrCtrNumber);
+				#endif // #if defined (MODBUS_RTU_SLAVE)
+			#else
+				#if defined (MODBUS_RTU_SLAVE)
+					#error "No rs485 heir in design"
+				#endif // #if defined (MODBUS_RTU_SLAVE)
+			#endif // #if defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID)
+		#else
+			#if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
+				#error "No ETHERNET device in design"
+			#endif // #if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
+
+			#if defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID)
+				#if defined (MODBUS_RTU_SLAVE)
+					void Timer0Handler(void *CallBackRef, u8 TmrCtrNumber);
+				#endif // #if defined (MODBUS_RTU_SLAVE)
+			#else
+				#if defined (MODBUS_RTU_SLAVE)
+					#error "No rs485 heir in design"
+				#endif // #if defined (MODBUS_RTU_SLAVE)
+			#endif // #if defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID)
+
+		#endif // #if defined (XPAR_XEMACPS_NUM_INSTANCES)
+	#endif // #if defined (INTC_DEVICE_ID) || defined (INTC_CONNECT)
 #endif // #if defined (PLATFORM_ZYNQ)
 
-#if defined (PLATFORM_ZYNQMP)
-void Timer0Handler(void *CallBackRef, u8 TmrCtrNumber);
-#endif // #if defined (PLATFORM_ZYNQMP)
 
-#endif // MODBUS_RTU_SLAVE
 
 #if defined (ARMR5) || (__aarch64__) || (__arm__)
 uint64_t get_time_ms(void);
