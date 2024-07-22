@@ -298,6 +298,7 @@ int Uart0_Init(void)
 	 * specific interrupt processing for the device.
 	 */
 #if defined (XPAR_XSCUGIC_NUM_INSTANCES)
+#if defined (MODBUS_RTU_SLAVE)
 	XUartLite_SetRecvHandler(&UartLiteRs485, Uart0RxCpltIRQ, &g_tUart0);
 	XUartLite_SetSendHandler(&UartLiteRs485, Uart0TxCpltIRQ, &g_tUart0);
 	Status = INTC_CONNECT(&InterruptController, XPAR_FABRIC_UARTLITE_0_VEC_ID,
@@ -305,32 +306,64 @@ int Uart0_Init(void)
 //			   (XInterruptHandler)Uart0IntrHandler,
 			   (void *)&UartLiteRs485);
 #else
+	XUartLite_SetRecvHandler(&UartLite0, Uart0RxCpltIRQ, &g_tUart0);
+	XUartLite_SetSendHandler(&UartLite0, Uart0TxCpltIRQ, &g_tUart0);
+	Status = INTC_CONNECT(&InterruptController, XPAR_FABRIC_UARTLITE_0_VEC_ID,
+			   (XInterruptHandler)XUartLite_InterruptHandler,
+//			   (XInterruptHandler)Uart0IntrHandler,
+			   (void *)&UartLite0);
+#endif // #if defined (MODBUS_RTU_SLAVE)
+#else
+#if defined (MODBUS_RTU_SLAVE)
 	XUartLite_SetRecvHandler(&UartLiteRs485, Uart0RxCpltIRQ, &g_tUart0);
 	XUartLite_SetSendHandler(&UartLiteRs485, Uart0TxCpltIRQ, &g_tUart0);
 	Status = INTC_CONNECT(&InterruptController, XPAR_INTC_0_UARTLITE_0_VEC_ID,
 			   (XInterruptHandler)XUartLite_InterruptHandler,
 //			   (XInterruptHandler)Uart0IntrHandler,
 			   (void *)&UartLiteRs485);
-#endif
+#else
+	XUartLite_SetRecvHandler(&UartLite0, Uart0RxCpltIRQ, &g_tUart0);
+	XUartLite_SetSendHandler(&UartLite0, Uart0TxCpltIRQ, &g_tUart0);
+	Status = INTC_CONNECT(&InterruptController, XPAR_INTC_0_UARTLITE_0_VEC_ID,
+			   (XInterruptHandler)XUartLite_InterruptHandler,
+//			   (XInterruptHandler)Uart0IntrHandler,
+			   (void *)&UartLite0);
+#endif // #if defined (MODBUS_RTU_SLAVE)
+#endif // #if defined (XPAR_XSCUGIC_NUM_INSTANCES)
 	if (Status != XST_SUCCESS) {
 		bsp_printf(TXT_RED "UartLite Interrupt setup failed...\r\n" TXT_RST);
 		return XST_FAILURE;
 	}
-	XUartLite_EnableInterrupt(&UartLiteRs485);
 
+#if defined (MODBUS_RTU_SLAVE)
+	XUartLite_EnableInterrupt(&UartLiteRs485);
+#else
+	XUartLite_EnableInterrupt(&UartLite0);
+#endif // #if defined (MODBUS_RTU_SLAVE)
 	/*
 	 * Enter a critical region by disabling all the UART interrupts to allow
 	 * this call to stop a previous operation that may be interrupt driven
 	 */
+#if defined (MODBUS_RTU_SLAVE)
 	StatusRegister = XUartLite_GetStatusReg(UartLiteRs485.RegBaseAddress);
 	XUartLite_WriteReg(UartLiteRs485.RegBaseAddress, XUL_CONTROL_REG_OFFSET, 0);
+#else
+	StatusRegister = XUartLite_GetStatusReg(UartLite0.RegBaseAddress);
+	XUartLite_WriteReg(UartLite0.RegBaseAddress, XUL_CONTROL_REG_OFFSET, 0);
+#endif // #if defined (MODBUS_RTU_SLAVE)
 	/*
 	 * Restore the interrupt enable register to it's previous value such
 	 * that the critical region is exited
 	 */
 	StatusRegister &= XUL_CR_ENABLE_INTR;
+#if defined (MODBUS_RTU_SLAVE)
 	XUartLite_WriteReg(UartLiteRs485.RegBaseAddress,
 				XUL_CONTROL_REG_OFFSET, StatusRegister);
+#else
+	XUartLite_WriteReg(UartLite0.RegBaseAddress,
+				XUL_CONTROL_REG_OFFSET, StatusRegister);
+#endif // #if defined (MODBUS_RTU_SLAVE)
+
 #if defined (XPAR_XSCUGIC_NUM_INSTANCES)
 	XScuGic_Enable(&InterruptController,XPAR_FABRIC_UARTLITE_0_VEC_ID);
 #else
