@@ -1,0 +1,1429 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1482</width>
+    <height>917</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>0</width>
+    <height>0</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>16777215</width>
+    <height>16777215</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="QTabWidget" name="tabWidget">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>60</y>
+     <width>1401</width>
+     <height>819</height>
+    </rect>
+   </property>
+   <property name="currentIndex">
+    <number>3</number>
+   </property>
+   <property name="usesScrollButtons">
+    <bool>true</bool>
+   </property>
+   <widget class="QWidget" name="tab_0">
+    <attribute name="title">
+     <string>Low Level Access</string>
+    </attribute>
+    <widget class="QGroupBox" name="groupBox">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>40</y>
+       <width>201</width>
+       <height>171</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>Memory Access</string>
+     </property>
+     <widget class="QLineEdit" name="ll_mm_value_lineEdit">
+      <property name="geometry">
+       <rect>
+        <x>70</x>
+        <y>70</y>
+        <width>111</width>
+        <height>23</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="ll_mm_read_btn">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>100</y>
+        <width>161</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Read</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_addr">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>40</y>
+        <width>41</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>ADDR</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="ll_mm_write_btn">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>130</y>
+        <width>161</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Write</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_value">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>70</y>
+        <width>41</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>VALUE</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="ll_mm_addr_lineEdit">
+      <property name="geometry">
+       <rect>
+        <x>70</x>
+        <y>40</y>
+        <width>111</width>
+        <height>23</height>
+       </rect>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QGroupBox" name="groupBox_3">
+     <property name="geometry">
+      <rect>
+       <x>260</x>
+       <y>40</y>
+       <width>221</width>
+       <height>201</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>SPI Access</string>
+     </property>
+     <widget class="QLineEdit" name="ll_spi_recv_lineEdit">
+      <property name="geometry">
+       <rect>
+        <x>90</x>
+        <y>140</y>
+        <width>111</width>
+        <height>23</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="ll_spi_send_btn">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>170</y>
+        <width>171</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Send</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_addr_2">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>110</y>
+        <width>41</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Send</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_value_2">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>140</y>
+        <width>51</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Recieve</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="ll_spi_send_lineEdit">
+      <property name="geometry">
+       <rect>
+        <x>90</x>
+        <y>110</y>
+        <width>111</width>
+        <height>23</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="ll_spi_ch_combobox">
+      <property name="geometry">
+       <rect>
+        <x>90</x>
+        <y>30</y>
+        <width>111</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="currentText">
+       <string/>
+      </property>
+      <property name="currentIndex">
+       <number>-1</number>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="ll_spi_cs_combobox">
+      <property name="geometry">
+       <rect>
+        <x>90</x>
+        <y>70</y>
+        <width>111</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="currentText">
+       <string/>
+      </property>
+      <property name="currentIndex">
+       <number>-1</number>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_addr_4">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>70</y>
+        <width>41</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>CS</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_addr_5">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>30</y>
+        <width>41</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>CH</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QGroupBox" name="groupBox_6">
+     <property name="geometry">
+      <rect>
+       <x>520</x>
+       <y>40</y>
+       <width>301</width>
+       <height>241</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>GPIO</string>
+     </property>
+     <widget class="QPushButton" name="ll_gpio_read_btn">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>160</y>
+        <width>161</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Read</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_addr_8">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>50</y>
+        <width>41</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>PIN</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="ll_gpio_write_btn">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>200</y>
+        <width>161</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Write</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_value_4">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>80</y>
+        <width>41</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>DIR</string>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="ll_gpio_dir_combobox">
+      <property name="geometry">
+       <rect>
+        <x>70</x>
+        <y>80</y>
+        <width>111</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="currentText">
+       <string/>
+      </property>
+      <property name="currentIndex">
+       <number>-1</number>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_32">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>120</y>
+        <width>41</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Value</string>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="ll_gpio_globalno_combobox">
+      <property name="geometry">
+       <rect>
+        <x>70</x>
+        <y>50</y>
+        <width>111</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="currentText">
+       <string/>
+      </property>
+      <property name="currentIndex">
+       <number>-1</number>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="ll_gpio_lineEdit">
+      <property name="geometry">
+       <rect>
+        <x>70</x>
+        <y>120</y>
+        <width>111</width>
+        <height>23</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_57">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>30</y>
+        <width>281</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>EMIO: PIN=EMIO+OFFSET(78)</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QLabel" name="label_31">
+     <property name="geometry">
+      <rect>
+       <x>260</x>
+       <y>230</y>
+       <width>201</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>eg. ch1cs0 send </string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_33">
+     <property name="geometry">
+      <rect>
+       <x>260</x>
+       <y>270</y>
+       <width>291</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>&quot;0,1&quot;, &quot;0x40,0&quot;, &quot;0,3&quot;, &quot;0x80,0&quot;</string>
+     </property>
+    </widget>
+    <widget class="QGroupBox" name="groupBox_4">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>310</y>
+       <width>1171</width>
+       <height>471</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>IIC Access</string>
+     </property>
+     <widget class="QTabWidget" name="tabWidget_2">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>40</y>
+        <width>1121</width>
+        <height>431</height>
+       </rect>
+      </property>
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="tab">
+       <attribute name="title">
+        <string>Register Read/Write</string>
+       </attribute>
+       <widget class="QGroupBox" name="groupBox_7">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>20</y>
+          <width>201</width>
+          <height>171</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>16-Bit Register Address Read</string>
+        </property>
+        <widget class="QLabel" name="label_4">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>20</y>
+           <width>71</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Device Addr</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_5">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>60</y>
+           <width>81</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Register Addr</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_6">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>100</y>
+           <width>61</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Read Count</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="iic_16bit_read">
+         <property name="geometry">
+          <rect>
+           <x>50</x>
+           <y>130</y>
+           <width>75</width>
+           <height>23</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Read</string>
+         </property>
+        </widget>
+        <widget class="QLineEdit" name="lineEdit_2">
+         <property name="geometry">
+          <rect>
+           <x>102</x>
+           <y>20</y>
+           <width>91</width>
+           <height>20</height>
+          </rect>
+         </property>
+        </widget>
+        <widget class="QLineEdit" name="lineEdit_3">
+         <property name="geometry">
+          <rect>
+           <x>100</x>
+           <y>60</y>
+           <width>91</width>
+           <height>20</height>
+          </rect>
+         </property>
+        </widget>
+        <widget class="QLineEdit" name="lineEdit_4">
+         <property name="geometry">
+          <rect>
+           <x>100</x>
+           <y>100</y>
+           <width>91</width>
+           <height>20</height>
+          </rect>
+         </property>
+        </widget>
+       </widget>
+       <widget class="QLineEdit" name="lineEdit">
+        <property name="geometry">
+         <rect>
+          <x>920</x>
+          <y>30</y>
+          <width>113</width>
+          <height>20</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_3">
+        <property name="geometry">
+         <rect>
+          <x>890</x>
+          <y>30</y>
+          <width>31</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>CH</string>
+        </property>
+       </widget>
+       <widget class="QGroupBox" name="groupBox_8">
+        <property name="geometry">
+         <rect>
+          <x>230</x>
+          <y>20</y>
+          <width>201</width>
+          <height>171</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>16-Bit Register Address Write</string>
+        </property>
+        <widget class="QLabel" name="label_7">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>20</y>
+           <width>71</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Device Addr</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_8">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>60</y>
+           <width>81</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Register Addr</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_9">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>100</y>
+           <width>71</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>write value</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="iic_16bit_write">
+         <property name="geometry">
+          <rect>
+           <x>50</x>
+           <y>130</y>
+           <width>75</width>
+           <height>23</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Write</string>
+         </property>
+        </widget>
+        <widget class="QLineEdit" name="lineEdit_5">
+         <property name="geometry">
+          <rect>
+           <x>102</x>
+           <y>20</y>
+           <width>91</width>
+           <height>20</height>
+          </rect>
+         </property>
+        </widget>
+        <widget class="QLineEdit" name="lineEdit_6">
+         <property name="geometry">
+          <rect>
+           <x>100</x>
+           <y>60</y>
+           <width>91</width>
+           <height>20</height>
+          </rect>
+         </property>
+        </widget>
+        <widget class="QLineEdit" name="lineEdit_7">
+         <property name="geometry">
+          <rect>
+           <x>100</x>
+           <y>100</y>
+           <width>91</width>
+           <height>20</height>
+          </rect>
+         </property>
+        </widget>
+       </widget>
+       <widget class="QGroupBox" name="groupBox_11">
+        <property name="geometry">
+         <rect>
+          <x>450</x>
+          <y>20</y>
+          <width>201</width>
+          <height>171</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>8-Bit Register Address Read</string>
+        </property>
+        <widget class="QLabel" name="label_17">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>20</y>
+           <width>71</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Device Addr</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_18">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>60</y>
+           <width>81</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Register Addr</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_19">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>100</y>
+           <width>61</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Read Count</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="iic_8bit_read">
+         <property name="geometry">
+          <rect>
+           <x>50</x>
+           <y>130</y>
+           <width>75</width>
+           <height>23</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Read</string>
+         </property>
+        </widget>
+        <widget class="QLineEdit" name="lineEdit_15">
+         <property name="geometry">
+          <rect>
+           <x>102</x>
+           <y>20</y>
+           <width>91</width>
+           <height>20</height>
+          </rect>
+         </property>
+        </widget>
+        <widget class="QLineEdit" name="lineEdit_16">
+         <property name="geometry">
+          <rect>
+           <x>100</x>
+           <y>60</y>
+           <width>91</width>
+           <height>20</height>
+          </rect>
+         </property>
+        </widget>
+        <widget class="QLineEdit" name="lineEdit_17">
+         <property name="geometry">
+          <rect>
+           <x>100</x>
+           <y>100</y>
+           <width>91</width>
+           <height>20</height>
+          </rect>
+         </property>
+        </widget>
+       </widget>
+       <widget class="QGroupBox" name="groupBox_12">
+        <property name="geometry">
+         <rect>
+          <x>670</x>
+          <y>20</y>
+          <width>201</width>
+          <height>171</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>8-Bit Register Address Write</string>
+        </property>
+        <widget class="QLabel" name="label_20">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>20</y>
+           <width>71</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Device Addr</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_21">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>60</y>
+           <width>81</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Register Addr</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_22">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>100</y>
+           <width>71</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>write value</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="iic_8bit_write">
+         <property name="geometry">
+          <rect>
+           <x>50</x>
+           <y>130</y>
+           <width>75</width>
+           <height>23</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>write</string>
+         </property>
+        </widget>
+        <widget class="QLineEdit" name="lineEdit_18">
+         <property name="geometry">
+          <rect>
+           <x>102</x>
+           <y>20</y>
+           <width>91</width>
+           <height>20</height>
+          </rect>
+         </property>
+        </widget>
+        <widget class="QLineEdit" name="lineEdit_19">
+         <property name="geometry">
+          <rect>
+           <x>100</x>
+           <y>60</y>
+           <width>91</width>
+           <height>20</height>
+          </rect>
+         </property>
+        </widget>
+        <widget class="QLineEdit" name="lineEdit_20">
+         <property name="geometry">
+          <rect>
+           <x>100</x>
+           <y>100</y>
+           <width>91</width>
+           <height>20</height>
+          </rect>
+         </property>
+        </widget>
+       </widget>
+       <widget class="QTextEdit" name="textEdit">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>200</y>
+          <width>861</width>
+          <height>201</height>
+         </rect>
+        </property>
+       </widget>
+      </widget>
+     </widget>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tab_1">
+    <attribute name="title">
+     <string>FPS and RES</string>
+    </attribute>
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>40</y>
+       <width>381</width>
+       <height>191</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>video source information</string>
+     </property>
+     <widget class="QLabel" name="label_2">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>80</y>
+        <width>111</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>resolution</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>40</y>
+        <width>101</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>fps</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="freq_label">
+      <property name="geometry">
+       <rect>
+        <x>180</x>
+        <y>40</y>
+        <width>131</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>?</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="pixel_label">
+      <property name="geometry">
+       <rect>
+        <x>180</x>
+        <y>80</y>
+        <width>141</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>?</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QGroupBox" name="groupBox_5">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>480</x>
+       <y>40</y>
+       <width>381</width>
+       <height>191</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>channel sel</string>
+     </property>
+     <widget class="QRadioButton" name="q_radioButton_ch0">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>50</y>
+        <width>103</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>ch&amp;0</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="q_radioButton_ch1">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>80</y>
+        <width>103</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>ch&amp;1</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="q_radioButton_ch2">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>110</y>
+        <width>103</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>ch&amp;2</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="q_radioButton_ch3">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>140</y>
+        <width>103</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>ch&amp;3</string>
+      </property>
+     </widget>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tab_2">
+    <attribute name="title">
+     <string>Settings</string>
+    </attribute>
+    <widget class="QLineEdit" name="settings_gateway_lineEdit">
+     <property name="geometry">
+      <rect>
+       <x>250</x>
+       <y>290</y>
+       <width>221</width>
+       <height>21</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_99">
+     <property name="geometry">
+      <rect>
+       <x>160</x>
+       <y>210</y>
+       <width>91</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Server IP</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="save_settings_btn_1">
+     <property name="geometry">
+      <rect>
+       <x>250</x>
+       <y>50</y>
+       <width>181</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Save Settings</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_100">
+     <property name="geometry">
+      <rect>
+       <x>100</x>
+       <y>250</y>
+       <width>141</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Server netmask</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="read_settings_btn_2">
+     <property name="geometry">
+      <rect>
+       <x>470</x>
+       <y>50</y>
+       <width>181</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Default Settings</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_101">
+     <property name="geometry">
+      <rect>
+       <x>100</x>
+       <y>290</y>
+       <width>141</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Server gateway</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="settings_netmask_lineEdit">
+     <property name="geometry">
+      <rect>
+       <x>250</x>
+       <y>250</y>
+       <width>221</width>
+       <height>21</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="settings_ipaddr_lineEdit">
+     <property name="geometry">
+      <rect>
+       <x>250</x>
+       <y>210</y>
+       <width>221</width>
+       <height>21</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="settings_mac_lineEdit">
+     <property name="geometry">
+      <rect>
+       <x>250</x>
+       <y>330</y>
+       <width>221</width>
+       <height>21</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="read_settings_btn_1">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>50</y>
+       <width>181</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Read Settings</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_102">
+     <property name="geometry">
+      <rect>
+       <x>40</x>
+       <y>110</y>
+       <width>701</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Note: New Settings should take effect after target reboot</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_103">
+     <property name="geometry">
+      <rect>
+       <x>130</x>
+       <y>330</y>
+       <width>111</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Server MAC</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_104">
+     <property name="geometry">
+      <rect>
+       <x>40</x>
+       <y>140</y>
+       <width>911</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Note: Settings in this tab will keep after disconnect. Click &quot;Read Settings&quot; to refresh after connect</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_105">
+     <property name="geometry">
+      <rect>
+       <x>40</x>
+       <y>170</y>
+       <width>911</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Note: Reset to default settings: Click &quot;Default Settings&quot;, then click &quot;Save Settings&quot;</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tab_3">
+    <attribute name="title">
+     <string>Version</string>
+    </attribute>
+    <widget class="QGroupBox" name="groupBox_21">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>40</y>
+       <width>451</width>
+       <height>261</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>version infomation</string>
+     </property>
+     <widget class="QLabel" name="hardware_ver_label">
+      <property name="geometry">
+       <rect>
+        <x>260</x>
+        <y>60</y>
+        <width>131</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>?</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="firmware_ver_label">
+      <property name="geometry">
+       <rect>
+        <x>260</x>
+        <y>120</y>
+        <width>151</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>?</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="software_ver_label">
+      <property name="geometry">
+       <rect>
+        <x>260</x>
+        <y>180</y>
+        <width>131</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>0xA0000001</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_35">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>60</y>
+        <width>201</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Hardware Version:</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_38">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>120</y>
+        <width>201</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Software Version:</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_36">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>180</y>
+        <width>201</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>GUI Version:</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QGroupBox" name="groupBox_22">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>340</y>
+       <width>1071</width>
+       <height>291</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>upgrade</string>
+     </property>
+     <widget class="QLabel" name="label_44">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>20</y>
+        <width>131</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:11pt;&quot;&gt;upgrade file:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="upgrade_file_button">
+      <property name="geometry">
+       <rect>
+        <x>670</x>
+        <y>20</y>
+        <width>111</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>select file</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="upgrade_button">
+      <property name="geometry">
+       <rect>
+        <x>930</x>
+        <y>20</y>
+        <width>121</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>upgrade</string>
+      </property>
+     </widget>
+     <widget class="QTextEdit" name="textEdit_upgradeFile_out_put">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>60</y>
+        <width>1041</width>
+        <height>201</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="textEdit_upgradeFile">
+      <property name="geometry">
+       <rect>
+        <x>160</x>
+        <y>20</y>
+        <width>491</width>
+        <height>31</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="upgrade_button_golden">
+      <property name="geometry">
+       <rect>
+        <x>800</x>
+        <y>20</y>
+        <width>121</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>golden</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QPushButton" name="pushButton_rst_all">
+     <property name="geometry">
+      <rect>
+       <x>840</x>
+       <y>650</y>
+       <width>112</width>
+       <height>30</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Reset All</string>
+     </property>
+    </widget>
+   </widget>
+  </widget>
+  <widget class="QLabel" name="label_37">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>30</y>
+     <width>71</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Target IP</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="ipaddr_lineEdit">
+   <property name="geometry">
+    <rect>
+     <x>100</x>
+     <y>30</y>
+     <width>181</width>
+     <height>21</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="ipaddr_connect_btn">
+   <property name="geometry">
+    <rect>
+     <x>300</x>
+     <y>20</y>
+     <width>101</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Connect</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="ipaddr_disconnect_btn">
+   <property name="geometry">
+    <rect>
+     <x>440</x>
+     <y>20</y>
+     <width>131</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Disconnect</string>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
