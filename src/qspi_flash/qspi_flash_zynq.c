@@ -268,7 +268,7 @@ int qspi_update(u32 total_bytes, const u8 *flash_data, int type)
 
 	if (Flash_Config_Table[FCTIndex].FlashDeviceSize > SIXTEENMB)
 	{
-		FlashEnterExit4BAddMode(&XSpiInstance, ENTER_4B);
+		FlashEnterExit4BAddMode(&QspiInstance, ENTER_4B);
 	}
 
 #if 1
@@ -377,7 +377,7 @@ int qspi_update(u32 total_bytes, const u8 *flash_data, int type)
 
 	if (Flash_Config_Table[FCTIndex].FlashDeviceSize > SIXTEENMB)
 	{
-		FlashEnterExit4BAddMode(&XSpiInstance, EXIT_4B);
+		FlashEnterExit4BAddMode(&QspiInstance, EXIT_4B);
 	}
 
     return XST_SUCCESS;
@@ -390,7 +390,7 @@ error_printf:
 
 	if (Flash_Config_Table[FCTIndex].FlashDeviceSize > SIXTEENMB)
 	{
-		FlashEnterExit4BAddMode(&XSpiInstance, EXIT_4B);
+		FlashEnterExit4BAddMode(&QspiInstance, EXIT_4B);
 	}
 
     return XST_FAILURE;
