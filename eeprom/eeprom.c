@@ -411,7 +411,6 @@ s32 EepromWriteData(u8 *BufferPtr, u16 ByteCount, u16 start_addr)
 	u16 byte_cnt;
 	u16 EepromSlvAddr;
 	u32 WrBfrOffset;
-	unsigned ByteCount;
 
 	u8 WriteBuffer[PageSize+2]; // page 大小 加 最多2byte 片内地址
 //	if (PageSize == PAGE_SIZE_16 || PageSize == PAGE_SIZE_8) {

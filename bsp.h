@@ -151,6 +151,7 @@ extern INTC InterruptController;	/* Instance of the Interrupt Controller */
 #include "axi_timer/axi_timer.h"
 #include "uartlite_fifo/uartlite_fifo.h"
 #include "hwicap/hwicap.h"
+#include "hot_reset/hot_reset.h"
 
 #if defined (MODBUS_RTU_SLAVE)
 #if !defined (__RS485_H__)
