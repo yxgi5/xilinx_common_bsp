@@ -47,7 +47,7 @@ class MyDialog(QtWidgets.QMainWindow):
         self.ipaddr_lineEdit.setText(self.ipaddr)
         self.ipaddr_disconnect_btn.setDisabled(True)
 
-        self.timer = QTimer(self)
+        # self.timer = QTimer(self)
         self.ipaddr_connect_btn.clicked.connect(self.ipaddr_connect_btn_handler)
         self.ipaddr_disconnect_btn.clicked.connect(self.ipaddr_disconnect_btn_handler)
 
@@ -58,7 +58,7 @@ class MyDialog(QtWidgets.QMainWindow):
 
     def ConnectSignalSlot(self):
         # timer
-        self.timer.timeout.connect(self.check_connection_alive)
+        # self.timer.timeout.connect(self.check_connection_alive)
 
         #upgrade file
         self.upgrade_file_button.clicked.connect(self.open_upgrade_file_handler)
@@ -70,7 +70,7 @@ class MyDialog(QtWidgets.QMainWindow):
 
     def DisconnectSignalSlot(self):     
         # timer
-        self.timer.timeout.disconnect(self.check_connection_alive)
+        # self.timer.timeout.disconnect(self.check_connection_alive)
 
         #upgrade
         self.upgrade_file_button.clicked.disconnect(self.open_upgrade_file_handler)
@@ -129,7 +129,7 @@ class MyDialog(QtWidgets.QMainWindow):
                 self.textEdit_upgradeFile_out_put.append(word)
     
     def upgrade_file_handler(self):
-        self.timer.stop()#传送开始前关闭定时器
+        # self.timer.stop()#传送开始前关闭定时器
         print("upgrade firmeware")
         if self.textEdit_upgradeFile.text()=="":
             QMessageBox.information(self, "Error!", "please select the file")
@@ -160,35 +160,28 @@ class MyDialog(QtWidgets.QMainWindow):
             QMessageBox.information(self,"Error!", "ip address errrrror!") 
         else:
             self.ipaddr = self.ipaddr_lineEdit.text()
-            try:
-                Status = check_ip_alive.check_ip_alive(self.ipaddr)
-                if Status == True:
-                    try:
-                        if self.comboBox.currentText() == 'UDP':
-                            self.ut = udp_client.client(server_host=self.ipaddr)
-                        else:
-                            self.ut = tcp_client.client(server_host=self.ipaddr)
-                    except Exception as ret:
-                        print(ret)
-                        QMessageBox.information(self,"Error!", "connection failed!")
-                        self.ut.close()
-                        del self.ut
-                        return
-                
-                    else:
-                        self.timer.start(1000)
-                        self.m1 = memory_ops.memory_ops(self.ut)
-                        self.vm1 = var_msg_ops.var_msg_ops(self.ut)
-                        self.connection_status = True
-                        self.ipaddr_disconnect_btn.setDisabled(False)
-                        self.ipaddr_connect_btn.setDisabled(True)
-                        self.comboBox.setDisabled(True)
-                    
-                else:
-                    QMessageBox.information(self,"Error!", "target address not alive!") 
 
+            try:
+                if self.comboBox.currentText() == 'UDP':
+                    self.ut = udp_client.client(server_host=self.ipaddr)
+                else:
+                    self.ut = tcp_client.client(server_host=self.ipaddr)
             except Exception as ret:
-                raise Exception(ret)
+                print(ret)
+                QMessageBox.information(self,"Error!", "connection failed!")
+                self.ut.close()
+                del self.ut
+                return
+        
+            else:
+                # self.timer.start(1000)
+                self.m1 = memory_ops.memory_ops(self.ut)
+                self.vm1 = var_msg_ops.var_msg_ops(self.ut)
+                self.connection_status = True
+                self.ipaddr_disconnect_btn.setDisabled(False)
+                self.ipaddr_connect_btn.setDisabled(True)
+                self.comboBox.setDisabled(True)
+                    
 
             if(self.connection_status == True):
                 status=self.vm1.read_var(HARD_VER_IDX)
@@ -228,7 +221,7 @@ class MyDialog(QtWidgets.QMainWindow):
         self.ipaddr_disconnect_btn.setDisabled(True)
         self.ipaddr_connect_btn.setDisabled(False)
         self.comboBox.setDisabled(False)
-        self.timer.stop()
+        # self.timer.stop()
         self.connection_status = False
         del self.m1
         del self.vm1
