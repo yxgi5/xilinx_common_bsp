@@ -181,11 +181,13 @@ static err_t tcp_update_recv_callback(void *arg, struct tcp_pcb *tpcb, struct pb
 		{
 			start_update_type = 0;
 			start_update_flag = 1;
-			tcp_update_svr_send_msg("MD5sum Verify success!!!Start QSPI Update\r\n");
+			tcp_update_svr_send_msg("md5sum Verify success!!!Start QSPI Update\r\n");
 		}
 		else
 		{
 			tcp_update_svr_send_msg("md5sum Verify Failed!!!\r\n");
+	        bsp_printf("tsize = %d\r\n", tsize);
+	        bsp_printf("file size of BOOT.bin is %lu Bytes\r\n", total_bytes);
 			memset(md5sum, 0, 16);
 			tsize = 0;
 			total_bytes = 0;
@@ -198,10 +200,13 @@ static err_t tcp_update_recv_callback(void *arg, struct tcp_pcb *tpcb, struct pb
 		{
 			start_update_flag = 1;
 			start_update_type = 1;
-			tcp_update_svr_send_msg("Start QSPI Update\r\n");
+			tcp_update_svr_send_msg("md5sum Verify success!!!Start QSPI Update\r\n");
 		}
 		else
 		{
+			tcp_update_svr_send_msg("md5sum Verify Failed!!!\r\n");
+	        bsp_printf("tsize = %d\r\n", tsize);
+	        bsp_printf("file size of BOOT.bin is %lu Bytes\r\n", total_bytes);
 			memset(md5sum, 0, 16);
 			tsize = 0;
 			total_bytes = 0;
