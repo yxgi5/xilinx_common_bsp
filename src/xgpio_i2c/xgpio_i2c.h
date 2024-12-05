@@ -207,6 +207,11 @@ int xgpio_i2c_reg16_read(i2c_no i2c, char IIC_ADDR, unsigned short Addr, u8 * re
 extern XGpio XGpioInst;
 
 int xgpio_setup(XGpio *InstancePtr, u16 DeviceId, u32 DirectionMask1, u32 DirectionMask2);
+u32 XGpio_GetPinDirection(XGpio *InstancePtr, unsigned Channel, u8 Pin);
+void XGpio_SetPinDirection(XGpio *InstancePtr, unsigned Channel, u8 Pin, u8 Direction);
+u32 XGpio_ReadPin(XGpio * InstancePtr, unsigned Channel, u8 Pin);
+void XGpio_WritePin(XGpio * InstancePtr, unsigned Channel, u8 Pin, u8 Data);
+void XGpio_TogglePin(XGpio * InstancePtr, unsigned Channel, u8 Pin);
 
 #endif // XPAR_XGPIO_NUM_INSTANCES
 

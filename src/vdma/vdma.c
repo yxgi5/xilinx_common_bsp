@@ -985,6 +985,7 @@ void vdma_config_m32_4(void)
     /* Configure the Read interface (MM2S)*/
     // MM2S Control Register
     Xil_Out32(XPAR_AXI_VDMA_4_BASEADDR + 0x00, 0x8B);
+    //Xil_Out32(XPAR_AXI_VDMA_4_BASEADDR + 0x00, 0x83);//there should be no genlock as there is no S2MM
 #if (XPAR_AXI_VDMA_4_NUM_FSTORES >= 1U)
     // MM2S Start Address 1
     Xil_Out32(XPAR_AXI_VDMA_4_BASEADDR + 0x5C, FRAME_BUFFER_4_0 + offset1);
@@ -1654,9 +1655,9 @@ int vdma_config(void)
 	vdma_reg_cfg
 	(
 		&Vdma1,
-		3,
-		0,	// offset (y*w+x)*Bpp
-		0,
+		VDMA_1_BPP,
+		VDMA_1_W_OFFSET,	// offset (y*w+x)*Bpp
+		VDMA_1_R_OFFSET,
 		VDMA_1_W_STRIDE,
 		VDMA_1_W_WIDTH,
 		VDMA_1_W_HEIGHTH,
@@ -1691,9 +1692,9 @@ int vdma_config(void)
 	vdma_reg_cfg
 	(
 		&Vdma2,
-		3,
-		0,	// offset (y*w+x)*Bpp
-		0,
+		VDMA_2_BPP,
+		VDMA_2_W_OFFSET,	// offset (y*w+x)*Bpp
+		VDMA_2_R_OFFSET,
 		VDMA_2_W_STRIDE,
 		VDMA_2_W_WIDTH,
 		VDMA_2_W_HEIGHTH,
@@ -1728,9 +1729,9 @@ int vdma_config(void)
 	vdma_reg_cfg
 	(
 		&Vdma3,
-		3,
-		0,	// offset (y*w+x)*Bpp
-		0,
+		VDMA_3_BPP,
+		VDMA_3_W_OFFSET,	// offset (y*w+x)*Bpp
+		VDMA_3_R_OFFSET,
 		VDMA_3_W_STRIDE,
 		VDMA_3_W_WIDTH,
 		VDMA_3_W_HEIGHTH,
@@ -1765,9 +1766,9 @@ int vdma_config(void)
 	vdma_reg_cfg
 	(
 		&Vdma4,
-		3,
-		0,	// offset (y*w+x)*Bpp
-		0,
+		VDMA_4_BPP,
+		VDMA_4_W_OFFSET,	// offset (y*w+x)*Bpp
+		VDMA_4_R_OFFSET,
 		VDMA_4_W_STRIDE,
 		VDMA_4_W_WIDTH,
 		VDMA_4_W_HEIGHTH,
@@ -1802,9 +1803,9 @@ int vdma_config(void)
 	vdma_reg_cfg
 	(
 		&Vdma5,
-		3,
-		0,	// offset (y*w+x)*Bpp
-		0,
+		VDMA_5_BPP,
+		VDMA_5_W_OFFSET,	// offset (y*w+x)*Bpp
+		VDMA_5_R_OFFSET,
 		VDMA_5_W_STRIDE,
 		VDMA_5_W_WIDTH,
 		VDMA_5_W_HEIGHTH,
@@ -1839,9 +1840,9 @@ int vdma_config(void)
 	vdma_reg_cfg
 	(
 		&Vdma6,
-		3,
-		0,	// offset (y*w+x)*Bpp
-		0,
+		VDMA_6_BPP,
+		VDMA_6_W_OFFSET,	// offset (y*w+x)*Bpp
+		VDMA_6_R_OFFSET,
 		VDMA_6_W_STRIDE,
 		VDMA_6_W_WIDTH,
 		VDMA_6_W_HEIGHTH,
@@ -1875,9 +1876,9 @@ int vdma_config(void)
 	vdma_reg_cfg
 	(
 		&Vdma7,
-		3,
-		0,	// offset (y*w+x)*Bpp
-		0,
+		VDMA_7_BPP,
+		VDMA_7_W_OFFSET,	// offset (y*w+x)*Bpp
+		VDMA_7_R_OFFSET,
 		VDMA_7_W_STRIDE,
 		VDMA_7_W_WIDTH,
 		VDMA_7_W_HEIGHTH,
@@ -2462,6 +2463,26 @@ void clear_display(void)
 #if (XPAR_XAXIVDMA_NUM_INSTANCES >= 8U)
 	clear_display_7();
 #endif
+
+#if 0
+    UINTPTR Addr1=FRAME_BUFFER_0_0,Addr2=FRAME_BUFFER_0_1,Addr3=FRAME_BUFFER_0_2;
+    int line, column;
+	for(line=0; line < 2160; line++)
+	{
+		for(column=0; column < 3840*3/4; column++)
+		{
+			Xil_Out32(Addr1, 0xFFFFFFFF);
+			Xil_Out32(Addr2, 0xFFFFFFFF);
+			Xil_Out32(Addr3, 0xFFFFFFFF);
+
+			Addr1+=4;
+			Addr2+=4;
+			Addr3+=4;
+		}
+	}
+#endif
+
+	Xil_DCacheFlush();
 }
 
 #endif // XPAR_XAXIVDMA_NUM_INSTANCES

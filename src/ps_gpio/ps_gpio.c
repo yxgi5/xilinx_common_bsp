@@ -76,5 +76,65 @@ int PsGpioSetup(XGpioPs *InstancePtr, u16 DeviceId)
 	return XST_SUCCESS ;
 }
 
+/****************************************************************************/
+/**
+*
+* Write data to the specified pin.
+*
+* @param	InstancePtr is a pointer to the XGpioPs instance.
+* @param	Pin is the pin number to which the Data is to be written.
+*		Valid values are 0-117 in Zynq and 0-173 in Zynq Ultrascale+ MP.
+*
+* @return	None.
+*
+* @note		This function does a masked write to the specified pin of
+*		the specified GPIO bank. The previous state of other pins
+*		is maintained.
+*
+*****************************************************************************/
+void XGpioPs_TogglePin(const XGpioPs *InstancePtr, u32 Pin)
+{
+	u32 RegOffset;
+	u32 Value;
+	u8 Bank;
+	u8 PinNumber;
+	u32 DataVar;
+
+	Xil_AssertVoid(InstancePtr != NULL);
+	Xil_AssertVoid(InstancePtr->IsReady == XIL_COMPONENT_IS_READY);
+	Xil_AssertVoid(Pin < InstancePtr->MaxPinNum);
+
+	/* Get the Bank number and Pin number within the bank. */
+#ifdef versal
+	XGpioPs_GetBankPin(InstancePtr,(u8)Pin, &Bank, &PinNumber);
+#else
+	XGpioPs_GetBankPin((u8)Pin, &Bank, &PinNumber);
+#endif
+
+	if (PinNumber > 15U) {
+		/* There are only 16 data bits in bit maskable register. */
+		PinNumber -= (u8)16;
+		RegOffset = XGPIOPS_DATA_MSW_OFFSET;
+	} else {
+		RegOffset = XGPIOPS_DATA_LSW_OFFSET;
+	}
+
+
+	DataVar = (XGpioPs_ReadReg(InstancePtr->GpioConfig.BaseAddr,
+				 ((u32)(Bank) * XGPIOPS_DATA_BANK_OFFSET) +
+				 XGPIOPS_DATA_RO_OFFSET) >> (u32)PinNumber) & (u32)1;
+	/*
+	 * Get the 32 bit value to be written to the Mask/Data register where
+	 * the upper 16 bits is the mask and lower 16 bits is the data.
+	 */
+	FLPB(DataVar,BIT32(0));
+	DataVar &= (u32)0x01;
+	Value = ~((u32)1 << (PinNumber + 16U)) & ((DataVar << PinNumber) | 0xFFFF0000U);
+	XGpioPs_WriteReg(InstancePtr->GpioConfig.BaseAddr,
+			  ((u32)(Bank) * XGPIOPS_DATA_MASK_OFFSET) +
+			  RegOffset, Value);
+
+}
+
 #endif // XPAR_XGPIOPS_NUM_INSTANCES
 

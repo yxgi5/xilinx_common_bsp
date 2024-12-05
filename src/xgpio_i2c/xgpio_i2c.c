@@ -907,6 +907,36 @@ int xgpio_i2c_32b32_read(i2c_no i2c, char IIC_ADDR, unsigned int Addr, unsigned 
 
 XGpio XGpioInst;
 
+/****************************************************************************/
+/**
+* Initialize the XGpio instance provided by the caller based on the
+* given DeviceID.
+*
+* Nothing is done except to initialize the InstancePtr.
+*
+* @param	InstancePtr is a pointer to an XGpio instance. The memory the
+*		pointer references must be pre-allocated by the caller. Further
+*		calls to manipulate the instance/driver through the XGpio API
+*		must be made with this pointer.
+* @param	DeviceId is the unique id of the device controlled by this XGpio
+*		instance. Passing in a device id associates the generic XGpio
+*		instance to a specific device, as chosen by the caller or
+*		application developer.
+* @param	DirectionMask1 is a bitmask of channel 1 specifying which discretes are input
+*		and which are output. Bits set to 0 are output and bits set to 1
+*		are input.
+* @param	DirectionMask2 is a bitmask of channel 2 specifying which discretes are input
+*		and which are output. Bits set to 0 are output and bits set to 1
+*		are input. If it dosen't has channel 2, just give 0 or 1
+*
+* @return
+*		- XST_SUCCESS if the initialization was successful.
+* 		- XST_DEVICE_NOT_FOUND  if the device configuration data was not
+*		found for a device with the supplied device ID.
+*
+* @note		None.
+*
+*****************************************************************************/
 int xgpio_setup(XGpio *InstancePtr, u16 DeviceId, u32 DirectionMask1, u32 DirectionMask2)
 {
 	int Status ;
@@ -927,6 +957,170 @@ int xgpio_setup(XGpio *InstancePtr, u16 DeviceId, u32 DirectionMask1, u32 Direct
 	return XST_SUCCESS ;
 }
 
+/****************************************************************************/
+/**
+* Get the input/output direction of specified Pin for the specified
+* GPIO channel.
+*
+* @param	InstancePtr is a pointer to an XGpio instance to be worked on.
+* @param	Channel contains the channel of the GPIO (1 or 2) to operate on.
+* @param    Pin contains the Pin number(0~31) of a channel to operate on
+*
+* @return	Pin specifying are input or output
+*		Bits set to 0 are output and bits set to 1 are input.
+*
+* @note
+*
+* The hardware must be built for dual channels if this function is used
+* with any channel other than 1.
+*
+*****************************************************************************/
+u32 XGpio_GetPinDirection(XGpio *InstancePtr, unsigned Channel, u8 Pin)
+{
+	u32 ret;
+
+//	Xil_AssertNonvoid(InstancePtr != NULL);
+//	Xil_AssertNonvoid(InstancePtr->IsReady == XIL_COMPONENT_IS_READY);
+//	Xil_AssertNonvoid((Channel == 1)  ||
+//		((Channel == 2) &&
+//		(InstancePtr->IsDual == TRUE)));
+	Xil_AssertNonvoid((Pin>=0)&&(Pin<32));
+
+	ret=XGpio_GetDataDirection(InstancePtr, Channel);
+	return CHKB(ret,BIT32(Pin));
+}
+
+/****************************************************************************/
+/**
+* Set the input/output direction of specified Pin for the specified
+* GPIO channel.
+*
+* @param	InstancePtr is a pointer to an XGpio instance to be worked on.
+* @param	Channel contains the channel of the GPIO (1 or 2) to operate on.
+* @param    Pin contains the Pin number(0~31) of a channel to operate on
+* @param	Direction is specifying which Pin are input or output
+*				Bits set to 0 are output and bits set to 1 are input.
+*
+* @return	None.
+*
+* @note		The hardware must be built for dual channels if this function
+*		is used with any channel other than 1.
+*
+*****************************************************************************/
+void XGpio_SetPinDirection(XGpio *InstancePtr, unsigned Channel, u8 Pin, u8 Direction)
+{
+	u32 ret;
+
+//	Xil_AssertVoid(InstancePtr != NULL);
+//	Xil_AssertVoid(InstancePtr->IsReady == XIL_COMPONENT_IS_READY);
+//	Xil_AssertVoid((Channel == 1) ||
+//		     ((Channel == 2) && (InstancePtr->IsDual == TRUE)));
+	Xil_AssertNonvoid((Pin>=0)&&(Pin<32));
+
+	ret=XGpio_GetDataDirection(InstancePtr, Channel);
+	if(Direction==0)
+	{
+		CLRB(ret, BIT32(Pin));
+	}
+	else
+	{
+		SETB(ret, BIT32(Pin));
+	}
+	XGpio_SetDataDirection(InstancePtr, Channel, ret);
+}
+
+/****************************************************************************/
+/**
+* Read state of discretes for the specified GPIO channel.
+*
+* @param	InstancePtr is a pointer to an XGpio instance to be worked on.
+* @param	Channel contains the channel of the GPIO (1 or 2) to operate on.
+* @param    Pin contains the Pin number(0~31) of a channel to operate on
+*
+* @return	Current copy of the Pin bit of the discretes register.
+*
+* @note		The hardware must be built for dual channels if this function
+*		is used with any channel other than 1.
+*
+*****************************************************************************/
+u32 XGpio_ReadPin(XGpio * InstancePtr, unsigned Channel, u8 Pin)
+{
+	u32 ret;
+
+//	Xil_AssertNonvoid(InstancePtr != NULL);
+//	Xil_AssertNonvoid(InstancePtr->IsReady == XIL_COMPONENT_IS_READY);
+//	Xil_AssertNonvoid((Channel == 1) ||
+//			((Channel == 2) && (InstancePtr->IsDual == TRUE)));
+	Xil_AssertNonvoid((Pin>=0)&&(Pin<32));
+
+	ret = XGpio_DiscreteRead(InstancePtr, Channel);
+	return CHKB(ret,BIT32(Pin));
+}
+
+/****************************************************************************/
+/**
+* Write to discretes register for the specified GPIO channel.
+*
+* @param	InstancePtr is a pointer to an XGpio instance to be worked on.
+* @param	Channel contains the channel of the GPIO (1 or 2) to operate on.
+* @param    Pin contains the Pin number(0~31) of a channel to operate on
+* @param	Data is the value to be written to the Pin bit of the discretes register.
+*
+* @return	None.
+*
+* @note		This function dosen't set Pin direction
+*
+*****************************************************************************/
+void XGpio_WritePin(XGpio * InstancePtr, unsigned Channel, u8 Pin, u8 Data)
+{
+	u32 ret;
+
+//	Xil_AssertVoid(InstancePtr != NULL);
+//	Xil_AssertVoid(InstancePtr->IsReady == XIL_COMPONENT_IS_READY);
+//	Xil_AssertVoid((Channel == 1) ||
+//		     ((Channel == 2) && (InstancePtr->IsDual == TRUE)));
+	Xil_AssertNonvoid((Pin>=0)&&(Pin<32));
+
+	ret = XGpio_DiscreteRead(InstancePtr, Channel);
+	if(Data==0)
+	{
+		CLRB(ret, BIT32(Pin));
+	}
+	else
+	{
+		SETB(ret, BIT32(Pin));
+	}
+	XGpio_DiscreteWrite(InstancePtr, Channel, ret);
+}
+
+/****************************************************************************/
+/**
+* Write to discretes register for the specified GPIO channel.
+*
+* @param	InstancePtr is a pointer to an XGpio instance to be worked on.
+* @param	Channel contains the channel of the GPIO (1 or 2) to operate on.
+* @param    Pin contains the Pin number(0~31) of a channel to operate on
+*
+* @return	None.
+*
+* @note		This function dosen't set Pin direction
+*
+*****************************************************************************/
+void XGpio_TogglePin(XGpio * InstancePtr, unsigned Channel, u8 Pin)
+{
+	u32 ret;
+
+//	Xil_AssertVoid(InstancePtr != NULL);
+//	Xil_AssertVoid(InstancePtr->IsReady == XIL_COMPONENT_IS_READY);
+//	Xil_AssertVoid((Channel == 1) ||
+//		     ((Channel == 2) && (InstancePtr->IsDual == TRUE)));
+	Xil_AssertNonvoid((Pin>=0)&&(Pin<32));
+
+	ret = XGpio_DiscreteRead(InstancePtr, Channel);
+	FLPB(ret, BIT32(Pin));
+	XGpio_DiscreteWrite(InstancePtr, Channel, ret);
+}
+
 #endif // XPAR_XGPIO_NUM_INSTANCES
 
 /*
@@ -937,17 +1131,17 @@ call follows before main_loop
 #if defined(XPAR_XGPIO_I2C_0_AXI_GPIO_0_DEVICE_ID)
     Status = xgpio_i2c_init();
     if (Status != XST_SUCCESS)
-	{
-		Xil_Assert(__FILE__, __LINE__);
-		return XST_FAILURE ;
-	}
+    {
+        Xil_Assert(__FILE__, __LINE__);
+        return XST_FAILURE ;
+    }
 //#elif defined (XPAR_XGPIO_NUM_INSTANCES)
 //    Status = xgpio_setup(&XGpioInst, XPAR_AXI_GPIO_0_DEVICE_ID, 0, 0);
 //    if (Status != XST_SUCCESS)
-//	{
-//		Xil_Assert(__FILE__, __LINE__);
-//		return XST_FAILURE ;
-//	}
+//    {
+//        Xil_Assert(__FILE__, __LINE__);
+//        return XST_FAILURE ;
+//    }
 #endif // XPAR_XGPIO_I2C_0_AXI_GPIO_0_DEVICE_ID
 
 then, you can access i2c devices like:

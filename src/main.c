@@ -59,6 +59,16 @@ int main()
 
     init_platform(); // include interrupts setup
 
+//
+//#if defined(XPAR_XGPIO_NUM_INSTANCES)
+//    Status = xgpio_setup(&XGpioOutput, XPAR_GPIO_0_DEVICE_ID, 0, 0) ;
+//    if (Status != XST_SUCCESS)
+//	{
+//    	Xil_Assert(__FILE__, __LINE__);
+//		return XST_FAILURE ;
+//	}
+//#endif // XPAR_XGPIO_NUM_INSTANCES
+
 #if defined(XPAR_XGPIO_I2C_0_AXI_GPIO_0_DEVICE_ID)
     Status = xgpio_i2c_init();
     if (Status != XST_SUCCESS)
@@ -67,7 +77,7 @@ int main()
 		return XST_FAILURE ;
 	}
 //#elif defined (XPAR_XGPIO_NUM_INSTANCES)
-//    Status = xgpio_setup(&XGpioInst, XPAR_GPIO_0_DEVICE_ID, 0, 0);
+//    Status = xgpio_setup(&XGpioInst, XPAR_AXI_GPIO_0_DEVICE_ID, 0, 0);
 //    if (Status != XST_SUCCESS)
 //	{
 //		Xil_Assert(__FILE__, __LINE__);
@@ -79,13 +89,26 @@ int main()
     XIic_WriteReg(XPAR_IIC_0_BASEADDR, XIIC_GPO_REG_OFFSET, 0);
 #endif // XPAR_AXI_IIC_0_DEVICE_ID
 
+//#if defined(XPAR_AXI_GPIO_0_DEVICE_ID)
+//	Status = xgpio_setup(&XGpioInst, XPAR_AXI_GPIO_0_DEVICE_ID, 0, 0);
+//	if (Status != XST_SUCCESS)
+//	{
+//		Xil_Assert(__FILE__, __LINE__);
+//		//return XST_FAILURE ;
+//	}
+//	XGpio_DiscreteWrite(&XGpioInst, 1, 0); // all pin output low
+//#endif // XPAR_AXI_GPIO_0_DEVICE_ID
+
+#if defined (XPAR_XGPIOPS_NUM_INSTANCES)
+    PsGpioSetup(&Gpio, XPAR_PSU_GPIO_0_DEVICE_ID);
+#endif
 
     bsp_printf("\r\n\r\n***************************\n\r");
     bsp_printf("Test common API.\n\r");
     bsp_printf("\r\n%s, UTC %s\r\n",__DATE__,__TIME__);
 #if defined (XPAR_AXI_LITE_REG_NUM_INSTANCES) && (XPAR_AXI_LITE_REG_0_DEVICE_ID == 0)
-	__HW_VER__ = AXI_LITE_REG_mReadReg(XPAR_PROCESSOR_SUBSYSTEM_AXI_LITE_REG_0_S00_AXI_BASEADDR, AXI_LITE_REG_S00_AXI_SLV_REG0_OFFSET);
-//	__HW_VER__ = AXI_LITE_REG_mReadReg(XPAR_AXI_LITE_REG_0_S00_AXI_BASEADDR, AXI_LITE_REG_S00_AXI_SLV_REG0_OFFSET);
+//	__HW_VER__ = AXI_LITE_REG_mReadReg(XPAR_PROCESSOR_SUBSYSTEM_AXI_LITE_REG_0_S00_AXI_BASEADDR, AXI_LITE_REG_S00_AXI_SLV_REG0_OFFSET);
+	__HW_VER__ = AXI_LITE_REG_mReadReg(XPAR_AXI_LITE_REG_0_S00_AXI_BASEADDR, AXI_LITE_REG_S00_AXI_SLV_REG0_OFFSET);
 	bsp_printf(TXT_GREEN "hardware ver = 0x%08x\n\r" TXT_RST, __HW_VER__);
 #endif // XPAR_AXI_LITE_REG_NUM_INSTANCES
 #ifdef SW_VER_BY_COMPILE_TIME
@@ -112,10 +135,23 @@ int main()
     ISSUE_IPROG(0);
 #endif
 
-
 #if defined(__SIL9136_H__)
     sil9136_config();
 #endif
+
+#if defined(XPAR_XGPIO_NUM_INSTANCES) && defined (XPAR_XCSI2TX_NUM_INSTANCES)
+	XGpio_DiscreteWrite(&XGpioOutput, 1, 0x24); // RGB888
+//	XGpio_DiscreteWrite(&XGpioOutput, 1, 0x2A); // RAW8
+//	XGpio_DiscreteWrite(&XGpioOutput, 1, 0x2B); // RAW10
+//	XGpio_DiscreteWrite(&XGpioOutput, 1, 0x2C); // RAW12
+//	XGpio_DiscreteWrite(&XGpioOutput, 1, 0x1E); // YUV422_8bit
+//	XGpio_DiscreteWrite(&XGpioOutput, 2, VIDEO_COLUMNS*24/8<<16); // WC RGB888
+//	XGpio_DiscreteWrite(&XGpioOutput, 2, 3840*24/8<<16); // WC RGB888
+//	XGpio_DiscreteWrite(&XGpioOutput, 2, (1920*12/8)<<16); // WC RAW12
+	XGpio_DiscreteWrite(&XGpioOutput, 2, (1920*24/8)<<16); // WC RGB888
+//	XGpio_DiscreteWrite(&XGpioOutput, 2, (VIDEO_COLUMNS*10/8)<<16); // WC RAW10
+//	XGpio_DiscreteWrite(&XGpioOutput, 2, (1920*16/8)<<16); // WC YUV422_8bit
+#endif // XPAR_XGPIO_NUM_INSTANCES
 
 #if defined (SER_CFG) || defined (DES_CFG)
     // MAX9296 config
@@ -211,6 +247,24 @@ int main()
 		return XST_FAILURE ;
 	}
 #endif // XPAR_XVPROCSS_NUM_INSTANCES
+
+#if defined (XPAR_XCSI2TX_NUM_INSTANCES)
+	Status = csi_tx_config();
+	if (Status != XST_SUCCESS)
+	{
+		Xil_Assert(__FILE__, __LINE__);
+		return XST_FAILURE ;
+	}
+#endif // XPAR_XCSI2TX_NUM_INSTANCES
+
+//#if defined (XPAR_XCSI_NUM_INSTANCES)
+//	Status = csi_rx_config();
+//	if (Status != XST_SUCCESS)
+//	{
+//		Xil_Assert(__FILE__, __LINE__);
+//		return XST_FAILURE ;
+//	}
+//#endif // XPAR_XCSI_NUM_INSTANCES
 
 #if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
 	lwip_common_init(&server_netif);

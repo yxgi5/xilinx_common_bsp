@@ -996,11 +996,12 @@ int FlashErase(XQspiPsu *QspiPsuPtr, u32 Address, u32 ByteCount, u8 *WriteBfrPtr
 
 	for (Sector = 0; Sector < NumSect; Sector++) {
 
-		PercentCurr = (int)(((float)Sector/(float)NumSect)*10) ;
+		PercentCurr = (int)(((float)Sector/(float)NumSect)*10 + (float)1/2) ;
 
 		if (PercentCurr != PercentLast)
 		{
-			print_percent(PercentCurr) ;
+			//print_percent(PercentCurr) ;
+			process_print(PercentCurr) ;
 		}
 
 		PercentLast = PercentCurr ;

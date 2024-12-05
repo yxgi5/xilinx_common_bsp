@@ -89,6 +89,6 @@ bsp config n_tx_descriptors 512
 
 #define USING_EEPROM
 
-#define MODBUS_RTU_SLAVE
+//#define MODBUS_RTU_SLAVE
 
 #endif // __CONFIG_H__

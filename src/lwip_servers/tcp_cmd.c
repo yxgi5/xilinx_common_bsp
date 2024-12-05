@@ -4,6 +4,9 @@
 #if defined (TCP_COMMAND_SRV)
 
 static struct tcp_pcb *client_pcb = NULL;
+extern FlashInfo Flash_Config_Table[28];
+extern u32 FlashMake;
+extern u32 FCTIndex;	/* Flash configuration table index */
 
 void print_tcp_cmd_header(void)
 {
@@ -234,7 +237,12 @@ static err_t tcp_cmd_recv_callback(void *arg, struct tcp_pcb *tpcb, struct pbuf 
 		{
 //			uint16_t major = __SW_VER_MAJOR__;
 //			uint16_t minor = __SW_VER_MINOR__;
+#if defined (XPAR_AXI_LITE_REG_NUM_INSTANCES) && (XPAR_AXI_LITE_REG_0_DEVICE_ID == 0)
 			uint32_t ver = __HW_VER__;
+#else
+			uint32_t ver = 0;
+#endif
+
 //			msg_send = (uint32_t)(((uint32_t)major)<<16) + (uint32_t)minor;
 			msg_send = ver;
 
@@ -262,7 +270,7 @@ static err_t tcp_cmd_recv_callback(void *arg, struct tcp_pcb *tpcb, struct pbuf 
 		{
 //			uint16_t major = __SW_VER_MAJOR__;
 //			uint16_t minor = __SW_VER_MINOR__;
-			uint32_t ver = AXI_LITE_REG_mReadReg(XPAR_PROCESSOR_SUBSYSTEM_AXI_LITE_REG_0_S00_AXI_BASEADDR, AXI_LITE_REG_S00_AXI_SLV_REG0_OFFSET);
+			uint32_t ver = 0x00300000; // keep same as type==0 in qspi_update()
 //			msg_send = (uint32_t)(((uint32_t)major)<<16) + (uint32_t)minor;
 			msg_send = ver;
 
@@ -276,13 +284,34 @@ static err_t tcp_cmd_recv_callback(void *arg, struct tcp_pcb *tpcb, struct pbuf 
 		{
 //			uint16_t major = __SW_VER_MAJOR__;
 //			uint16_t minor = __SW_VER_MINOR__;
-			uint32_t ver = __SW_VER__;
+			uint32_t ver = FlashMake;
+			char *send_arr = NULL;
+			if(FlashMake == MICRON_ID_BYTE0)
+			{
+				send_arr = "MICRON";
+			}
+			else if(FlashMake == SPANSION_ID_BYTE0)
+			{
+				send_arr = "SPANSION";
+			}
+			else if(FlashMake == WINBOND_ID_BYTE0)
+			{
+				send_arr = "WINBOND";
+			}
+			else if(FlashMake == MACRONIX_ID_BYTE0)
+			{
+				send_arr = "MACRONIX";
+			}
+			else if(FlashMake == ISSI_ID_BYTE0)
+			{
+				send_arr = "ISSI";
+			}
 //			msg_send = (uint32_t)(((uint32_t)major)<<16) + (uint32_t)minor;
-			msg_send = ver;
-
+//			msg_send = ver;
+			bsp_printf("string = %s,len = %d\r\n",send_arr,strlen(send_arr));
 			memcpy(send_buf1,receivebuf1,7);
-			memcpy(send_buf1+7,&msg_send,4);
-			sendlen1 = 12;
+			memcpy(send_buf1+7,send_arr,strlen(send_arr));
+			sendlen1 = 7+strlen(send_arr)+1;
 			send_buf1[sendlen1-1] = checksum(send_buf1,sendlen1-1); 
 			memcpy(send_buf1,&sendlen1,2);
 		}
@@ -290,7 +319,8 @@ static err_t tcp_cmd_recv_callback(void *arg, struct tcp_pcb *tpcb, struct pbuf 
 		{
 //			uint16_t major = __SW_VER_MAJOR__;
 //			uint16_t minor = __SW_VER_MINOR__;
-			uint32_t ver = __SW_VER__;
+			FlashInfo*flash_ptr=&Flash_Config_Table[FCTIndex];
+			uint32_t ver = (flash_ptr->FlashDeviceSize)/1024;
 //			msg_send = (uint32_t)(((uint32_t)major)<<16) + (uint32_t)minor;
 			msg_send = ver;
 
@@ -323,7 +353,7 @@ static err_t tcp_cmd_recv_callback(void *arg, struct tcp_pcb *tpcb, struct pbuf 
 		{
 			uint8_t var1;
 			memcpy(&var1,receivebuf1+7,1);
-		//	reset_pl = var1;
+			reset_pl = var1;
 			memcpy(send_buf1,receivebuf1,7);
 			memcpy(send_buf1+7,&msg_send,1);
 			sendlen1 = 7 + 1 + 1;

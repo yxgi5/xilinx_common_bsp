@@ -45,7 +45,7 @@ int Csi2TxSs_Init(XCsi2TxSs *InstancePtr, u32 DeviceId)
 int csi_tx_config(void)
 {
 	int Status;
-
+#if (XPAR_XCSI2TX_NUM_INSTANCES >= 1U)
 	Status = Csi2TxSs_Init(&Csi2TxSsInst_0, XPAR_CSI2TXSS_0_DEVICE_ID);
 	if (Status != XST_SUCCESS)
 	{
@@ -76,7 +76,103 @@ int csi_tx_config(void)
 		//Xil_Assert(__FILE__, __LINE__);
 		return XST_FAILURE;
 	}
+#endif
+#if (XPAR_XCSI2TX_NUM_INSTANCES >= 2U)
+	Status = Csi2TxSs_Init(&Csi2TxSsInst_1, XPAR_CSI2TXSS_1_DEVICE_ID);
+	if (Status != XST_SUCCESS)
+	{
+		//Xil_Assert(__FILE__, __LINE__);
+		return XST_FAILURE;
+	}
+    XCsi2TxSs_SetClkMode(&Csi2TxSsInst_1, 0);
 
+    Status = XCsi2TxSs_SetLineCountForVC(&Csi2TxSsInst_1, 0, 1080);
+    if (Status != XST_SUCCESS)
+    {
+    	//Xil_Assert(__FILE__, __LINE__);
+    	bsp_printf(TXT_RED "In %s: XCsi2TxSs_SetLineCountForVC failed...\r\n" TXT_RST, __func__);
+		return Status;
+	}
+//    Status = XCsi2TxSs_SetLineCountForVC(&Csi2TxSsInst_1, 1, 1080);
+//    if (Status != XST_SUCCESS)
+//    {
+//    	bsp_printf(TXT_RED "In %s: XCsi2TxSs_SetLineCountForVC failed...\r\n" TXT_RST, __func__);
+//		Xil_Assert(__FILE__, __LINE__);
+//		return Status;
+//	}
+
+    Status = XCsi2TxSs_Activate(&Csi2TxSsInst_1, XCSI2TX_ENABLE);
+	if (Status != XST_SUCCESS)
+	{
+		bsp_printf(TXT_RED "In %s: XCsi2TxSs_Activate failed...\r\n" TXT_RST, __func__);
+		//Xil_Assert(__FILE__, __LINE__);
+		return XST_FAILURE;
+	}
+#endif
+#if (XPAR_XCSI2TX_NUM_INSTANCES >= 3U)
+	Status = Csi2TxSs_Init(&Csi2TxSsInst_2, XPAR_CSI2TXSS_2_DEVICE_ID);
+	if (Status != XST_SUCCESS)
+	{
+		//Xil_Assert(__FILE__, __LINE__);
+		return XST_FAILURE;
+	}
+    XCsi2TxSs_SetClkMode(&Csi2TxSsInst_2, 0);
+
+    Status = XCsi2TxSs_SetLineCountForVC(&Csi2TxSsInst_2, 0, 1080);
+    if (Status != XST_SUCCESS)
+    {
+    	//Xil_Assert(__FILE__, __LINE__);
+    	bsp_printf(TXT_RED "In %s: XCsi2TxSs_SetLineCountForVC failed...\r\n" TXT_RST, __func__);
+		return Status;
+	}
+//    Status = XCsi2TxSs_SetLineCountForVC(&Csi2TxSsInst_2, 1, 1080);
+//    if (Status != XST_SUCCESS)
+//    {
+//    	bsp_printf(TXT_RED "In %s: XCsi2TxSs_SetLineCountForVC failed...\r\n" TXT_RST, __func__);
+//		Xil_Assert(__FILE__, __LINE__);
+//		return Status;
+//	}
+
+    Status = XCsi2TxSs_Activate(&Csi2TxSsInst_2, XCSI2TX_ENABLE);
+	if (Status != XST_SUCCESS)
+	{
+		bsp_printf(TXT_RED "In %s: XCsi2TxSs_Activate failed...\r\n" TXT_RST, __func__);
+		//Xil_Assert(__FILE__, __LINE__);
+		return XST_FAILURE;
+	}
+#endif
+#if (XPAR_XCSI2TX_NUM_INSTANCES >= 4U)
+	Status = Csi2TxSs_Init(&Csi2TxSsInst_3, XPAR_CSI2TXSS_3_DEVICE_ID);
+	if (Status != XST_SUCCESS)
+	{
+		//Xil_Assert(__FILE__, __LINE__);
+		return XST_FAILURE;
+	}
+    XCsi2TxSs_SetClkMode(&Csi2TxSsInst_3, 0);
+
+    Status = XCsi2TxSs_SetLineCountForVC(&Csi2TxSsInst_3, 0, 1080);
+    if (Status != XST_SUCCESS)
+    {
+    	//Xil_Assert(__FILE__, __LINE__);
+    	bsp_printf(TXT_RED "In %s: XCsi2TxSs_SetLineCountForVC failed...\r\n" TXT_RST, __func__);
+		return Status;
+	}
+//    Status = XCsi2TxSs_SetLineCountForVC(&Csi2TxSsInst_3, 1, 1080);
+//    if (Status != XST_SUCCESS)
+//    {
+//    	bsp_printf(TXT_RED "In %s: XCsi2TxSs_SetLineCountForVC failed...\r\n" TXT_RST, __func__);
+//		Xil_Assert(__FILE__, __LINE__);
+//		return Status;
+//	}
+
+    Status = XCsi2TxSs_Activate(&Csi2TxSsInst_3, XCSI2TX_ENABLE);
+	if (Status != XST_SUCCESS)
+	{
+		bsp_printf(TXT_RED "In %s: XCsi2TxSs_Activate failed...\r\n" TXT_RST, __func__);
+		//Xil_Assert(__FILE__, __LINE__);
+		return XST_FAILURE;
+	}
+#endif
     return XST_SUCCESS;
 }
 

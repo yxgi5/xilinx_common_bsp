@@ -50,6 +50,8 @@ XTtcPs TimerInstance;
 
 #define PLATFORM_EMAC_BASEADDR XPAR_XEMACPS_0_BASEADDR
 
+extern enum ethernet_link_status eth_link_status;
+
 #endif // #if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
 
 void enable_caches(void)
@@ -120,6 +122,7 @@ void platform_clear_interrupt( XTtcPs * TimerInstance )
 void timer_callback(XTtcPs * TimerInstance)
 {
 	static int DetectEthLinkStatus = 0;
+	static int LEDStatus = 0;
 	/* we need to call tcp_fasttmr & tcp_slowtmr at intervals specified
 	 * by lwIP. It is not important that the timing is absoluetly accurate.
 	 */
@@ -149,6 +152,22 @@ void timer_callback(XTtcPs * TimerInstance)
 	if (DetectEthLinkStatus == ETH_LINK_DETECT_INTERVAL) {
 		eth_link_detect(&server_netif);
 		DetectEthLinkStatus = 0;
+	}
+
+	if(eth_link_status == ETH_LINK_UP)
+	{
+		if(LEDStatus == 0)
+		{
+			LEDStatus = 1;
+			//XGpio_WritePin(&XGpioInst, 1, 1, 1);
+			XGpioPs_WritePin(&Gpio, PL_LOCK_LED, 1) ;
+		}
+	}
+	else
+	{
+		LEDStatus = 0;
+		//XGpio_TogglePin(&XGpioInst, 1, 1);
+		XGpioPs_TogglePin(&Gpio, PL_LOCK_LED) ;
 	}
 
 	platform_clear_interrupt(TimerInstance);

@@ -161,7 +161,7 @@ void transfer_data(struct netif *netif)
 	if(reset_pl)
 	{
 		reset_pl = 0;
-		// TODO: PsSoftwareReset();
+		PsSoftwareReset();
 	}
 }
 

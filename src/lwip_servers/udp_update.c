@@ -151,10 +151,13 @@ void udp_update_recv_callback(void *arg, struct udp_pcb *upcb, struct pbuf *p,
 		{
 			start_update_type = 0;
 			start_update_flag = 1;
-			udp_update_svr_send_msg("Start QSPI Update\r\n");
+			udp_update_svr_send_msg("md5sum Verify Successful!!!Start QSPI Update\r\n");
 		}
 		else
 		{
+			udp_update_svr_send_msg("md5sum Verify Failed!!!\r\n");
+	        bsp_printf("tsize = %d\r\n", tsize);
+	        bsp_printf("file size of BOOT.bin is %lu Bytes\r\n", total_bytes);
 			memset(md5sum, 0, 16);
 			tsize = 0;
 			total_bytes = 0;
@@ -167,10 +170,13 @@ void udp_update_recv_callback(void *arg, struct udp_pcb *upcb, struct pbuf *p,
 		{
 			start_update_flag = 1;
 			start_update_type = 1;
-			udp_update_svr_send_msg("Start QSPI Update\r\n");
+			udp_update_svr_send_msg("md5sum Verify Successful!!!Start QSPI Update\r\n");
 		}
 		else
 		{
+			udp_update_svr_send_msg("md5sum Verify Failed!!!\r\n");
+	        bsp_printf("tsize = %d\r\n", tsize);
+	        bsp_printf("file size of BOOT.bin is %lu Bytes\r\n", total_bytes);
 			memset(md5sum, 0, 16);
 			tsize = 0;
 			total_bytes = 0;
