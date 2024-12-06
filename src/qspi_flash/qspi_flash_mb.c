@@ -280,9 +280,9 @@ int qspi_update(u32 total_bytes, const u8 *flash_data, int type)
 
     if(type==0)
     {
-    	write_addr = 0x00900000;
-    	read_addr  = 0x00900000;
-    	erase_addr = 0x00900000;
+    	write_addr = 0x00A00000;
+    	read_addr  = 0x00A00000;
+    	erase_addr = 0x00A00000;
     }
 
 	if (Flash_Config_Table[FCTIndex].FlashDeviceSize > SIXTEENMB)

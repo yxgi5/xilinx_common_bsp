@@ -87,7 +87,7 @@ void init_uart(void)
 
 #if defined (INTC_DEVICE_ID) || defined (INTC_CONNECT)
 
-#if defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID) && defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID)
+#if defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID)
 #if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
 void timer00_callback(void)
 {
@@ -131,13 +131,13 @@ void timer00_callback(void)
 		if(LEDStatus == 0)
 		{
 			LEDStatus = 1;
-			//XGpio_WritePin(&XGpioInst, 1, 1, 1);
+//			XGpio_WritePin(&XGpioInst, 1, 1, 1);
 		}
 	}
 	else
 	{
 		LEDStatus = 0;
-		//XGpio_TogglePin(&XGpioInst, 1, 1);
+//		XGpio_TogglePin(&XGpioInst, 1, 1);
 	}
 }
 
@@ -163,7 +163,7 @@ void Timer0Handler(void *CallBackRef, u8 TmrCtrNumber)
 }
 #endif // #if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
 
-#if defined (MODBUS_RTU_SLAVE)
+#if defined (MODBUS_RTU_SLAVE) && defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID)
 void Timer1Handler(void *CallBackRef, u8 TmrCtrNumber)
 {
 	XTmrCtr *InstancePtr = (XTmrCtr *)CallBackRef;
@@ -186,9 +186,11 @@ void Timer1Handler(void *CallBackRef, u8 TmrCtrNumber)
 //		}
 	}
 }
-#endif // #if defined (MODBUS_RTU_SLAVE)
+#endif // #if defined (MODBUS_RTU_SLAVE) && defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID)
 
-#endif // #if defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID) && defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID)
+#endif // #if defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID)
+
+
 
 #if !defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID) && defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID)
 #if defined (MODBUS_RTU_SLAVE)
@@ -220,8 +222,6 @@ void Timer0Handler(void *CallBackRef, u8 TmrCtrNumber)
 #endif // #if defined (INTC_DEVICE_ID) || defined (INTC_CONNECT)
 
 
-
-
 #if defined (INTC_DEVICE_ID) || defined (INTC)
 
 int platform_setup_interrupts(void)
@@ -244,7 +244,7 @@ int platform_setup_interrupts(void)
 	Xil_ExceptionRegisterHandler(XIL_EXCEPTION_ID_INT, (XExceptionHandler)INTC_HANDLER, &InterruptController);
 
 #if defined (__AXI_TIMER_H_)
-#if defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID) && defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID)
+#if defined (XPAR_ETHERNET_SUBSYSTEM_AXI_TIMER_0_DEVICE_ID)
 #if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
 	Status = timer0_init();
 	if (Status != XST_SUCCESS) {
@@ -252,7 +252,7 @@ int platform_setup_interrupts(void)
 		return XST_FAILURE;
 	}
 #endif //#if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
-#if defined (MODBUS_RTU_SLAVE)
+#if defined (MODBUS_RTU_SLAVE) && defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID)
 	Status = timer1_init();
 	if (Status != XST_SUCCESS) {
 		bsp_printf(TXT_RED "timer1_init Failed\r\n" TXT_RST);

@@ -153,6 +153,7 @@ int main()
 //	XGpio_DiscreteWrite(&XGpioOutput, 2, (1920*16/8)<<16); // WC YUV422_8bit
 #endif // XPAR_XGPIO_NUM_INSTANCES
 
+#if defined(XPAR_XGPIO_I2C_0_AXI_GPIO_0_DEVICE_ID)
 #if defined (SER_CFG) || defined (DES_CFG)
     // MAX9296 config
     u8 ret8=0;
@@ -190,6 +191,7 @@ int main()
     Status = xgpio_i2c_reg16_read(I2C_NO_3, 0x80>>1, 0x0001, &ret8, STRETCH_ON);
 #endif // SER_CFG
 #endif // SER_CFG || DES_CFG
+#endif // #if defined(XPAR_XGPIO_I2C_0_AXI_GPIO_0_DEVICE_ID)
 
 #if defined (XPAR_XAXIS_SWITCH_NUM_INSTANCES)
     Status = axis_switch_cfg(0);
@@ -230,13 +232,13 @@ int main()
 
 #if defined (XPAR_XAXIVDMA_NUM_INSTANCES)
     clear_display();
-//    vdma_config_direct();
-	Status = vdma_config();
-	if (Status != XST_SUCCESS)
-	{
-		Xil_Assert(__FILE__, __LINE__);
-		return XST_FAILURE ;
-	}
+    vdma_config_direct();
+//	Status = vdma_config();
+//	if (Status != XST_SUCCESS)
+//	{
+//		Xil_Assert(__FILE__, __LINE__);
+//		return XST_FAILURE ;
+//	}
 #endif // XPAR_XAXIVDMA_NUM_INSTANCES
 
 #if defined (XPAR_XVPROCSS_NUM_INSTANCES)

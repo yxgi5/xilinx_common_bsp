@@ -1,6 +1,6 @@
 #ifndef __SERDES_H__
 
-#if defined (__XGPIO_I2C_H__)
+#if defined(XPAR_XGPIO_I2C_0_AXI_GPIO_0_DEVICE_ID)
 #if defined (SER_CFG) || defined (DES_CFG)
 #define __SERDES_H__
 //#include "xil_types.h"
@@ -30,7 +30,7 @@ void max929x_write_array(i2c_no i2c, struct reginfo *regarray);
 
 #endif // SER_CFG || DES_CFG
 
-#endif // __XGPIO_I2C_H__
+#endif // #if defined(XPAR_XGPIO_I2C_0_AXI_GPIO_0_DEVICE_ID)
 
 #endif // __SERDES_H__
 
