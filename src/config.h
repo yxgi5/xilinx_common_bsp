@@ -58,21 +58,20 @@ ps i2c dosen't support streching, use MIO/XGPIO or XIIC
  * for remote update tcl settings
 domain active
 bsp setlib -name lwip211
-bsp config mem_size 33554432
+bsp config mem_size 524288
 bsp config memp_n_pbuf 4096
 bsp config memp_n_tcp_pcb 1024
 bsp config memp_n_tcp_seg 1024
-##bsp config pbuf_pool_size 2048
-bsp config pbuf_pool_size 4096
+bsp config pbuf_pool_size 2048 or 4096
 bsp config tcp_snd_buf 65535
 bsp config tcp_wnd 8192
  * for remote update tcl settings(zynq/znyqmp)
 bsp setlib -name lwip211
-bsp config mem_size 524288
-bsp config memp_n_pbuf 1024
-bsp config memp_n_tcp_pcb 32
+bsp config mem_size 524288 or 33554432 or 134217728
+bsp config memp_n_pbuf 4096
+bsp config memp_n_tcp_pcb 1024
 bsp config memp_n_tcp_seg 1024
-bsp config pbuf_pool_size 16384
+bsp config pbuf_pool_size 4096 or 16384
 bsp config tcp_snd_buf 65535
 bsp config tcp_wnd 65535
 bsp config n_rx_descriptors 512
