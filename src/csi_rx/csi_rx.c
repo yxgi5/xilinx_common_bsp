@@ -230,7 +230,7 @@ void print_csi_rx_reg_info(XCsiSs *InstancePtr, u8 verbose)
 		bsp_printf("(0x6C)Image Information 2 for VC1     = 0x%08x\r\n", Xil_In32(Addr+0x6C));
 		bsp_printf("(0x70)Image Information 1 for VC2     = 0x%08x\r\n", Xil_In32(Addr+0x70));
 		bsp_printf("(0x74)Image Information 2 for VC2     = 0x%08x\r\n", Xil_In32(Addr+0x74));
-		bsp_printf("(0x78)Image Information 1 for VC3     = 0x%08x\r\n", Xil_In32(Addr+0x78));
+		bsp_printf("(0x78)Image Information 1 for VC3     = 0x%08x\r\n", Xil_In32(Addr+0x78));  
 		bsp_printf("(0x7C)Image Information 2 for VC3     = 0x%08x\r\n", Xil_In32(Addr+0x7C));
 		bsp_printf("(0x80)Image Information 1 for VC4     = 0x%08x\r\n", Xil_In32(Addr+0x80));
 		bsp_printf("(0x84)Image Information 2 for VC4     = 0x%08x\r\n", Xil_In32(Addr+0x84));
@@ -311,4 +311,67 @@ call follows before main_loop, especially call csi_tx_config() after axis prepar
 		Xil_Assert(__FILE__, __LINE__);
 		return XST_FAILURE ;
 	}
+
+
+
+// a good status
+////		if (0x24) looks like 0x80020000, the camera should work well
+////		(0x00)Core Configuration Register     = 0x00000001
+////		(0x04)Protocol Configuration Register = 0x00000009
+////		(0x10)Core Status Register            = 0x5C8C0000
+////		(0x20)Global Interrupt Enable Register= 0x00000000
+////		(0x24)Interrupt Status Register       = 0x80020000
+////		(0x28)Interrupt Enable Register       = 0x00000000
+////		(0x30)Generic Short Packet Register   = 0x00000000
+////		(0x34)VCX Frame Error Register        = 0x00000000
+////		(0x3C)Clock Lane Information Register = 0x00000000
+////		(0x40)Lane0 Information               = 0x00000020
+////		(0x44)Lane1 Information               = 0x00000000
+////		(0x48)Lane2 Information               = 0x00000000
+////		(0x4C)Lane3 Information               = 0x00000000
+////		(0x60)Image Information 1 for VC0     = 0x5F830640
+////		(0x64)Image Information 2 for VC0     = 0x0000002B
+////		(0x68)Image Information 1 for VC1     = 0x00000000
+////		(0x6C)Image Information 2 for VC1     = 0x00000000
+////		(0x70)Image Information 1 for VC2     = 0x00000000
+////		(0x74)Image Information 2 for VC2     = 0x00000000
+////		(0x78)Image Information 1 for VC3     = 0x00000000
+////		(0x7C)Image Information 2 for VC3     = 0x00000000
+////		(0x80)Image Information 1 for VC4     = 0x00000000
+////		(0x84)Image Information 2 for VC4     = 0x00000000
+////		(0x88)Image Information 1 for VC5     = 0x00000000
+////		(0x8C)Image Information 2 for VC5     = 0x00000000
+////		(0x90)Image Information 1 for VC6     = 0x00000000
+////		(0x94)Image Information 2 for VC6     = 0x00000000
+////		(0x98)Image Information 1 for VC7     = 0x00000000
+////		(0x9C)Image Information 2 for VC7     = 0x00000000
+////		(0xA0)Image Information 1 for VC8     = 0x00000000
+////		(0xA4)Image Information 2 for VC8     = 0x00000000
+////		(0xA8)Image Information 1 for VC9     = 0x00000000
+////		(0xAC)Image Information 2 for VC9     = 0x00000000
+////		(0xB0)Image Information 1 for VC10    = 0x00000000
+////		(0xB4)Image Information 2 for VC10    = 0x00000000
+////		(0xB8)Image Information 1 for VC11    = 0x00000000
+////		(0xBC)Image Information 2 for VC11    = 0x00000000
+////		(0xC0)Image Information 1 for VC12    = 0x00000000
+////		(0xC4)Image Information 2 for VC12    = 0x00000000
+////		(0xC8)Image Information 1 for VC13    = 0x00000000
+////		(0xCC)Image Information 2 for VC13    = 0x00000000
+////		(0xD0)Image Information 1 for VC14    = 0x00000000
+////		(0xD4)Image Information 2 for VC14    = 0x00000000
+////		(0xD8)Image Information 1 for VC15    = 0x00000000
+////		(0xDC)Image Information 2 for VC15    = 0x00000000
+////		(0x00)D-PHY CONTROL                   = 0x00000002
+////		(0x04)D-PHY IDELAY_TAP_VALUE          = 0x00000000
+////		(0x08)D-PHY INIT                      = 0x000186A0
+////		(0x10)D-PHY HS_TIMEOUT                = 0x00000000
+////		(0x14)D-PHY ESC_TIMEOUT               = 0x00000000
+////		(0x18)D-PHY CL_STATUS                 = 0x00000009
+////		(0x1C)D-PHY DL0_STATUS                = 0x69E60009
+////		(0x20)D-PHY DL1_STATUS                = 0x6A4F0009
+////		(0x24)D-PHY DL2_STATUS                = 0x00000008
+////		(0x28)D-PHY DL3_STATUS                = 0x00000008
+////		(0x30)D-PHY HS_SETTLE L0              = 0x00000091
+////		(0x48)D-PHY HS_SETTLE L1              = 0x00000091
+
 */
