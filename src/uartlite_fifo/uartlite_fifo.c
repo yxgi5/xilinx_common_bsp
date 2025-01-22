@@ -116,6 +116,7 @@ void Uart0TxCpltIRQ(UART_T *_pUart)
 			_pUart->usTxRead = 0;
 		}
 		_pUart->usTxCount--;
+		usleep(1000);
 	}
 	//else
 	if (_pUart->usTxCount == 0)
