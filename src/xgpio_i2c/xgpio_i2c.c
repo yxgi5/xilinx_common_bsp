@@ -115,6 +115,28 @@ int xgpio_i2c_init(void)
 //	XGpio_DiscreteWrite(&XGpioInstI2c, 1, 0xfff);
 
 
+	// rs485 input
+//	while(!XUartLite_IsTransmitEmpty(XPAR_UARTLITE_0_BASEADDR));
+//	XGpio_DiscreteWrite(&XGpioInst, 2, 0);
+
+    // rs485 usage:
+//    while(!XUartLite_IsTransmitEmpty(STDOUT_BASEADDRESS));
+//    XGpio_DiscreteWrite(&XGpioInst, 2, 0);
+//    if (!XUartLite_IsReceiveEmpty(XPAR_UARTLITE_0_BASEADDR))
+//    {
+//    	u8 Data;
+//		Data = XUartLite_RecvByte(XPAR_UARTLITE_0_BASEADDR);
+//    	if((Data == 'A'))
+//    	{
+//			...
+//			XGpio_DiscreteWrite(&XGpioInst, 2, 1);
+//			xil_printf();
+//    		...
+//			while(!XUartLite_IsTransmitEmpty(XPAR_UARTLITE_0_BASEADDR));
+//			XGpio_DiscreteWrite(&XGpioInst, 2, 0);
+//    	}
+//    }
+
 	return XST_SUCCESS ;
 }
 

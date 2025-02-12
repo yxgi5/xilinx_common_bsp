@@ -768,3 +768,22 @@ void it6801_init(void)
 
 #endif // __XGPIO_I2C_H__ && IT6801
 
+
+/*
+usage:
+assume you have a IT6801, corresponding to I2C_0
+call follows before main_loop
+```
+#if defined(__IT6801__)
+    it6801_init();
+#endif
+```
+
+in main_loop add 
+```
+#if defined(__IT6801__)
+    	it6801_InterruptHandler();
+#endif
+```
+
+*/
