@@ -181,11 +181,35 @@ int csi_tx_config(void)
 
 /*
 usage:
+assume you have a xgpio to set 96 bit user data
 
-call follows before main_loop, especially after axis prepared(tpg,vdma,vpss)
+declare a globle variable before main()
+```
+XGpio XGpioOutput;
+```
+
+call follows before main_loop, especially call csi_tx_config() after axis prepared(tpg,vdma,vpss)
+
+    Status = xgpio_setup(&XGpioOutput, XPAR_GPIO_0_DEVICE_ID, 0, 0) ;
+    if (Status != XST_SUCCESS)
+	{
+    	Xil_Assert(__FILE__, __LINE__);
+		return XST_FAILURE ;
+	}
+	XGpio_DiscreteWrite(&XGpioOutput, 1, 0x24); // RGB888
+//	XGpio_DiscreteWrite(&XGpioOutput, 1, 0x2A); // RAW8
+//	XGpio_DiscreteWrite(&XGpioOutput, 1, 0x2B); // RAW10
+//	XGpio_DiscreteWrite(&XGpioOutput, 1, 0x2C); // RAW12
+//	XGpio_DiscreteWrite(&XGpioOutput, 1, 0x1E); // YUV422_8bit
+//	XGpio_DiscreteWrite(&XGpioOutput, 2, VIDEO_COLUMNS*24/8<<16); // WC RGB888
+//	XGpio_DiscreteWrite(&XGpioOutput, 2, 3840*24/8<<16); // WC RGB888
+//	XGpio_DiscreteWrite(&XGpioOutput, 2, (1920*12/8)<<16); // WC RAW12
+	XGpio_DiscreteWrite(&XGpioOutput, 2, (1920*24/8)<<16); // WC RGB888
+//	XGpio_DiscreteWrite(&XGpioOutput, 2, (VIDEO_COLUMNS*10/8)<<16); // WC RAW10
+//	XGpio_DiscreteWrite(&XGpioOutput, 2, (1920*16/8)<<16); // WC YUV422_8bit
 
 	//after axis prepared
-	Status = csi_rx_config();
+	Status = csi_tx_config();
 	if (Status != XST_SUCCESS)
 	{
 		Xil_Assert(__FILE__, __LINE__);
