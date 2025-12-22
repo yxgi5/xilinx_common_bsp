@@ -46,7 +46,7 @@ uint8_t receivebuf1[1500] = {0};
 uint8_t send_buf1[1500] = {0};
 int receivelen1 = 0;
 int sendlen1 = 0;
-u8 cerrent_ch;
+static u8 cerrent_ch;
 
 static err_t tcp_cmd_recv_callback(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, err_t err)
 {

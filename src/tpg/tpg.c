@@ -43,7 +43,7 @@
 
 #if (XPAR_XV_TPG_NUM_INSTANCES >= 1U)
 XV_tpg tpg_inst0;
-XVidC_ColorFormat colorFmtIn0 = XVIDC_CSF_RGB;
+static XVidC_ColorFormat colorFmtIn0 = XVIDC_CSF_RGB;
 u32 bckgndId0=XTPG_BKGND_COLOR_BARS;
 #endif // XPAR_XV_TPG_NUM_INSTANCES == 1U
 #if (XPAR_XV_TPG_NUM_INSTANCES >= 2U)
@@ -124,7 +124,7 @@ int tpg_config(void)
 {
     int Status;
 
-    Status = XV_tpg_Initialize(&tpg_inst0, XPAR_V_TPG_0_DEVICE_ID);
+    Status = XV_tpg_Initialize(&tpg_inst0, XPAR_XV_TPG_0_DEVICE_ID);
     if(Status!= XST_SUCCESS)
     {
         bsp_printf("TPG0 configuration failed\r\n");

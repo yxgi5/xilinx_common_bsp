@@ -41,7 +41,7 @@ int csi_rx_config(void)
 {
 	int Status;
 #if (XPAR_XCSI_NUM_INSTANCES >= 1U)
-	Status = Csi2RxSs_Init(&Csi2RxSsInst_0, XPAR_MIPI_CSI2_RX_SUBSYST_0_DEVICE_ID);
+	Status = Csi2RxSs_Init(&Csi2RxSsInst_0, XPAR_CSI_0_DEVICE_ID);
 	if (Status != XST_SUCCESS)
 	{
 		//Xil_Assert(__FILE__, __LINE__);

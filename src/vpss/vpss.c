@@ -17,11 +17,11 @@ XVidC_VideoTiming const *TimingPtr;
 XVidC_VideoMode resId;
 XVidC_VideoStream StreamIn, StreamOut;
 XVidC_VideoTiming const *TimingPtr;
-XVidC_FrameRate fpsIn = XVIDC_FR_30HZ;
-XVidC_FrameRate fpsOut = XVIDC_FR_30HZ;
-XVidC_ColorFormat colorFmtIn0 = XVIDC_CSF_RGB;
-//XVidC_ColorFormat colorFmtIn0 = XVIDC_CSF_YCRCB_422;
-XVidC_ColorFormat colorFmtOut0 = XVIDC_CSF_RGB;
+static XVidC_FrameRate fpsIn = XVIDC_FR_30HZ;
+static XVidC_FrameRate fpsOut = XVIDC_FR_30HZ;
+static XVidC_ColorFormat colorFmtIn0 = XVIDC_CSF_RGB;
+//static XVidC_ColorFormat colorFmtIn0 = XVIDC_CSF_YCRCB_422;
+static XVidC_ColorFormat colorFmtOut0 = XVIDC_CSF_RGB;
 
 /* Assign Mode ID Enumeration. First entry Must be > XVIDC_VM_CUSTOM */
 typedef enum {

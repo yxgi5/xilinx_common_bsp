@@ -31,7 +31,7 @@ uint8_t receivebuf[1500] = {0};
 uint8_t send_buf[1500] = {0};
 int receivelen = 0;
 int sendlen = 0;
-u8 cerrent_ch;
+static u8 cerrent_ch;
 
 void udp_cmd_recv_callback(void *arg, struct udp_pcb *upcb, struct pbuf *p,
 		const ip_addr_t *addr, u16_t port)
