@@ -65,7 +65,7 @@ int main()
 //    if (Status != XST_SUCCESS)
 //	{
 //    	Xil_Assert(__FILE__, __LINE__);
-//		return XST_FAILURE ;
+////		return XST_FAILURE ;
 //	}
 //#endif // XPAR_XGPIO_NUM_INSTANCES
 
@@ -74,14 +74,14 @@ int main()
     if (Status != XST_SUCCESS)
 	{
 		Xil_Assert(__FILE__, __LINE__);
-		return XST_FAILURE ;
+//		return XST_FAILURE ;
 	}
 //#elif defined (XPAR_XGPIO_NUM_INSTANCES)
 //    Status = xgpio_setup(&XGpioInst, XPAR_AXI_GPIO_0_DEVICE_ID, 0, 0);
 //    if (Status != XST_SUCCESS)
 //	{
 //		Xil_Assert(__FILE__, __LINE__);
-//		return XST_FAILURE ;
+////		return XST_FAILURE ;
 //	}
 #endif // XPAR_XGPIO_I2C_0_AXI_GPIO_0_DEVICE_ID
 
@@ -198,7 +198,7 @@ int main()
     if (Status != XST_SUCCESS)
 	{
 		Xil_Assert(__FILE__, __LINE__);
-		return XST_FAILURE ;
+//		return XST_FAILURE ;
 	}
 #endif // XPAR_XAXIS_SWITCH_NUM_INSTANCES
 
@@ -207,7 +207,7 @@ int main()
     if (Status != XST_SUCCESS)
 	{
 		Xil_Assert(__FILE__, __LINE__);
-		return XST_FAILURE ;
+//		return XST_FAILURE ;
 	}
 #endif // XPAR_XCLK_WIZ_NUM_INSTANCES
 
@@ -216,7 +216,7 @@ int main()
     if (Status != XST_SUCCESS)
 	{
 		Xil_Assert(__FILE__, __LINE__);
-		return XST_FAILURE ;
+//		return XST_FAILURE ;
 	}
 #endif // XPAR_XVTC_NUM_INSTANCES
 
@@ -225,7 +225,7 @@ int main()
     if (Status != XST_SUCCESS)
 	{
 		Xil_Assert(__FILE__, __LINE__);
-		return XST_FAILURE ;
+//		return XST_FAILURE ;
 	}
 #endif // XPAR_XV_TPG_NUM_INSTANCES
 
@@ -246,16 +246,34 @@ int main()
 	if (Status != XST_SUCCESS)
 	{
 		Xil_Assert(__FILE__, __LINE__);
-		return XST_FAILURE ;
+//		return XST_FAILURE ;
 	}
 #endif // XPAR_XVPROCSS_NUM_INSTANCES
+
+#if defined (XPAR_XV_GAMMA_LUT_NUM_INSTANCES)
+	Status = gamma_lut_init(XPAR_XV_GAMMA_LUT_0_DEVICE_ID, 1920, 1080, XVIDC_CSF_RGB);
+	if (Status != XST_SUCCESS)
+	{
+		Xil_Assert(__FILE__, __LINE__);
+//		return XST_FAILURE ;
+	}
+#endif // XPAR_XV_GAMMA_LUT_NUM_INSTANCES
+
+#if defined (XPAR_XV_DEMOSAIC_NUM_INSTANCES)
+	Status = demosaic_init(XPAR_XV_DEMOSAIC_0_DEVICE_ID, 0, 1920, 1080);
+	if (Status != XST_SUCCESS)
+	{
+		Xil_Assert(__FILE__, __LINE__);
+//		return XST_FAILURE ;
+	}
+#endif // XPAR_XV_DEMOSAIC_NUM_INSTANCES
 
 #if defined (XPAR_XCSI2TX_NUM_INSTANCES)
 	Status = csi_tx_config();
 	if (Status != XST_SUCCESS)
 	{
 		Xil_Assert(__FILE__, __LINE__);
-		return XST_FAILURE ;
+//		return XST_FAILURE ;
 	}
 #endif // XPAR_XCSI2TX_NUM_INSTANCES
 
@@ -264,7 +282,7 @@ int main()
 //	if (Status != XST_SUCCESS)
 //	{
 //		Xil_Assert(__FILE__, __LINE__);
-//		return XST_FAILURE ;
+////		return XST_FAILURE ;
 //	}
 //#endif // XPAR_XCSI_NUM_INSTANCES
 
