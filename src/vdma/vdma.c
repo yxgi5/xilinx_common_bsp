@@ -415,6 +415,8 @@ void vdma_config_m32_0(void)
     /* Configure the Write interface (S2MM)*/
     // S2MM Control Register
     Xil_Out32(XPAR_AXI_VDMA_0_BASEADDR + 0x30, 0x8B);
+//    Xil_Out32(XPAR_AXI_VDMA_0_BASEADDR + 0x30, 0x04);//reset
+//    Xil_Out32(XPAR_AXI_VDMA_0_BASEADDR + 0x30, 0x08);//gen_lock
 #if (XPAR_AXI_VDMA_0_NUM_FSTORES >= 1U)
     Xil_Out32(XPAR_AXI_VDMA_0_BASEADDR + 0x44, 0x00);
     //S2MM Start Address 1
@@ -556,6 +558,8 @@ void vdma_config_m32_0(void)
     /* Configure the Read interface (MM2S)*/
     // MM2S Control Register
     Xil_Out32(XPAR_AXI_VDMA_0_BASEADDR + 0x00, 0x8B);
+//    Xil_Out32(XPAR_AXI_VDMA_0_BASEADDR + 0x00, 0x04);//reset
+//    Xil_Out32(XPAR_AXI_VDMA_0_BASEADDR + 0x00, 0x08);//gen_lock
 #if (XPAR_AXI_VDMA_0_NUM_FSTORES >= 1U)
     Xil_Out32(XPAR_AXI_VDMA_0_BASEADDR + 0x14, 0x00);
     //MM2S Start Address 1
