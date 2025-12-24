@@ -552,6 +552,8 @@ void vdma_config_m32_0(void)
     Xil_Out32(XPAR_AXI_VDMA_0_BASEADDR + 0xA8, stride0*bytePerPixels);
     // S2MM HSIZE register
     Xil_Out32(XPAR_AXI_VDMA_0_BASEADDR + 0xA4, width0*bytePerPixels);
+	//
+//    Xil_Out32(XPAR_AXI_VDMA_0_BASEADDR + 0x30, 0x03);//en
     // S2MM VSIZE register
     Xil_Out32(XPAR_AXI_VDMA_0_BASEADDR + 0xA0, height0);
 
@@ -695,6 +697,8 @@ void vdma_config_m32_0(void)
     Xil_Out32(XPAR_AXI_VDMA_0_BASEADDR + 0x58, stride1*bytePerPixels);
     // MM2S HSIZE register
     Xil_Out32(XPAR_AXI_VDMA_0_BASEADDR + 0x54, width1*bytePerPixels);
+	//
+//    Xil_Out32(XPAR_AXI_VDMA_0_BASEADDR + 0x00, 0x03);//en
     // MM2S VSIZE register
     Xil_Out32(XPAR_AXI_VDMA_0_BASEADDR + 0x50, height1);
 
