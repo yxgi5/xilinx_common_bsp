@@ -4,6 +4,16 @@
 
 #if (XPAR_XAXIVDMA_NUM_INSTANCES >= 1U)
 XAxiVdma Vdma0;
+#if defined(USE_INTR)
+#if defined(XPAR_FABRIC_AXI_VDMA_0_MM2S_INTROUT_INTR)
+volatile static int ReadDone;
+volatile static int ReadError;
+#endif
+#if defined(XPAR_FABRIC_AXI_VDMA_0_S2MM_INTROUT_INTR)
+volatile static int WriteDone;
+volatile static int WriteError;
+#endif
+#endif
 #endif
 #if (XPAR_XAXIVDMA_NUM_INSTANCES >= 2U)
 XAxiVdma Vdma1;
@@ -25,6 +35,88 @@ XAxiVdma Vdma6;
 #endif
 #if (XPAR_XAXIVDMA_NUM_INSTANCES >= 8U)
 XAxiVdma Vdma7;
+#endif
+
+#if defined(USE_INTR) && defined(XPAR_FABRIC_AXI_VDMA_0_S2MM_INTROUT_INTR)
+/*****************************************************************************/
+/*
+ * Call back function for write channel
+ *
+ * This callback only clears the interrupts and updates the transfer status.
+ *
+ * @param	CallbackRef is the call back reference pointer
+ * @param	Mask is the interrupt mask passed in from the driver
+ *
+ * @return	None
+ *
+ ******************************************************************************/
+static void WriteCallBack(void *CallbackRef, u32 Mask)
+{
+	if (Mask & XAXIVDMA_IXR_FRMCNT_MASK)
+	{
+		WriteDone += 1;
+	}
+}
+
+/*****************************************************************************/
+/*
+ * Call back function for write channel error interrupt
+ *
+ * @param	CallbackRef is the call back reference pointer
+ * @param	Mask is the interrupt mask passed in from the driver
+ *
+ * @return	None
+ *
+ ******************************************************************************/
+static void WriteErrorCallBack(void *CallbackRef, u32 Mask)
+{
+
+	if (Mask & XAXIVDMA_IXR_ERROR_MASK) {
+		WriteError += 1;
+	}
+}
+#endif
+
+#if defined(USE_INTR) && defined(XPAR_FABRIC_AXI_VDMA_0_MM2S_INTROUT_INTR)
+/*****************************************************************************/
+/*
+ * Call back function for read channel
+ *
+ * This callback only clears the interrupts and updates the transfer status.
+ *
+ * @param	CallbackRef is the call back reference pointer
+ * @param	Mask is the interrupt mask passed in from the driver
+ *
+ * @return	None
+*
+******************************************************************************/
+static void ReadCallBack(void *CallbackRef, u32 Mask)
+{
+
+	if (Mask & XAXIVDMA_IXR_FRMCNT_MASK)
+	{
+		ReadDone += 1;
+	}
+}
+
+/*****************************************************************************/
+/*
+ * Call back function for read channel error interrupt
+ *
+ * @param	CallbackRef is the call back reference pointer
+ * @param	Mask is the interrupt mask passed in from the driver
+ *
+ * @return	None
+*
+******************************************************************************/
+static void ReadErrorCallBack(void *CallbackRef, u32 Mask)
+{
+
+	if (Mask & XAXIVDMA_IXR_ERROR_MASK)
+	{
+		ReadError += 1;
+	}
+}
 #endif
 
 int vdma_init(XAxiVdma *InstancePtr, u16 DeviceID)
@@ -99,6 +191,11 @@ int vdma_read_init
 		}
 	}
 
+	vdma_read_stop(InstancePtr);
+#if defined(USE_INTR) && defined(XPAR_FABRIC_AXI_VDMA_0_MM2S_INTROUT_INTR)
+	XAxiVdma_IntrDisable(InstancePtr, XAXIVDMA_IXR_ALL_MASK, XAXIVDMA_READ);
+#endif
+
 	Status = XAxiVdma_SetFrmStore(InstancePtr, 3, XAXIVDMA_READ);
 	if (Status != XST_SUCCESS)
 	{
@@ -129,10 +226,14 @@ int vdma_read_init
 		return XST_FAILURE;
 	}
 
+//	ReadCfg.EnableCircularBuf = 0;
 	ReadCfg.EnableCircularBuf = 1;
+
 	ReadCfg.EnableFrameCounter = 0;
 	ReadCfg.FixedFrameStoreAddr = 0;
 
+//	ReadCfg.EnableSync = 0;
+//	ReadCfg.PointNum = 0;
 	ReadCfg.EnableSync = 1;
 	ReadCfg.PointNum = 1;
 
@@ -159,6 +260,23 @@ int vdma_read_init
 		bsp_printf(TXT_RED "In %s: Read channel set buffer address failed %d\r\n" TXT_RST, __func__, Status);
 		return XST_FAILURE;
 	}
+
+#if defined(USE_INTR) && defined(XPAR_FABRIC_AXI_VDMA_0_MM2S_INTROUT_INTR)
+	// TODO:SetupIntrSystem
+	XScuGic *IntcInstPtr = &InterruptController;
+	XScuGic_SetPriorityTriggerType(IntcInstPtr, XPAR_FABRIC_AXI_VDMA_0_MM2S_INTROUT_INTR, 0xA0, 0x3);
+
+	Status = XScuGic_Connect(IntcInstPtr, XPAR_FABRIC_AXI_VDMA_0_MM2S_INTROUT_INTR,
+	         (XInterruptHandler)XAxiVdma_WriteIntrHandler, InstancePtr);
+	if (Status != XST_SUCCESS)
+	{
+		bsp_printf(TXT_RED "n %s: Failed read channel connect intc %d\r\n" TXT_RST, __func__, Status);
+		return XST_FAILURE;
+	}
+
+	XScuGic_Enable(IntcInstPtr, XPAR_FABRIC_AXI_VDMA_0_MM2S_INTROUT_INTR);
+	XAxiVdma_IntrEnable(InstancePtr, XAXIVDMA_IXR_ALL_MASK, XAXIVDMA_READ);
+#endif
 
 	Status = vdma_read_start(InstancePtr);
 	if (Status != XST_SUCCESS)
@@ -218,6 +336,15 @@ int vdma_write_init
 		}
 	}
 
+
+
+	vdma_write_stop(InstancePtr);
+#if defined(USE_INTR) && defined(XPAR_FABRIC_AXI_VDMA_0_S2MM_INTROUT_INTR)
+	XAxiVdma_IntrDisable(InstancePtr, XAXIVDMA_IXR_ALL_MASK, XAXIVDMA_WRITE);
+#endif
+
+
+
 	Status = XAxiVdma_SetFrmStore(InstancePtr, 3, XAXIVDMA_WRITE);
 	if (Status != XST_SUCCESS)
 	{
@@ -246,13 +373,19 @@ int vdma_write_init
 	}
 
 	WriteCfg.EnableCircularBuf = 0;
+//	WriteCfg.EnableCircularBuf = 1;
+
 	WriteCfg.EnableFrameCounter = 0;
 	WriteCfg.FixedFrameStoreAddr = 0;
 
+//	WriteCfg.EnableSync = 0;
+//	WriteCfg.PointNum = 0;
 	WriteCfg.EnableSync = 1;
 	WriteCfg.PointNum = 1;
 
 	WriteCfg.FrameDelay = 0;
+
+	WriteCfg.EnableVFlip = 0;
 
 	WriteCfg.VertSizeInput = VertSizeInput;
 	WriteCfg.HoriSizeInput = HoriSizeInput;
@@ -276,6 +409,23 @@ int vdma_write_init
 		bsp_printf(TXT_RED "In %s: Write channel set buffer address failed %d\r\n" TXT_RST, __func__, Status);
 		return XST_FAILURE;
 	}
+
+#if defined(USE_INTR) && defined(XPAR_FABRIC_AXI_VDMA_0_S2MM_INTROUT_INTR)
+	// TODO:SetupIntrSystem
+	XScuGic *IntcInstPtr = &InterruptController;
+	XScuGic_SetPriorityTriggerType(IntcInstPtr, XPAR_FABRIC_AXI_VDMA_0_S2MM_INTROUT_INTR, 0xA0, 0x3);
+
+	Status = XScuGic_Connect(IntcInstPtr, XPAR_FABRIC_AXI_VDMA_0_S2MM_INTROUT_INTR,
+	         (XInterruptHandler)XAxiVdma_WriteIntrHandler, InstancePtr);
+	if (Status != XST_SUCCESS)
+	{
+		bsp_printf(TXT_RED "In %s: Failed write channel connect intc %d\r\n" TXT_RST, __func__, Status);
+		return XST_FAILURE;
+	}
+
+	XScuGic_Enable(IntcInstPtr, XPAR_FABRIC_AXI_VDMA_0_S2MM_INTROUT_INTR);
+	XAxiVdma_IntrEnable(InstancePtr, XAXIVDMA_IXR_ALL_MASK, XAXIVDMA_WRITE);
+#endif
 
 	Status = vdma_write_start(InstancePtr);
 	if (Status != XST_SUCCESS)
@@ -552,7 +702,7 @@ void vdma_config_m32_0(void)
     Xil_Out32(XPAR_AXI_VDMA_0_BASEADDR + 0xA8, stride0*bytePerPixels);
     // S2MM HSIZE register
     Xil_Out32(XPAR_AXI_VDMA_0_BASEADDR + 0xA4, width0*bytePerPixels);
-	//
+    //
 //    Xil_Out32(XPAR_AXI_VDMA_0_BASEADDR + 0x30, 0x03);//en
     // S2MM VSIZE register
     Xil_Out32(XPAR_AXI_VDMA_0_BASEADDR + 0xA0, height0);
@@ -941,15 +1091,15 @@ void vdma_config_m32_1(void)
     Xil_Out32(XPAR_AXI_VDMA_1_BASEADDR + 0x00, 0x8B);
 #if (XPAR_AXI_VDMA_1_NUM_FSTORES >= 1U)
     Xil_Out32(XPAR_AXI_VDMA_1_BASEADDR + 0x14, 0x00);
-    //MM2S Start Address 1
+    // MM2S Start Address 1
     Xil_Out32(XPAR_AXI_VDMA_1_BASEADDR + 0x5C, FRAME_BUFFER_1_0 + offset1);
 #endif // XPAR_AXI_VDMA_1_NUM_FSTORES == 1U
 #if (XPAR_AXI_VDMA_1_NUM_FSTORES >= 2U)
-    //MM2S Start Address 2
+    // MM2S Start Address 2
     Xil_Out32(XPAR_AXI_VDMA_1_BASEADDR + 0x60, FRAME_BUFFER_1_1 + offset1);
 #endif // XPAR_AXI_VDMA_1_NUM_FSTORES == 2U
 #if (XPAR_AXI_VDMA_1_NUM_FSTORES >= 3U)
-    //MM2S Start Address 3
+    // MM2S Start Address 3
     Xil_Out32(XPAR_AXI_VDMA_1_BASEADDR + 0x64, FRAME_BUFFER_1_2 + offset1);
 #endif // XPAR_AXI_VDMA_1_NUM_FSTORES == 3U
 #if (XPAR_AXI_VDMA_1_NUM_FSTORES >= 4U)
@@ -2579,10 +2729,10 @@ void clear_display_0(void)
 	column = VDMA_0_R_STRIDE;
 
 #if (XPAR_AXIVDMA_0_INCLUDE_S2MM == 1U)
-    Xil_Out32(XPAR_AXIVDMA_0_BASEADDR + 0x00, 0x8A);//stop mm2s
+    Xil_Out32(XPAR_AXIVDMA_0_BASEADDR + 0x30, 0x8A);//stop mm2s
 #endif
 #if (XPAR_AXIVDMA_0_INCLUDE_MM2S == 1U)
-	Xil_Out32(XPAR_AXIVDMA_0_BASEADDR + 0x30, 0x8A);//stop s2mm
+	Xil_Out32(XPAR_AXIVDMA_0_BASEADDR + 0x00, 0x8A);//stop s2mm
 #endif
 
 	Xil_DCacheDisable();

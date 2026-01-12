@@ -1000,8 +1000,12 @@ int FlashErase(XQspiPsu *QspiPsuPtr, u32 Address, u32 ByteCount, u8 *WriteBfrPtr
 
 		if (PercentCurr != PercentLast)
 		{
-			//print_percent(PercentCurr) ;
+
+#if (defined (UDP_UPDATE) || defined (TCP_UPDATE)) && (defined (XPAR_XEMACPS_NUM_INSTANCES) || defined (XPAR_XAXIETHERNET_NUM_INSTANCES))
 			process_print(PercentCurr) ;
+#else
+			print_percent(PercentCurr) ;
+#endif
 		}
 
 		PercentLast = PercentCurr ;

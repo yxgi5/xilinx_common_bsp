@@ -5,6 +5,8 @@
 #define __VDMA_H__
 #include "xaxivdma.h"
 
+#define USE_INTR
+
 #if (XPAR_XAXIVDMA_NUM_INSTANCES >= 1U)
 //#define CFG_VDMA_0_AFTER_CLEAR
 #endif // XPAR_XAXIVDMA_NUM_INSTANCES == 1U

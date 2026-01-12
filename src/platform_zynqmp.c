@@ -108,6 +108,11 @@ void Timer0Handler(void *CallBackRef, u8 TmrCtrNumber)
 #endif // #if defined (MODBUS_RTU_SLAVE)
 #endif // #if defined (XPAR_MODBUS_RTU_0_AXI_TIMER_0_DEVICE_ID)
 
+
+
+#if defined (XPAR_XEMACPS_NUM_INSTANCES)
+#if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
+
 void platform_clear_interrupt( XTtcPs * TimerInstance )
 {
 	u32 StatusEvent;
@@ -115,9 +120,6 @@ void platform_clear_interrupt( XTtcPs * TimerInstance )
 	StatusEvent = XTtcPs_GetInterruptStatus(TimerInstance);
 	XTtcPs_ClearInterruptStatus(TimerInstance, StatusEvent);
 }
-
-#if defined (XPAR_XEMACPS_NUM_INSTANCES)
-#if defined (UDP_UPDATE) || defined (TCP_UPDATE) || defined (TCP_COMMAND_SRV) || defined (UDP_COMMAND_SRV)
 
 void timer_callback(XTtcPs * TimerInstance)
 {
