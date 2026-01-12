@@ -566,9 +566,10 @@ int vdma_read_init
 	u16 HoriSizeInput,
 	u16 VertSizeInput,
 	u16 Stride,
-	UINTPTR FrameStoreStartAddr0,
-	UINTPTR FrameStoreStartAddr1,
-	UINTPTR FrameStoreStartAddr2
+	u16 FrmStores,
+	u16 Bpp,
+	s32 Offset,
+	UINTPTR * FrameStoreStartAddrs
 );
 int vdma_write_start(XAxiVdma *InstancePtr);
 void vdma_write_stop(XAxiVdma *InstancePtr);
@@ -579,9 +580,10 @@ int vdma_write_init
 	u16 HoriSizeInput,
 	u16 VertSizeInput,
 	u16 Stride,
-	UINTPTR FrameStoreStartAddr0,
-	UINTPTR FrameStoreStartAddr1,
-	UINTPTR FrameStoreStartAddr2
+	u16 FrmStores,
+	u16 Bpp,
+	s32 Offset,
+	UINTPTR * FrameStoreStartAddrs
 );
 
 #if (XPAR_XAXIVDMA_NUM_INSTANCES >= 1U)

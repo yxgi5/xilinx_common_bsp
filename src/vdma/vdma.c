@@ -172,9 +172,10 @@ int vdma_read_init
 	u16 HoriSizeInput,
 	u16 VertSizeInput,
 	u16 Stride,
-	UINTPTR FrameStoreStartAddr0,
-	UINTPTR FrameStoreStartAddr1,
-	UINTPTR FrameStoreStartAddr2
+	u16 Bpp,
+	u16 FrmStores,
+	s32 Offset,
+	UINTPTR * FrameStoreStartAddrs
 )
 {
 	int Status;
@@ -196,7 +197,7 @@ int vdma_read_init
 	XAxiVdma_IntrDisable(InstancePtr, XAXIVDMA_IXR_ALL_MASK, XAXIVDMA_READ);
 #endif
 
-	Status = XAxiVdma_SetFrmStore(InstancePtr, 3, XAXIVDMA_READ);
+	Status = XAxiVdma_SetFrmStore(InstancePtr, FrmStores, XAXIVDMA_READ);
 	if (Status != XST_SUCCESS)
 	{
 		bsp_printf(TXT_RED
@@ -240,8 +241,8 @@ int vdma_read_init
 	ReadCfg.FrameDelay = 0;
 
 	ReadCfg.VertSizeInput = VertSizeInput;
-	ReadCfg.HoriSizeInput = HoriSizeInput;
-	ReadCfg.Stride = Stride;
+	ReadCfg.HoriSizeInput = HoriSizeInput*Bpp;
+	ReadCfg.Stride = Stride*Bpp;
 
 	Status = XAxiVdma_DmaConfig(InstancePtr, XAXIVDMA_READ, &ReadCfg);
 	if (Status != XST_SUCCESS)
@@ -250,9 +251,10 @@ int vdma_read_init
 		return XST_FAILURE;
 	}
 
-	ReadCfg.FrameStoreStartAddr[0] = FrameStoreStartAddr0;
-	ReadCfg.FrameStoreStartAddr[1] = FrameStoreStartAddr1;
-	ReadCfg.FrameStoreStartAddr[2] = FrameStoreStartAddr2;
+	ReadCfg.FrameStoreStartAddr[0] = FrameStoreStartAddrs[0] + Offset;
+	ReadCfg.FrameStoreStartAddr[1] = FrameStoreStartAddrs[1] + Offset;
+	ReadCfg.FrameStoreStartAddr[2] = FrameStoreStartAddrs[2] + Offset;
+	// TODO: add more if FrameStore>3
 
 	Status = XAxiVdma_DmaSetBufferAddr(InstancePtr, XAXIVDMA_READ, ReadCfg.FrameStoreStartAddr);
 	if (Status != XST_SUCCESS)
@@ -317,9 +319,10 @@ int vdma_write_init
 	u16 HoriSizeInput,
 	u16 VertSizeInput,
 	u16 Stride,
-	UINTPTR FrameStoreStartAddr0,
-	UINTPTR FrameStoreStartAddr1,
-	UINTPTR FrameStoreStartAddr2
+	u16 Bpp,
+	u16 FrmStores,
+	s32 Offset,
+	UINTPTR * FrameStoreStartAddrs
 )
 {
 	int Status;
@@ -345,7 +348,7 @@ int vdma_write_init
 
 
 
-	Status = XAxiVdma_SetFrmStore(InstancePtr, 3, XAXIVDMA_WRITE);
+	Status = XAxiVdma_SetFrmStore(InstancePtr, FrmStores, XAXIVDMA_WRITE);
 	if (Status != XST_SUCCESS)
 	{
 		bsp_printf(TXT_RED
@@ -388,8 +391,8 @@ int vdma_write_init
 	WriteCfg.EnableVFlip = 0;
 
 	WriteCfg.VertSizeInput = VertSizeInput;
-	WriteCfg.HoriSizeInput = HoriSizeInput;
-	WriteCfg.Stride = Stride;
+	WriteCfg.HoriSizeInput = HoriSizeInput*Bpp;
+	WriteCfg.Stride = Stride*Bpp;
 
 	Status = XAxiVdma_DmaConfig(InstancePtr, XAXIVDMA_WRITE, &WriteCfg);
 	if (Status != XST_SUCCESS)
@@ -399,9 +402,10 @@ int vdma_write_init
 	}
 
 
-	WriteCfg.FrameStoreStartAddr[0] = FrameStoreStartAddr0;
-	WriteCfg.FrameStoreStartAddr[1] = FrameStoreStartAddr1;
-	WriteCfg.FrameStoreStartAddr[2] = FrameStoreStartAddr2;
+	WriteCfg.FrameStoreStartAddr[0] = FrameStoreStartAddrs[0] + Offset;
+	WriteCfg.FrameStoreStartAddr[1] = FrameStoreStartAddrs[1] + Offset;
+	WriteCfg.FrameStoreStartAddr[2] = FrameStoreStartAddrs[2] + Offset;
+	// TODO: add more if FrameStore>3
 
 	Status = XAxiVdma_DmaSetBufferAddr(InstancePtr, XAXIVDMA_WRITE, WriteCfg.FrameStoreStartAddr);
 	if (Status != XST_SUCCESS)
@@ -2262,6 +2266,9 @@ int vdma_config(void)
 		VDMA_0_R_HEIGHTH,
 		vmda_0_frame_addrs
 	);
+
+//	vdma_write_init(&Vdma0, XPAR_AXI_VDMA_0_DEVICE_ID, VDMA_0_W_WIDTH, VDMA_0_W_HEIGHTH, VDMA_0_R_STRIDE, VDMA_0_BPP, XPAR_AXI_VDMA_0_NUM_FSTORES, VDMA_0_W_OFFSET, vmda_0_frame_addrs);
+
 //	bsp_printf("vdma 0 config done!\r\n");
 #endif // XPAR_XAXIVDMA_NUM_INSTANCES == 1U
 
