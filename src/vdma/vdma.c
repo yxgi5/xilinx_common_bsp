@@ -277,6 +277,10 @@ int vdma_read_init
 	}
 
 	XScuGic_Enable(IntcInstPtr, XPAR_FABRIC_AXI_VDMA_0_MM2S_INTROUT_INTR);
+
+
+	XAxiVdma_SetCallBack(InstancePtr, XAXIVDMA_HANDLER_GENERAL, ReadCallBack, (void *)InstancePtr, XAXIVDMA_READ);
+	XAxiVdma_SetCallBack(InstancePtr, XAXIVDMA_HANDLER_ERROR, ReadErrorCallBack, (void *)InstancePtr, XAXIVDMA_READ);
 	XAxiVdma_IntrEnable(InstancePtr, XAXIVDMA_IXR_ALL_MASK, XAXIVDMA_READ);
 #endif
 
@@ -354,7 +358,7 @@ int vdma_write_init
 		bsp_printf(TXT_RED
 		    "Setting Frame Store Number Failed in Write Channel"
 							" %d\r\n" TXT_RST, Status);
-		return XST_FAILURE;
+//		return XST_FAILURE;
 	}
 
 	XAxiVdma_GetFrameCounter(InstancePtr, &FrameCfg) ;
@@ -428,6 +432,10 @@ int vdma_write_init
 	}
 
 	XScuGic_Enable(IntcInstPtr, XPAR_FABRIC_AXI_VDMA_0_S2MM_INTROUT_INTR);
+
+
+	XAxiVdma_SetCallBack(InstancePtr, XAXIVDMA_HANDLER_GENERAL,WriteCallBack, (void *)InstancePtr, XAXIVDMA_WRITE);
+	XAxiVdma_SetCallBack(InstancePtr, XAXIVDMA_HANDLER_ERROR, WriteErrorCallBack, (void *)InstancePtr, XAXIVDMA_WRITE);
 	XAxiVdma_IntrEnable(InstancePtr, XAXIVDMA_IXR_ALL_MASK, XAXIVDMA_WRITE);
 #endif
 
