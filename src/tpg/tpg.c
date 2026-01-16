@@ -48,17 +48,17 @@ u32 bckgndId0=XTPG_BKGND_COLOR_BARS;
 #endif // XPAR_XV_TPG_NUM_INSTANCES == 1U
 #if (XPAR_XV_TPG_NUM_INSTANCES >= 2U)
 XV_tpg tpg_inst1;
-XVidC_ColorFormat colorFmtIn1 = XVIDC_CSF_RGB;
+static XVidC_ColorFormat colorFmtIn1 = XVIDC_CSF_RGB;
 u32 bckgndId1=XTPG_BKGND_COLOR_BARS;
 #endif // XPAR_XV_TPG_NUM_INSTANCES == 2U
 #if (XPAR_XV_TPG_NUM_INSTANCES >= 3U)
 XV_tpg tpg_inst2;
-XVidC_ColorFormat colorFmtIn2 = XVIDC_CSF_RGB;
+static XVidC_ColorFormat colorFmtIn2 = XVIDC_CSF_RGB;
 u32 bckgndId2=XTPG_BKGND_COLOR_BARS;
 #endif // XPAR_XV_TPG_NUM_INSTANCES == 3U
 #if (XPAR_XV_TPG_NUM_INSTANCES >= 4U)
 XV_tpg tpg_inst3;
-XVidC_ColorFormat colorFmtIn3 = XVIDC_CSF_RGB;
+static XVidC_ColorFormat colorFmtIn3 = XVIDC_CSF_RGB;
 u32 bckgndId3=XTPG_BKGND_COLOR_BARS;
 #endif // XPAR_XV_TPG_NUM_INSTANCES == 4U
 
@@ -132,6 +132,7 @@ int tpg_config(void)
     }
 
     tpg_cfg(&tpg_inst0, 1080, 1920, colorFmtIn0, bckgndId0);
+//    tpg_cfg(&tpg_inst0, 2160, 3840, colorFmtIn0, bckgndId0);
 
     //Configure the moving box of the TPG0
     tpg_box(&tpg_inst0, 50, 1);
@@ -139,7 +140,7 @@ int tpg_config(void)
     //Start the TPG0
     XV_tpg_EnableAutoRestart(&tpg_inst0);
     XV_tpg_Start(&tpg_inst0);
-    //bsp_printf("TPG0 started!\r\n");
+    bsp_printf("TPG0 started!\r\n");
 
     return XST_SUCCESS;
 }

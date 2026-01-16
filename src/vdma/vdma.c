@@ -203,7 +203,7 @@ int vdma_read_init
 		bsp_printf(TXT_RED
 			"Setting Frame Store Number Failed in Read Channel"
 							" %d\r\n" TXT_RST, Status);
-		return XST_FAILURE;
+//		return XST_FAILURE;
 	}
 
 	XAxiVdma_GetFrameCounter(InstancePtr, &FrameCfg) ;
@@ -422,9 +422,12 @@ int vdma_write_init
 	// TODO:SetupIntrSystem
 	XScuGic *IntcInstPtr = &InterruptController;
 	XScuGic_SetPriorityTriggerType(IntcInstPtr, XPAR_FABRIC_AXI_VDMA_0_S2MM_INTROUT_INTR, 0xA0, 0x3);
+//	XScuGic_SetPriorityTriggerType(IntcInstPtr, 122, 0xA0, 0x3);
 
 	Status = XScuGic_Connect(IntcInstPtr, XPAR_FABRIC_AXI_VDMA_0_S2MM_INTROUT_INTR,
 	         (XInterruptHandler)XAxiVdma_WriteIntrHandler, InstancePtr);
+//	Status = XScuGic_Connect(IntcInstPtr, 122,
+//	         (XInterruptHandler)XAxiVdma_WriteIntrHandler, InstancePtr);
 	if (Status != XST_SUCCESS)
 	{
 		bsp_printf(TXT_RED "In %s: Failed write channel connect intc %d\r\n" TXT_RST, __func__, Status);
@@ -432,7 +435,7 @@ int vdma_write_init
 	}
 
 	XScuGic_Enable(IntcInstPtr, XPAR_FABRIC_AXI_VDMA_0_S2MM_INTROUT_INTR);
-
+//	XScuGic_Enable(IntcInstPtr, 122);
 
 	XAxiVdma_SetCallBack(InstancePtr, XAXIVDMA_HANDLER_GENERAL,WriteCallBack, (void *)InstancePtr, XAXIVDMA_WRITE);
 	XAxiVdma_SetCallBack(InstancePtr, XAXIVDMA_HANDLER_ERROR, WriteErrorCallBack, (void *)InstancePtr, XAXIVDMA_WRITE);
@@ -719,6 +722,7 @@ void vdma_config_m32_0(void)
     // S2MM VSIZE register
     Xil_Out32(XPAR_AXI_VDMA_0_BASEADDR + 0xA0, height0);
 
+#if 1
     /* Configure the Read interface (MM2S)*/
     // MM2S Control Register
     Xil_Out32(XPAR_AXI_VDMA_0_BASEADDR + 0x00, 0x8B);
@@ -863,8 +867,9 @@ void vdma_config_m32_0(void)
 //    Xil_Out32(XPAR_AXI_VDMA_0_BASEADDR + 0x00, 0x03);//en
     // MM2S VSIZE register
     Xil_Out32(XPAR_AXI_VDMA_0_BASEADDR + 0x50, height1);
+#endif
 
-//    bsp_printf("VDMA started!\r\n");
+    bsp_printf("VDMA started!\r\n");
 	/* End of VDMA Configuration */
 }
 #endif // XPAR_AXI_VDMA_0_ADDR_WIDTH == 32U
@@ -2277,7 +2282,7 @@ int vdma_config(void)
 
 //	vdma_write_init(&Vdma0, XPAR_AXI_VDMA_0_DEVICE_ID, VDMA_0_W_WIDTH, VDMA_0_W_HEIGHTH, VDMA_0_R_STRIDE, VDMA_0_BPP, XPAR_AXI_VDMA_0_NUM_FSTORES, VDMA_0_W_OFFSET, vmda_0_frame_addrs);
 
-//	bsp_printf("vdma 0 config done!\r\n");
+	bsp_printf("vdma 0 config done!\r\n");
 #endif // XPAR_XAXIVDMA_NUM_INSTANCES == 1U
 
 #if (XPAR_XAXIVDMA_NUM_INSTANCES >= 2U)
@@ -2744,10 +2749,10 @@ void clear_display_0(void)
 	column = VDMA_0_R_STRIDE;
 
 #if (XPAR_AXIVDMA_0_INCLUDE_S2MM == 1U)
-    Xil_Out32(XPAR_AXIVDMA_0_BASEADDR + 0x30, 0x8A);//stop mm2s
+    Xil_Out32(XPAR_AXIVDMA_0_BASEADDR + 0x30, 0x8A);//stop s2mm
 #endif
 #if (XPAR_AXIVDMA_0_INCLUDE_MM2S == 1U)
-	Xil_Out32(XPAR_AXIVDMA_0_BASEADDR + 0x00, 0x8A);//stop s2mm
+	Xil_Out32(XPAR_AXIVDMA_0_BASEADDR + 0x00, 0x8A);//stop mm2s
 #endif
 
 	Xil_DCacheDisable();

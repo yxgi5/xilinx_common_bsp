@@ -124,6 +124,37 @@ int XClk_Wiz_dynamic_reconfig(XClk_Wiz * ClkWizInstance, u32 DeviceId)
                    *(u32 *) (CfgPtr_Dynamic->BaseAddr + 0x04) & CLK_LOCK);
     }
 
+
+#if 0
+    //in=100
+    //out1=297
+    Multiply_Int = 111;
+    Multiply_Frac = 375;
+    Divide = 10;
+    Divide0_Int = 3;
+    Divide0_Frac = 750;
+#endif
+
+#if 0
+    //in=100
+    //out1=148.5
+    Multiply_Int = 111;
+    Multiply_Frac = 375;
+    Divide = 10;
+    Divide0_Int = 7;
+    Divide0_Frac = 500;
+#endif
+
+#if 0
+    //in=100
+    //out1=74.25
+    Multiply_Int = 111;
+    Multiply_Frac = 375;
+    Divide = 10;
+    Divide0_Int = 15;
+    Divide0_Frac = 0;
+#endif
+
 //    //in=200
 //    //out1=297
 //    Multiply_Int = 37;

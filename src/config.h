@@ -26,7 +26,7 @@ bsp regenerate
 /*
  * software version by compile time
  */
-//#define SW_VER_BY_COMPILE_TIME
+#define SW_VER_BY_COMPILE_TIME
 
 
 /*

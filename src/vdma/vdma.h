@@ -49,15 +49,21 @@
 #define VDMA_0_BPP					(3)	// byte per pixel
 //#if (XPAR_AXIVDMA_0_INCLUDE_S2MM == 1U)
 #define VDMA_0_W_OFFSET				(0) // (y*w+x)*Bpp
-#define VDMA_0_W_WIDTH				(1920U)
-#define VDMA_0_W_STRIDE				(1920U)
-#define VDMA_0_W_HEIGHTH			(1080U)
+//#define VDMA_0_W_WIDTH				(1920U)
+//#define VDMA_0_W_STRIDE				(1920U)
+//#define VDMA_0_W_HEIGHTH			(1080U)
+#define VDMA_0_W_WIDTH				(3840U)
+#define VDMA_0_W_STRIDE				(3840U)
+#define VDMA_0_W_HEIGHTH			(2160U)
 //#endif // XPAR_AXIVDMA_0_INCLUDE_S2MM == 1U
 //#if (XPAR_AXIVDMA_0_INCLUDE_MM2S == 1U)
 #define VDMA_0_R_OFFSET				(0) // (y*w+x)*Bpp
-#define VDMA_0_R_WIDTH				(1920U)
-#define VDMA_0_R_STRIDE				(1920U)
-#define VDMA_0_R_HEIGHTH			(1080U)
+//#define VDMA_0_R_WIDTH				(1920U)
+//#define VDMA_0_R_STRIDE				(1920U)
+//#define VDMA_0_R_HEIGHTH			(1080U)
+#define VDMA_0_R_WIDTH				(3840U)
+#define VDMA_0_R_STRIDE				(3840U)
+#define VDMA_0_R_HEIGHTH			(2160U)
 //#endif // XPAR_AXIVDMA_0_INCLUDE_MM2S == 1U
 #endif // XPAR_XAXIVDMA_NUM_INSTANCES == 1U
 
