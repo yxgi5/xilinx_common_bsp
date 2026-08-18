@@ -1171,4 +1171,42 @@ then, you can access i2c devices like:
 	Status = xgpio_i2c_reg16_read(I2C_NO_3, 0x90>>1, 0x0000, &ret8, STRETCH_ON);
     Status = xgpio_i2c_reg16_read(I2C_NO_3, 0x90>>1, 0x0001, &ret8, STRETCH_ON);
 ```
+
+resetIp() method1
+```
+void resetIp()
+{
+	//xil_printf("\r\nReset HLS IP \r\n");
+//	power_down_HLSIPs();
+	Xil_Out32(HLS_RST_BASEADDR, 0x1);
+	usleep(10000);          //hold reset line
+//	power_up_HLSIPs();
+	Xil_Out32(HLS_RST_BASEADDR, 0x3);
+	usleep(10000);          //hold reset line
+//	power_down_HLSIPs();
+	Xil_Out32(HLS_RST_BASEADDR, 0x1);
+	usleep(10000);          //hold reset line
+//	power_up_HLSIPs();
+	Xil_Out32(HLS_RST_BASEADDR, 0x3);
+	usleep(10000);          //hold reset line
+}
+```
+
+
+resetIp() method2
+```
+
+gpio_hlsIpReset = (u32*) XPAR_HLS_IP_RESET_BASEADDR;
+*gpio_hlsIpReset = 1;
+	
+void resetIp(void)
+{
+    // xil_printf("\r\nReset HLS IP \r\n");
+    *gpio_hlsIpReset = 0; //reset IPs
+    usleep(1000);         //hold reset line
+    *gpio_hlsIpReset = 1; //release reset
+    usleep(1000);         //wait
+}
+```
+
 */

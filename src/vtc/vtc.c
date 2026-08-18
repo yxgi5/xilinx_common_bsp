@@ -53,7 +53,7 @@ vres_timing_t vres_resolutions[VIDEO_RESOLUTION_NO_BUTT] = {
   {"1920X960",  960,   10,   20,   10,    0, 1920,   20,   40,   20,    0 }, // VIDEO_RESOLUTION_1920X960
    { "4K",     2160,    8,   10,   72,    1, 3840,  176,   88,  296,    1 }, // VIDEO_RESOLUTION_4K
 //   { "4K",     2160,    8,   10,   72,    1, 1920,   88,   44,  148,    1 }, // VIDEO_RESOLUTION_4K
-   { "4KFULL", 2160,    8,   10,   72,    1, 4096,   88,   88,  128,    1 }, // VIDEO_RESOLUTION_4KW
+   { "4KDCI", 2160,    8,   10,   72,    1, 4096,   88,   88,  128,    1 }, // VIDEO_RESOLUTION_4KDCI
    { "CUSTOM0",1080,    4,    5,   36,    1, 960,    44,   22,   74,    1 }, // VIDEO_RESOLUTION_CUSTOM0
    { "CUSTOM1",2160,    8,   10,   72,    1, 1920,   88,   44,  148,    1 }, // VIDEO_RESOLUTION_CUSTOM1
    { "4KCUST", 2160,    3,    5,   18,    1, 3840,   48,   32,   80,    1 }, // VIDEO_RESOLUTION_4KCUST
